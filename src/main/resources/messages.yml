@@ -1,0 +1,70 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                        ----[EpicHomes]----                                        #
+#                                     ----[By Loving11ish]----                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                  ----[Plugin Messages File]----                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#EpicHomes messages config for ${version}
+
+#Changing anything below may require a server restart to take effect!
+
+#Plugin global prefix
+global-prefix: "&f[&6Epic&bHomes&f]&r"
+
+#Home teleportation
+timed-teleporting-begin-tp: "%PREFIX% &aTeleporting to home &e%HOME%&a...\n%PREFIX% &aPlease stay still!"
+timed-teleporting-complete: "%PREFIX% &aSuccessfully arrived at &e%HOME%&a."
+timed-teleport-failed-player-moved: "%PREFIX% &cYou moved before you were teleported to your home! The teleport was cancelled."
+non-timed-teleporting-complete: "%PREFIX% &aSuccessfully arrived at &e%HOME%&a."
+
+#Home set
+home-set-successfully: "%PREFIX% &aSuccessfully set home &e%HOME% &aat your current location."
+home-set-failed-home-exists: "%PREFIX% &e%HOME% &calready exists!"
+home-set-failed-max-homes-reached: "%PREFIX% &cSorry, you have reached the max allowed homes."
+
+#Home delete
+home-delete-successful: "%PREFIX% &aSuccessfully deleted &e%HOME%&a."
+home-delete-failed: "%PREFIX% &cFailed to delete &e%HOME%&c!\n%PREFIX% &cCheck console for errors!"
+
+#Home list
+list:
+  header: "&3<======> %PREFIX% &3<======>\n"
+  sub-header: "&aYour homes: \n"
+  home: " &7>> &e%HOME%\n"
+  sub-footer: " \n"
+  footer: "&3<======> %PREFIX% &3<======>\n"
+
+#General messages
+no-permission: "%PREFIX% &cSorry, you don't have permission to do that."
+incorrect-command-usage: "%PREFIX% &cSorry, that is a player only command."
+plugin-reload-start: "%PREFIX% &aStarting reload process..."
+plugin-reload-complete: "%PREFIX% &aPlugin reload process complete!"
+plugin-reload-failed: "%PREFIX% &cPlugin reload process failed!\n%PREFIX% &cCheck console for any errors!"
+move-event-cancel-failed: "%PREFIX% &4Unable to cancel teleport on move!\n%PREFIX% &4See below for reason!"
+timed-teleport-failed-plugin-reloaded: "%PREFIX% &cA server operator reloaded the plugin so your teleport was canceled.\n%PREFIX% &cPlease try again."
+
+#Home List GUI
+GUI-first-page: "&7You are on the first page."
+GUI-last-page: "&7You are on the last page."
+
+#Home command usage
+incorrect-home-command-usage:
+  line-1: "%PREFIX% &ahome Usage:"
+  line-2: "%PREFIX% &7- &6/home <name>"
+  line-3: "%PREFIX% &7- &6/home set <name>"
+  line-4: "%PREFIX% &7- &6/home delete <name>"
+  line-5: "%PREFIX% &7- &6/home list"
+  line-6: "%PREFIX% &7- &6/home reload"
+
+#Update Notification
+update-check-failure: "&6EpicHomes: &4Unable to check for updates! - &c"
+update-available:
+  1: "&4*-------------------------------------------*"
+  2: "&6EpicHomes: &cA new version is available!"
+  3: "&4*-------------------------------------------*"
+no-update-available:
+  1: "&a*-------------------------------------------*"
+  2: "&6EpicHomes: &aPlugin is up to date!"
+  3: "&a*-------------------------------------------*"

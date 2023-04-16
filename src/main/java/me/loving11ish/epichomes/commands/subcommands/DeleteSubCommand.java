@@ -1,0 +1,66 @@
+package me.loving11ish.epichomes.commands.subcommands;
+
+import me.loving11ish.epichomes.EpicHomes;
+import me.loving11ish.epichomes.api.HomeDeleteEvent;
+import me.loving11ish.epichomes.models.User;
+import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.UsermapStorageUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+public class DeleteSubCommand {
+
+    Logger logger = EpicHomes.getPlugin().getLogger();
+
+    FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+
+    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
+    private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
+
+    private String prefix = messagesConfig.getString("global-prefix");
+    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+
+    public boolean deleteSubCommand(CommandSender sender, String[] args) {
+        if (sender instanceof Player){
+            Player player = (Player) sender;
+            if (args.length >= 2) {
+                String homeName = args[1];
+                if (homeName != null) {
+                    User user = usermapStorageUtil.getUserByOnlinePlayer(player);
+                    if (user != null){
+                        List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
+                        for (String home : userHomesList){
+                            if (homeName.equalsIgnoreCase(home)){
+                                if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
+                                    fireHomeDeleteEvent(player, user, homeName);
+                                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                    }
+                                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
+                                            .replace(PREFIX_PLACEHOLDER, prefix)
+                                            .replace(HOME_NAME_PLACEHOLDER, homeName)));
+                                }else {
+                                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-failed")
+                                            .replace(PREFIX_PLACEHOLDER, prefix)
+                                            .replace(HOME_NAME_PLACEHOLDER, homeName)));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static void fireHomeDeleteEvent(Player player, User user, String homeName) {
+        HomeDeleteEvent homeDeleteEvent = new HomeDeleteEvent(player, user, homeName);
+        Bukkit.getPluginManager().callEvent(homeDeleteEvent);
+    }
+}

@@ -1,0 +1,89 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                        ----[EpicHomes]----                                        #
+#                                     ----[By Loving11ish]----                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#                                   ----[Plugin Config File]----                                    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#EpicHomes config for ${version}
+
+#Changing anything below may require a server restart to take effect!
+
+#Homes config options.
+homes:
+  #Set the default maximum amount of homes a player can have. [Default value: 3]
+  default-max-homes: 3
+  #To allow the use of a tiered permission system for home sizes instead of the global amount, use the system below.
+  permission-based-homes-max-amount:
+    #Enable the tiered system use. [Default value: false]
+    enabled: false
+    permission-group-list:
+      group-1: 4    #Perm: 'epichomes.maxhomes.group1' [This perm is given by default]
+      group-2: 8    #Perm: 'epichomes.maxhomes.group2'
+      group-3: 12   #Perm: 'epichomes.maxhomes.group3'
+      group-4: 16   #Perm: 'epichomes.maxhomes.group4'
+      group-5: 20   #Perm: 'epichomes.maxhomes.group5'
+      group-6: 24   #Perm: 'epichomes.maxhomes.group6'
+
+  teleportation:
+    delay-before-teleport:
+      #Do you want to have a delay before teleporting the player to their home? [Default value: true]
+      enabled: true
+      #How long do you want the countdown delay to be? (In seconds) [Default value: 5]
+      time: 5
+      #Do you want the server to constantly check if the player moves when they have requested a home teleport?
+      ##WARNING - THIS ENABLES ADDITIONAL MOVEMENT EVENT CHECKS THAT MAY CAUSE INCREASED LOAD ON YOUR SERVER##
+      ##IF YOU EXPERIENCE PERFORMANCE ISSUES TRY SETTING BELOW TO 'FALSE'##
+      #[Default value: true]
+      cancel-teleport-on-move: true
+
+gui-system:
+  use-global-gui:
+    #Do you want to use the gui system to allow players to view and select their homes? [Default value: true]
+    enabled: true
+
+  home-list-gui:
+    #What title do you want the GUI to have? [Default value: &d&nYour Homes:]
+    title: "&d&nYour Homes:"
+
+    icons:
+      #What material do you want the home item to be represented by? [Default value: RED_BED]
+      #Use Bukkit material names only! (https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
+      home-material: RED_BED
+      #What name do you want the home item to be? [Default value: &6%HOME%]
+      display-name: "&6%HOME%"
+      #Below is the lore for the home item. If you don't want to show the player the home location values, simply
+      #remove the lines below that contain the values inside the '%%' symbols.
+      lore:
+        - "&3<============>"
+        - "&6Home Word: &a%LOCATION-WORLD%"
+        - "&6Home X: &a%LOCATION-X%"
+        - "&6Home Y: &a%LOCATION-Y%"
+        - "&6Home Z: &a%LOCATION-Z%"
+        - "&3<============>"
+        - "&e&oLeft click me to travel here"
+        - "&7------------"
+        - "&c&oRight click me to delete this home"
+        - "&3<============>"
+
+  #Menu controls options
+  menu-controls:
+    #The name of the previous page icon
+    previous-page-icon-name: "&2Previous Page"
+    #The name of the next page icon
+    next-page-icon-name: "&2Next Page"
+    #The name of the close/go back icon
+    close-go-back-icon-name: "&4Close/Go Back"
+
+
+#This section is for any general plugin config options.
+general:
+  developer-debug-mode:
+    #Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]
+    enabled: false
+
+#EpicHomes update system
+plugin-update-notifications:
+  #Do you want to enable in game plugin update notifications? (Permission:'epichomes.update'). [Default value: true]
+  enabled: true
