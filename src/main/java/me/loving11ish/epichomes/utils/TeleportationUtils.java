@@ -43,7 +43,6 @@ public class TeleportationUtils {
     }
 
     public void teleportPlayerAsyncTimed(Player player, Location location, String homeName) {
-        User user = EpicHomes.getPlugin().usermapStorageUtil.getUserByOnlinePlayer(player);
         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleporting-begin-tp")
                 .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix)).replace(HOME_NAME_PLACEHOLDER, homeName)));
         wrappedTask = foliaLib.getImpl().runTimerAsync(new Runnable() {
@@ -62,10 +61,6 @@ public class TeleportationUtils {
                         logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has been removed from the teleport queue"));
                     }
                     PaperLib.teleportAsync(player, location);
-                    fireHomeTeleportEvent(player, user, homeName, location);
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
-                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent"));
-                    }
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleporting-complete")
                             .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
                             .replace(HOME_NAME_PLACEHOLDER, homeName)));
