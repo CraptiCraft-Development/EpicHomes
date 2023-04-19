@@ -14,6 +14,15 @@ commands:
       - eh
       - homes
       - epichomes
+  importhomes:
+    description: The command used by ops to import homes and player data from the StormerHomes plugin.
+    usage: "/importhomes"
+    aliases:
+      - ih
+      - epicimport
+      - ei
+      - importhome
+      - homeimport
 
 permissions:
   epichomes.maxhomes.group1:

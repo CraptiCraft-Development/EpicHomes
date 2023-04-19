@@ -12,9 +12,11 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class UsermapStorageUtil {
 
+    Logger logger = EpicHomes.getPlugin().getLogger();
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
@@ -22,7 +24,7 @@ public class UsermapStorageUtil {
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
 
-    private String prefix = config.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix");
 
     private HashMap<UUID, User> usermapStorage = new HashMap<>();
 
@@ -33,6 +35,12 @@ public class UsermapStorageUtil {
             usermapConfig.set("users.data." + entry.getKey() + ".lastKnownName", entry.getValue().getLastKnownName());
             if (!entry.getValue().getHomesList().isEmpty()){
                 for (Map.Entry<String, Location> homeEntry : homeLocations.entrySet()) {
+                    if (homeEntry.getValue().getWorld() == null){
+                        logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("usermap-file-save-failure")
+                                .replace(PREFIX_PLACEHOLDER, prefix)
+                                .replace("%PLAYER%", entry.getValue().getLastKnownName())));
+                        continue;
+                    }
                     usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeName", homeEntry.getKey());
                     usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeWorld", homeEntry.getValue().getWorld().getName());
                     usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeX", homeEntry.getValue().getX());
@@ -214,8 +222,20 @@ public class UsermapStorageUtil {
         return homeNames;
     }
 
+    public void setHomeImportCompleted() {
+        usermapConfig.set("import-completed", true);
+        EpicHomes.getPlugin().usermapFileManager.saveUsermapConfig();
+    }
+
+    public boolean getHomeImportCompleted() {
+        return usermapConfig.getBoolean("import-completed");
+    }
+
     public Set<UUID> getRawUsermapList() {
         return usermapStorage.keySet();
     }
 
+    public HashMap<UUID, User> getUsermapStorage() {
+        return usermapStorage;
+    }
 }

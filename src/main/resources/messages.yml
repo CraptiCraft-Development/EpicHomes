@@ -39,11 +39,16 @@ list:
 #General messages
 no-permission: "%PREFIX% &cSorry, you don't have permission to do that."
 incorrect-command-usage: "%PREFIX% &cSorry, that is a player only command."
+usermap-file-save-failure: "%PREFIX% &cInvalid home world name entry found for player &e%PLAYER%&c! &aSkipping current entry!"
 plugin-reload-start: "%PREFIX% &aStarting reload process..."
 plugin-reload-complete: "%PREFIX% &aPlugin reload process complete!"
 plugin-reload-failed: "%PREFIX% &cPlugin reload process failed!\n%PREFIX% &cCheck console for any errors!"
 move-event-cancel-failed: "%PREFIX% &4Unable to cancel teleport on move!\n%PREFIX% &4See below for reason!"
 timed-teleport-failed-plugin-reloaded: "%PREFIX% &cA server operator reloaded the plugin so your teleport was canceled.\n%PREFIX% &cPlease try again."
+home-data-import-successful: "%PREFIX% &aAll available home and player data successfully imported from &e%PLUGIN%&a!"
+home-data-import-failed: "%PREFIX% &4Failed to import home or player data from &e%PLUGIN%&a!\n%PREFIX% &4Please check console for errors!"
+home-data-import-failed-already-run: "%PREFIX% &cData has already been successfully imported!"
+home-data-import-disabled: "%PREFIX% &cThe importer system is disabled in the config.yml!\n%PREFIX% &cPlease contact a system admin if you believe this is in error!"
 
 #Home List GUI
 GUI-first-page: "&7You are on the first page."

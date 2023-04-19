@@ -82,6 +82,19 @@ general:
   developer-debug-mode:
     #Do you want to see a lot of debug messages in console when most actions are performed? [Default value: false]
     enabled: false
+  home-data-importer:
+    #Do you want to import and convert the home data from another supported plugin? [Default value: false]
+    enabled: false
+    #Do you want to import home and player data from another homes' plugin?
+    #To import, set below to one of the supported options listed then restart the server.
+    ##ENSURE THAT BOTH EPICHOMES AND YOUR OLD HOMES PLUGIN ARE BOTH ENABLED BEFORE PROCEEDING!##
+    #Next, run the command `/importhomes` either in game or from the console. (Permission: 'epichomes.command.import')
+    #If no errors are reported the import process should be completed then you are safe to remove or disable the previous homes' plugin.
+    #current-supported-plugins:
+      #- StormerHomes
+      #- StormerHomesReloaded
+      #- EssentialsX
+    import-from: EssentialsX
 
 #EpicHomes update system
 plugin-update-notifications:

@@ -4,6 +4,7 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.WrappedTask;
 import me.loving11ish.epichomes.commands.HomeCommand;
 import me.loving11ish.epichomes.commands.HomeCommandTabCompleter;
+import me.loving11ish.epichomes.commands.HomeImportCommand;
 import me.loving11ish.epichomes.files.UsermapFileManager;
 import me.loving11ish.epichomes.files.MessagesFileManager;
 import me.loving11ish.epichomes.listeners.MenuEvent;
@@ -101,6 +102,7 @@ public final class EpicHomes extends JavaPlugin {
 
         //Register commands
         getCommand("home").setExecutor(new HomeCommand());
+        getCommand("importhomes").setExecutor(new HomeImportCommand());
 
         //Register tabCompleter
         getCommand("home").setTabCompleter(new HomeCommandTabCompleter());
@@ -174,6 +176,8 @@ public final class EpicHomes extends JavaPlugin {
                 logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4See below error for reason!"));
                 e.printStackTrace();
             }
+        }else {
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Usermap storage was empty, skipping saving!"));
         }
 
         //Final plugin shutdown message
