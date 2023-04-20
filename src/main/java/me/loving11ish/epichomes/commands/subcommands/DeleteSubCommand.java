@@ -59,6 +59,37 @@ public class DeleteSubCommand {
         return true;
     }
 
+    public boolean deleteHomeSubCommand(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            String homeName = args[0];
+            if (homeName != null) {
+                User user = usermapStorageUtil.getUserByOnlinePlayer(player);
+                if (user != null){
+                    List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
+                    for (String home : userHomesList){
+                        if (homeName.equalsIgnoreCase(home)){
+                            if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
+                                fireHomeDeleteEvent(player, user, homeName);
+                                if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                }
+                                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
+                                        .replace(PREFIX_PLACEHOLDER, prefix)
+                                        .replace(HOME_NAME_PLACEHOLDER, homeName)));
+                            }else {
+                                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-failed")
+                                        .replace(PREFIX_PLACEHOLDER, prefix)
+                                        .replace(HOME_NAME_PLACEHOLDER, homeName)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private static void fireHomeDeleteEvent(Player player, User user, String homeName) {
         HomeDeleteEvent homeDeleteEvent = new HomeDeleteEvent(player, user, homeName);
         Bukkit.getPluginManager().callEvent(homeDeleteEvent);

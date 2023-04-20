@@ -8,7 +8,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #EpicHomes messages config for ${version}
 
-#Changing anything below may require a server restart to take effect!
+#Changing anything below MAY require a server restart to take effect!
 
 #Plugin global prefix
 global-prefix: "&f[&6Epic&bHomes&f]&r"
@@ -39,6 +39,8 @@ list:
 #General messages
 no-permission: "%PREFIX% &cSorry, you don't have permission to do that."
 incorrect-command-usage: "%PREFIX% &cSorry, that is a player only command."
+home-name-does-not-exist: "%PREFIX% &cSorry, you do not appear to have a home called &e%HOME%&c!"
+command-cool-down-time-left: "%PREFIX% &cSorry, you still have &e%TIMELEFT% &cseconds until you can use that command again."
 usermap-file-save-failure: "%PREFIX% &cInvalid home world name entry found for player &e%PLAYER%&c! &aSkipping current entry!"
 plugin-reload-start: "%PREFIX% &aStarting reload process..."
 plugin-reload-complete: "%PREFIX% &aPlugin reload process complete!"
@@ -63,13 +65,23 @@ incorrect-home-command-usage:
   line-5: "%PREFIX% &7- &6/home list"
   line-6: "%PREFIX% &7- &6/home reload"
 
+#Sethome command usage
+incorrect-sethome-command-usage:
+  line-1: "%PREFIX% &asethome Usage:"
+  line-2: "%PREFIX% &7- &6/sethome <name>"
+
+#Delhome command usage
+incorrect-delhome-command-usage:
+  line-1: "%PREFIX% &adelhome Usage:"
+  line-2: "%PREFIX% &7- &6/delhome <name>"
+
 #Update Notification
-update-check-failure: "&6EpicHomes: &4Unable to check for updates! - &c"
+update-check-failure: "%PREFIX%: &4Unable to check for updates! - &c"
 update-available:
   1: "&4*-------------------------------------------*"
-  2: "&6EpicHomes: &cA new version is available!"
+  2: "%PREFIX%: &cA new version is available!"
   3: "&4*-------------------------------------------*"
 no-update-available:
   1: "&a*-------------------------------------------*"
-  2: "&6EpicHomes: &aPlugin is up to date!"
+  2: "%PREFIX%: &aPlugin is up to date!"
   3: "&a*-------------------------------------------*"

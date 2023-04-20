@@ -14,6 +14,12 @@ commands:
       - eh
       - homes
       - epichomes
+  sethome:
+    description: This command lets a player st at home at their current location.
+    usage: "/sethome <home-name>"
+  delhome:
+    description: This command lets a player delete the specified home if it exists.
+    usage: "/delhome <home-name>"
   importhomes:
     description: The command used by ops to import homes and player data from the StormerHomes plugin.
     usage: "/importhomes"

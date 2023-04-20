@@ -6,6 +6,8 @@ import me.loving11ish.epichomes.commands.subcommands.DeleteSubCommand;
 import me.loving11ish.epichomes.commands.subcommands.ListSubCommand;
 import me.loving11ish.epichomes.commands.subcommands.ReloadSubCommand;
 import me.loving11ish.epichomes.commands.subcommands.SetSubCommand;
+import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
+import me.loving11ish.epichomes.menusystem.menus.DeleteSingleGUI;
 import me.loving11ish.epichomes.menusystem.paginatedmenus.HomeListGUI;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
@@ -69,7 +71,16 @@ public class HomeCommand implements CommandExecutor {
                     case "delete":
                         if (args.length == 2){
                             if (args[1] != null){
-                                return new DeleteSubCommand().deleteSubCommand(sender, args);
+                                if (config.getBoolean("gui-system.use-global-gui.enabled")){
+                                    PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
+                                    playerMenuUtility.setUser(user);
+                                    playerMenuUtility.setHomeName(args[1]);
+                                    playerMenuUtility.setHomeLocation(usermapStorageUtil.getHomeLocationByHomeName(user, args[1]));
+                                    new DeleteSingleGUI(playerMenuUtility).open();
+                                    return true;
+                                }else {
+                                    return new DeleteSubCommand().deleteSubCommand(sender, args);
+                                }
                             }else {
                                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-4").replace(PREFIX_PLACEHOLDER, prefix)));
                                 return true;

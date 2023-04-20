@@ -13,6 +13,9 @@ public class JoinEvent implements Listener {
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
+    private String prefix = messagesConfig.getString("global-prefix");
+    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -21,12 +24,12 @@ public class JoinEvent implements Listener {
 //                new UpdateChecker("TODO").getVersion(version -> {
 //                    try {
 //                        if (!(EpicHomes.getPlugin().getDescription().getVersion().equalsIgnoreCase(version))) {
-//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.1")));
-//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.2")));
-//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.3")));
+//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
+//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
+//                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
 //                        }
 //                    }catch (NullPointerException e){
-//                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("Update-check-failure")));
+//                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("Update-check-failure").replace(PREFIX_PLACEHOLDER, prefix)));
 //                    }
 //                });
 //            }

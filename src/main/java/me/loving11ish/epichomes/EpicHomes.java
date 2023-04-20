@@ -2,15 +2,11 @@ package me.loving11ish.epichomes;
 
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.WrappedTask;
-import me.loving11ish.epichomes.commands.HomeCommand;
-import me.loving11ish.epichomes.commands.HomeCommandTabCompleter;
-import me.loving11ish.epichomes.commands.HomeImportCommand;
+import io.papermc.lib.PaperLib;
+import me.loving11ish.epichomes.commands.*;
 import me.loving11ish.epichomes.files.UsermapFileManager;
 import me.loving11ish.epichomes.files.MessagesFileManager;
-import me.loving11ish.epichomes.listeners.MenuEvent;
-import me.loving11ish.epichomes.listeners.PlayerConnectionEvent;
-import me.loving11ish.epichomes.listeners.PlayerDisconnectionEvent;
-import me.loving11ish.epichomes.listeners.PlayerMovementEvent;
+import me.loving11ish.epichomes.listeners.*;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.updatesystem.JoinEvent;
 import me.loving11ish.epichomes.updatesystem.UpdateChecker;
@@ -37,8 +33,8 @@ public final class EpicHomes extends JavaPlugin {
     public UsermapStorageUtil usermapStorageUtil;
 
     public HashMap<UUID, WrappedTask> teleportQueue = new HashMap<>();
-
     private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
+    private final List<String> pluginCommands = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -68,6 +64,12 @@ public final class EpicHomes extends JavaPlugin {
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &aA supported Minecraft version has been detected"));
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
+        }
+
+        //Suggest owner to use Paper if not on paper.
+        FoliaLib foliaLib = new FoliaLib(this);
+        if (foliaLib.isSpigot()||foliaLib.isUnsupported()){
+            PaperLib.suggestPaper(this);
         }
 
         //Load the plugin configs
@@ -103,6 +105,16 @@ public final class EpicHomes extends JavaPlugin {
         //Register commands
         getCommand("home").setExecutor(new HomeCommand());
         getCommand("importhomes").setExecutor(new HomeImportCommand());
+        getCommand("sethome").setExecutor(new SetHomeCommand());
+        getCommand("delhome").setExecutor(new DeleteHomeCommand());
+        pluginCommands.add("/home");
+        pluginCommands.add("/sethome");
+        pluginCommands.add("/delhome");
+        pluginCommands.add("/h");
+        pluginCommands.add("/eh");
+        pluginCommands.add("/delhome");
+        pluginCommands.add("/homes");
+        pluginCommands.add("/epichomes");
 
         //Register tabCompleter
         getCommand("home").setTabCompleter(new HomeCommandTabCompleter());
@@ -113,6 +125,7 @@ public final class EpicHomes extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerMovementEvent(), this);
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
+        getServer().getPluginManager().registerEvents(new PlayerCommandSendEvent(pluginCommands), this);
 
         //Plugin startup message
         logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
@@ -130,14 +143,16 @@ public final class EpicHomes extends JavaPlugin {
 
         //Check for available updates
 //        new UpdateChecker(97163).getVersion(version -> {
+//            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix");
+//            String PREFIX_PLACEHOLDER = "%PREFIX%";
 //            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1")));
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2")));
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3")));
+//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
+//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
+//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
 //            }else {
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1")));
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2")));
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3")));
+//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
+//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
+//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
 //            }
 //        });
     }

@@ -18,6 +18,9 @@ public class UpdateChecker {
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     Logger logger = EpicHomes.getPlugin().getLogger();
 
+    private String prefix = messagesConfig.getString("global-prefix");
+    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
+
     public UpdateChecker(int resourceId) {
         this.resourceId = resourceId;
     }
@@ -30,7 +33,7 @@ public class UpdateChecker {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException exception) {
-                logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("update-check-failure") + exception.getMessage()));
+                logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("update-check-failure").replace(PREFIX_PLACEHOLDER, prefix) + exception.getMessage()));
             }
         });
     }

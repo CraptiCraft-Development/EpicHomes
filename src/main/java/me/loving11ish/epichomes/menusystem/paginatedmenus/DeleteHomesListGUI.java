@@ -1,15 +1,12 @@
 package me.loving11ish.epichomes.menusystem.paginatedmenus;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomePreTeleportEvent;
 import me.loving11ish.epichomes.menusystem.PaginatedMenu;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.menusystem.menus.DeleteSingleGUI;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
-import me.loving11ish.epichomes.utils.TeleportationUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,11 +19,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
-public class HomeListGUI extends PaginatedMenu {
-
-    Logger logger = EpicHomes.getPlugin().getLogger();
+public class DeleteHomesListGUI extends PaginatedMenu {
 
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
@@ -42,13 +36,14 @@ public class HomeListGUI extends PaginatedMenu {
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
 
-    public HomeListGUI(PlayerMenuUtility playerMenuUtility) {
+    public DeleteHomesListGUI(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
     @Override
     public String getMenuName() {
-        return ColorUtils.translateColorCodes(config.getString("gui-system.home-list-gui.title").replace(PREFIX_PLACEHOLDER, prefix));
+        return ColorUtils.translateColorCodes(config.getString("gui-system.delete-list-gui.title")
+                .replace(PREFIX_PLACEHOLDER, prefix));
     }
 
     @Override
@@ -63,35 +58,15 @@ public class HomeListGUI extends PaginatedMenu {
         List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
         playerMenuUtility.setUser(user);
 
-        //Check & run left click options
         if (event.isLeftClick()){
-            if (event.getCurrentItem().getType().equals(Material.valueOf(config.getString("gui-system.home-list-gui.icons.home-material")))){
+            if (event.getCurrentItem().getType().equals(Material.valueOf(config.getString("gui-system.delete-list-gui.icons.home-material")))){
                 String homeName = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(EpicHomes.getPlugin(), "homeName"), PersistentDataType.STRING);
                 if (homeName != null){
-                    Location homeLocation = usermapStorageUtil.getHomeLocationByHomeName(user, homeName);
                     playerMenuUtility.setHomeName(homeName);
-                    playerMenuUtility.setHomeLocation(homeLocation);
-                    if (config.getBoolean("homes.teleportation.delay-before-teleport.enabled")){
-                        TeleportationUtils teleportationUtils = new TeleportationUtils();
-                        fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
-                        if (config.getBoolean("general.developer-debug-mode.enabled")){
-                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
-                        }
-                        teleportationUtils.teleportPlayerAsyncTimed(player, homeLocation, homeName);
-                        player.closeInventory();
-                    }else {
-                        TeleportationUtils teleportationUtils = new TeleportationUtils();
-                        fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
-                        if (config.getBoolean("general.developer-debug-mode.enabled")){
-                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
-                        }
-                        teleportationUtils.teleportPlayerAsync(player, homeLocation, homeName);
-                        player.closeInventory();
-                    }
+                    playerMenuUtility.setHomeLocation(usermapStorageUtil.getHomeLocationByHomeName(user, homeName));
+                    new DeleteSingleGUI(playerMenuUtility).open();
                 }
-            }
-
-            else if (event.getCurrentItem().getType().equals(Material.BARRIER)) {
+            }else if (event.getCurrentItem().getType().equals(Material.BARRIER)) {
                 player.closeInventory();
             }
 
@@ -113,18 +88,6 @@ public class HomeListGUI extends PaginatedMenu {
                 }
             }
         }
-
-        //Check & run right click options
-        else if (event.isRightClick()){
-            if (event.getCurrentItem().getType().equals(Material.valueOf(config.getString("gui-system.home-list-gui.icons.home-material")))){
-                String homeName = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(EpicHomes.getPlugin(), "homeName"), PersistentDataType.STRING);
-                if (homeName != null){
-                    playerMenuUtility.setHomeName(homeName);
-                    playerMenuUtility.setHomeLocation(usermapStorageUtil.getHomeLocationByHomeName(user, homeName));
-                    new DeleteSingleGUI(playerMenuUtility).open();
-                }
-            }
-        }
     }
 
     @Override
@@ -142,12 +105,12 @@ public class HomeListGUI extends PaginatedMenu {
                     String homeName = userHomesList.get(index);
                     Location homeLocation = usermapStorageUtil.getHomeLocationByHomeName(user, homeName);
 
-                    ItemStack homeItem = new ItemStack(Material.valueOf(config.getString("gui-system.home-list-gui.icons.home-material")), 1);
+                    ItemStack homeItem = new ItemStack(Material.valueOf(config.getString("gui-system.delete-list-gui.icons.home-material")), 1);
                     ItemMeta itemMeta = homeItem.getItemMeta();
-                    itemMeta.setDisplayName(ColorUtils.translateColorCodes(config.getString("gui-system.home-list-gui.icons.display-name")
+                    itemMeta.setDisplayName(ColorUtils.translateColorCodes(config.getString("gui-system.delete-list-gui.icons.display-name")
                             .replace(HOME_NAME_PLACEHOLDER, homeName).replace(PREFIX_PLACEHOLDER, prefix)));
 
-                    List<String> loreConfigList = config.getStringList("gui-system.home-list-gui.icons.lore");
+                    List<String> loreConfigList = config.getStringList("gui-system.delete-list-gui.icons.lore");
                     ArrayList<String> homeLore = new ArrayList<>();
                     for (String string : loreConfigList){
                         homeLore.add(ColorUtils.translateColorCodes(string)
@@ -165,10 +128,5 @@ public class HomeListGUI extends PaginatedMenu {
                 }
             }
         }
-    }
-
-    private static void fireHomePreTeleportEvent(Player player, User user, String homeName, Location homeLocation, Location oldLocation) {
-        HomePreTeleportEvent homePreTeleportEvent = new HomePreTeleportEvent(player, user, homeName, homeLocation, oldLocation);
-        Bukkit.getPluginManager().callEvent(homePreTeleportEvent);
     }
 }
