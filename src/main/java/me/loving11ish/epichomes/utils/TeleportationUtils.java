@@ -33,9 +33,9 @@ public class TeleportationUtils {
     public void teleportPlayerAsync(Player player, Location location, String homeName) {
         User user = EpicHomes.getPlugin().usermapStorageUtil.getUserByOnlinePlayer(player);
         PaperLib.teleportAsync(player, location);
-        fireHomeTeleportEvent(player, user, homeName, location);
+        fireHomeTeleportEvent(false, player, user, homeName, location);
         if (config.getBoolean("general.developer-debug-mode.enabled")){
-            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in sync mode"));
         }
         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("non-timed-teleporting-complete")
                 .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
@@ -43,6 +43,7 @@ public class TeleportationUtils {
     }
 
     public void teleportPlayerAsyncTimed(Player player, Location location, String homeName) {
+        User user = EpicHomes.getPlugin().usermapStorageUtil.getUserByOnlinePlayer(player);
         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleporting-begin-tp")
                 .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix)).replace(HOME_NAME_PLACEHOLDER, homeName)));
         wrappedTask = foliaLib.getImpl().runTimerAsync(new Runnable() {
@@ -64,6 +65,10 @@ public class TeleportationUtils {
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleporting-complete")
                             .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
                             .replace(HOME_NAME_PLACEHOLDER, homeName)));
+                    fireHomeTeleportEvent(true, player, user, homeName, location);
+                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in async mode"));
+                    }
                     getWrappedTask().cancel();
                     if (config.getBoolean("general.developer-debug-mode.enabled")){
                         logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + getWrappedTask().toString()));
@@ -85,8 +90,8 @@ public class TeleportationUtils {
         return wrappedTask;
     }
 
-    private void fireHomeTeleportEvent(Player player, User user, String homeName, Location homeLocation) {
-        HomeTeleportEvent homeTeleportEvent = new HomeTeleportEvent(player, user, homeName, homeLocation);
+    private void fireHomeTeleportEvent(boolean isAsync, Player player, User user, String homeName, Location homeLocation) {
+        HomeTeleportEvent homeTeleportEvent = new HomeTeleportEvent(isAsync, player, user, homeName, homeLocation);
         Bukkit.getPluginManager().callEvent(homeTeleportEvent);
     }
 }

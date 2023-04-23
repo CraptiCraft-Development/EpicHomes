@@ -20,7 +20,6 @@ public class PlayerMovementEvent implements Listener {
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-
     private String prefix = messagesConfig.getString("global-prefix");
 
     @EventHandler

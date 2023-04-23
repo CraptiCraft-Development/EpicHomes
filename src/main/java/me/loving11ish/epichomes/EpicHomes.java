@@ -116,9 +116,6 @@ public final class EpicHomes extends JavaPlugin {
         pluginCommands.add("/homes");
         pluginCommands.add("/epichomes");
 
-        //Register tabCompleter
-        getCommand("home").setTabCompleter(new HomeCommandTabCompleter());
-
         //Register events
         getServer().getPluginManager().registerEvents(new PlayerConnectionEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerDisconnectionEvent(), this);

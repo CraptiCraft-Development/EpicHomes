@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -61,20 +62,24 @@ public class DeleteSingleGUI extends Menu {
                 List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
                 for (String home : userHomesList){
                     if (homeName.equalsIgnoreCase(home)){
-                        if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
-                            fireHomeDeleteEvent(player, user, homeName);
-                            if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                        try {
+                            if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
+                                fireHomeDeleteEvent(player, user, homeName);
+                                if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                }
+                                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
+                                        .replace(PREFIX_PLACEHOLDER, prefix)
+                                        .replace(HOME_PLACEHOLDER, homeName)));
+                                player.closeInventory();
+                            }else {
+                                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-failed")
+                                        .replace(PREFIX_PLACEHOLDER, prefix)
+                                        .replace(HOME_PLACEHOLDER, homeName)));
+                                player.closeInventory();
                             }
-                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
-                                    .replace(PREFIX_PLACEHOLDER, prefix)
-                                    .replace(HOME_PLACEHOLDER, homeName)));
-                            player.closeInventory();
-                        }else {
-                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-failed")
-                                    .replace(PREFIX_PLACEHOLDER, prefix)
-                                    .replace(HOME_PLACEHOLDER, homeName)));
-                            player.closeInventory();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

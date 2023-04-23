@@ -14,7 +14,8 @@ public class HomeTeleportEvent extends Event {
     private final String homeName;
     private final Location homeLocation;
 
-    public HomeTeleportEvent(Player createdBy, User user, String homeName, Location homeLocation) {
+    public HomeTeleportEvent(boolean isAsync, Player createdBy, User user, String homeName, Location homeLocation) {
+        super(isAsync);
         this.createdBy = createdBy;
         this.user = user;
         this.homeName = homeName;

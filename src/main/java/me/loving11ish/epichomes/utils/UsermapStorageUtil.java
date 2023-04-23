@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 public class UsermapStorageUtil {
 
     Logger logger = EpicHomes.getPlugin().getLogger();
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
 
@@ -175,12 +174,16 @@ public class UsermapStorageUtil {
         return true;
     }
 
-    public boolean removeHomeFromUser(User user, String homeName) {
+    public boolean removeHomeFromUser(User user, String homeName) throws IOException {
+        String key = user.getUserUUID();
         HashMap<String, Location> userHomesList = user.getHomesList();
         for (Map.Entry<String, Location> home: userHomesList.entrySet()){
             if (home.getKey().equalsIgnoreCase(homeName)){
                 userHomesList.remove(homeName);
                 user.setHomesList(userHomesList);
+                usermapStorage.replace(UUID.fromString(user.getUserUUID()), user);
+                usermapConfig.set("users.data." + key + ".homes." + homeName, null);
+                EpicHomes.getPlugin().usermapFileManager.saveUsermapConfig();
                 return true;
             }
         }

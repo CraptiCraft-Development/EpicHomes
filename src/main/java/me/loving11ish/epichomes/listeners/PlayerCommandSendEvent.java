@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +32,6 @@ public class PlayerCommandSendEvent implements Listener {
     public void onCommandSend(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        System.out.println(pluginCommands);
 
         if (!config.getBoolean("general.command-cool-down.enabled")){
             return;

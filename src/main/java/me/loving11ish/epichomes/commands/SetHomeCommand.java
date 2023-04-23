@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 public class SetHomeCommand implements CommandExecutor {
 
     Logger logger = EpicHomes.getPlugin().getLogger();
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private String prefix = messagesConfig.getString("global-prefix");
@@ -25,12 +24,8 @@ public class SetHomeCommand implements CommandExecutor {
         if (sender instanceof Player){
             Player player = (Player) sender;
             if (args.length < 1){
-                if (config.getBoolean("gui-system.use-global-gui.enabled")){
-                    //TODO
-                }else {
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));
-                }
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));
                 return true;
             }else {
                 if (args[0] != null){
