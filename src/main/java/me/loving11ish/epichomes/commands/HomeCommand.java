@@ -108,8 +108,14 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         }
                 }
             }else {
-                List<String> homesList = usermapStorageUtil.getHomeNamesListByUser(user);
-                for (String home : homesList){
+                List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
+                for (String home : userHomesList){
+                    if (!userHomesList.contains(args[0])){
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-name-does-not-exist")
+                                .replace(PREFIX_PLACEHOLDER, prefix)
+                                .replace(HOME_NAME_PLACEHOLDER, args[0])));
+                        return true;
+                    }
                     if (args[0].equalsIgnoreCase(home)){
                         Location homeLocation = usermapStorageUtil.getHomeLocationByHomeName(user, args[0]);
                         if (config.getBoolean("homes.teleportation.delay-before-teleport.enabled")){
@@ -127,11 +133,6 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                             }
                             teleportationUtils.teleportPlayerAsync(player, homeLocation, args[0]);
                         }
-                        return true;
-                    }else {
-                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-name-does-not-exist")
-                                .replace(PREFIX_PLACEHOLDER, prefix)
-                                .replace(HOME_NAME_PLACEHOLDER, args[0])));
                         return true;
                     }
                 }

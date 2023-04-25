@@ -1,9 +1,11 @@
 package me.loving11ish.epichomes;
 
+import com.rylinaux.plugman.api.PlugManAPI;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.WrappedTask;
 import io.papermc.lib.PaperLib;
 import me.loving11ish.epichomes.commands.*;
+import me.loving11ish.epichomes.externalhooks.PlaceholderAPIHook;
 import me.loving11ish.epichomes.files.UsermapFileManager;
 import me.loving11ish.epichomes.files.MessagesFileManager;
 import me.loving11ish.epichomes.listeners.*;
@@ -66,10 +68,44 @@ public final class EpicHomes extends JavaPlugin {
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
         }
 
-        //Suggest owner to use Paper if not on paper.
+        //Suggest PaperMC if not using
         FoliaLib foliaLib = new FoliaLib(this);
-        if (foliaLib.isSpigot()||foliaLib.isUnsupported()){
+        if (foliaLib.isUnsupported()|| foliaLib.isSpigot()){
             PaperLib.suggestPaper(this);
+        }
+
+        //Check if PlugManX is enabled
+        if (isPlugManXEnabled()){
+            if (!PlugManAPI.iDoNotWantToBeUnOrReloaded("EpicHomes")){
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&4WARNING WARNING WARNING WARNING!"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4You appear to be using an unsupported version of &d&lPlugManX"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Please &4&lDO NOT USE PLUGMANX TO LOAD/UNLOAD/RELOAD THIS PLUGIN!"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Please &4&lFULLY RESTART YOUR SERVER!"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin &4&lHAS NOT &4been validated to use this version of PlugManX!"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4&lNo official support will be given to you if you use this!"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4&lUnless Loving11ish has explicitly agreed to help!"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Please add EpicHomes to the ignored-plugins list in PlugManX's config.yml"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+                logger.severe(ColorUtils.translateColorCodes("&c-------------------------------------------"));
+            }else {
+                logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &aSuccessfully hooked into PlugManX"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &aSuccessfully added EpicHomes to ignoredPlugins list."));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
+                logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
+            }
+        }else {
+            logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &cPlugManX not found!"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &cDisabling PlugManX hook loader"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
+            logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
         }
 
         //Load the plugin configs
@@ -103,7 +139,9 @@ public final class EpicHomes extends JavaPlugin {
         }
 
         //Register commands
-        getCommand("home").setExecutor(new HomeCommand());
+        HomeCommand homeCommand = new HomeCommand();
+        getCommand("home").setExecutor(homeCommand);
+        getCommand("home").setTabCompleter(homeCommand);
         getCommand("importhomes").setExecutor(new HomeImportCommand());
         getCommand("sethome").setExecutor(new SetHomeCommand());
         getCommand("delhome").setExecutor(new DeleteHomeCommand());
@@ -123,6 +161,22 @@ public final class EpicHomes extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerCommandSendEvent(pluginCommands), this);
+
+        //Register PlaceHolderAPI hooks
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")||isPlaceholderAPIEnabled()){
+            new PlaceholderAPIHook().register();
+            logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3PlaceholderAPI found!"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3External placeholders enabled!"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
+            logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
+        }else {
+            logger.warning(ColorUtils.translateColorCodes("-------------------------------------------"));
+            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &cPlaceholderAPI not found!"));
+            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &cExternal placeholders disabled!"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
+            logger.warning(ColorUtils.translateColorCodes("-------------------------------------------"));
+        }
 
         //Plugin startup message
         logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
@@ -166,12 +220,19 @@ public final class EpicHomes extends JavaPlugin {
                 for (Map.Entry<UUID, WrappedTask> wrappedTaskEntry: teleportQueue.entrySet()){
                     WrappedTask wrappedTask = wrappedTaskEntry.getValue();
                     wrappedTask.cancel();
+                    if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aTimed task canceled successfully"));
+                    }
                     teleportQueue.remove(wrappedTaskEntry.getKey());
                 }
             }
             FoliaLib foliaLib = new FoliaLib(this);
             if (foliaLib.isUnsupported()){
                 Bukkit.getScheduler().cancelTasks(this);
+                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aBukkit scheduler tasks canceled successfully"));
+                }
             }
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3All pending teleport tasks stopped successfully."));
         }catch (Exception e){
@@ -213,6 +274,40 @@ public final class EpicHomes extends JavaPlugin {
             return playerMenuUtility;
         } else {
             return playerMenuUtilityMap.get(player);
+        }
+    }
+
+    public boolean isPlugManXEnabled() {
+        try {
+            Class.forName("com.rylinaux.plugman.PlugMan");
+            if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound PlugManX main class at:"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dcom.rylinaux.plugman.PlugMan"));
+            }
+            return true;
+        }catch (ClassNotFoundException e){
+            if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aCould not find PlugManX main class at:"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dcom.rylinaux.plugman.PlugMan"));
+            }
+            return false;
+        }
+    }
+
+    public boolean isPlaceholderAPIEnabled() {
+        try {
+            Class.forName("me.clip.placeholderapi.PlaceholderAPIPlugin");
+            if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound PlaceholderAPI main class at:"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin"));
+            }
+            return true;
+        }catch (ClassNotFoundException e){
+            if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aCould not find PlaceholderAPI main class at:"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dme.clip.placeholderapi.PlaceholderAPIPlugin"));
+            }
+            return false;
         }
     }
 
