@@ -20,17 +20,17 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
-        return EpicHomes.getPlugin().getDescription().getName();
+        return "epicHomes";
     }
 
     @Override
     public @NotNull String getAuthor() {
-        return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
+        return "Loving11ish";
     }
 
     @Override
     public @NotNull String getVersion() {
-        return EpicHomes.getPlugin().getDescription().getVersion();
+        return "1.0.0-BETA-03";
     }
 
     @Override
@@ -44,37 +44,37 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
 
         if (params.equalsIgnoreCase("pluginPrefix")){
-            //%EpicHomes_pluginPrefix%
+            //%epicHomes_pluginPrefix%
             return ColorUtils.translateColorCodes(prefix);
         }
 
         if (params.equalsIgnoreCase("pluginVersion")){
-            //%EpicHomes_pluginVersion%
+            //%epicHomes_pluginVersion%
             return EpicHomes.getPlugin().getDescription().getVersion();
         }
 
         if (params.equalsIgnoreCase("pluginAuthor")){
-            //%EpicHomes_pluginAuthor%
+            //%epicHomes_pluginAuthor%
             return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
         }
 
         if (params.equalsIgnoreCase("totalPlayerJoined")){
-            //%EpicHomes_totalPlayerJoined%
+            //%epicHomes_totalPlayerJoined%
             return String.valueOf(usermapStorageUtil.getUsermapStorage().size());
         }
 
         if (params.equalsIgnoreCase("userLastKnownName")){
-            //%EpicHomes_userLastKnownName%
+            //%epicHomes_userLastKnownName%
             return user.getLastKnownName();
         }
 
         if (params.equalsIgnoreCase("userUUID")){
-            //%EpicHomes_userUUID%
+            //%epicHomes_userUUID%
             return user.getUserUUID();
         }
 
         if (params.equalsIgnoreCase("userHomeListSize")){
-            //%EpicHomes_userHomeListSize%
+            //%epicHomes_userHomeListSize%
             if (userHomesList != null && !userHomesList.isEmpty()){
                 return String.valueOf(userHomesList.size());
             }else {
