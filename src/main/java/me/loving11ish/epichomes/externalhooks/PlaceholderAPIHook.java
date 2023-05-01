@@ -25,12 +25,12 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "Loving11ish";
+        return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
     }
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0-BETA-03";
+        return EpicHomes.getPlugin().getDescription().getVersion();
     }
 
     @Override
