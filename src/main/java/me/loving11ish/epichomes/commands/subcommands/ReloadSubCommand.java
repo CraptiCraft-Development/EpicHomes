@@ -1,6 +1,6 @@
 package me.loving11ish.epichomes.commands.subcommands;
 
-import com.tcoded.folialib.wrapper.WrappedTask;
+import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import org.bukkit.Bukkit;
@@ -8,9 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class ReloadSubCommand {
@@ -19,51 +18,82 @@ public class ReloadSubCommand {
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-
     private String prefix = messagesConfig.getString("global-prefix");
+    private ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 
     public boolean reloadSubCommand(CommandSender sender) {
         if (sender instanceof Player){
             Player player = (Player) sender;
             player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-start").replace(PREFIX_PLACEHOLDER, prefix)));
             logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-start").replace(PREFIX_PLACEHOLDER, prefix)));
-            EpicHomes.getPlugin().reloadConfig();
-            EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
-            if (!EpicHomes.getPlugin().teleportQueue.isEmpty()){
-                for (Map.Entry<UUID, WrappedTask> wrappedTaskEntry: EpicHomes.getPlugin().teleportQueue.entrySet()){
-                    WrappedTask wrappedTask = wrappedTaskEntry.getValue();
-                    wrappedTask.cancel();
-                    UUID uuid = wrappedTaskEntry.getKey();
-                    Player p = Bukkit.getPlayer(uuid);
-                    if (p != null){
-                        p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleport-failed-plugin-reloaded").replace(PREFIX_PLACEHOLDER, prefix)));
+            for (Player p : onlinePlayers){
+                if (p.getName().equalsIgnoreCase(player.getName())){
+                    continue;
+                }
+                if (!onlinePlayers.isEmpty()){
+                    p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-broadcast-start").replace(PREFIX_PLACEHOLDER, prefix)));
+                }
+            }
+            FoliaLib foliaLib = new FoliaLib(EpicHomes.getPlugin());
+            EpicHomes plugin = EpicHomes.getPlugin();
+            EpicHomes.getPlugin().onDisable();
+            foliaLib.getImpl().runLater(new Runnable() {
+                @Override
+                public void run() {
+                    plugin.onEnable();
+                }
+            },5L, TimeUnit.SECONDS);
+            foliaLib.getImpl().runLater(new Runnable() {
+                @Override
+                public void run() {
+                    EpicHomes.getPlugin().reloadConfig();
+                    EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                    logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                    for (Player p : onlinePlayers){
+                        if (p.getName().equalsIgnoreCase(player.getName())){
+                            continue;
+                        }
+                        if (!onlinePlayers.isEmpty()){
+                            p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                        }
+                    }
+                }
+            }, 5L, TimeUnit.SECONDS);
+            return true;
+        }
+        return true;
+    }
+
+    public boolean reloadSubCommand() {
+        logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-start").replace(PREFIX_PLACEHOLDER, prefix)));
+        for (Player p : onlinePlayers){
+            if (!onlinePlayers.isEmpty()){
+                p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-broadcast-start").replace(PREFIX_PLACEHOLDER, prefix)));
+            }
+        }
+        FoliaLib foliaLib = new FoliaLib(EpicHomes.getPlugin());
+        EpicHomes plugin = EpicHomes.getPlugin();
+        EpicHomes.getPlugin().onDisable();
+        foliaLib.getImpl().runLater(new Runnable() {
+            @Override
+            public void run() {
+                plugin.onEnable();
+            }
+        },5L, TimeUnit.SECONDS);
+        foliaLib.getImpl().runLater(new Runnable() {
+            @Override
+            public void run() {
+                EpicHomes.getPlugin().reloadConfig();
+                EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
+                logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                for (Player p : onlinePlayers){
+                    if (!onlinePlayers.isEmpty()){
+                        p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
                     }
                 }
             }
-            try {
-                if (!EpicHomes.getPlugin().usermapStorageUtil.getRawUsermapList().isEmpty()){
-                    EpicHomes.getPlugin().usermapStorageUtil.saveUsermap();
-                }
-            } catch (IOException e) {
-                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-failed").replace(PREFIX_PLACEHOLDER, prefix)));
-                logger.severe(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-failed").replace(PREFIX_PLACEHOLDER, prefix)));
-                e.printStackTrace();
-                return true;
-            }
-            try {
-                if (EpicHomes.getPlugin().usermapFileManager.getUsermapConfig().contains("users.data")){
-                    EpicHomes.getPlugin().usermapStorageUtil.loadUsermap();
-                }
-            } catch (IOException e) {
-                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-failed").replace(PREFIX_PLACEHOLDER, prefix)));
-                logger.severe(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-failed").replace(PREFIX_PLACEHOLDER, prefix)));
-                e.printStackTrace();
-                return true;
-            }
-            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-            logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-            return true;
-        }
+        }, 5L, TimeUnit.SECONDS);
         return true;
     }
 }

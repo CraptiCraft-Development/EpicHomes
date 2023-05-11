@@ -193,19 +193,19 @@ public final class EpicHomes extends JavaPlugin {
         logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
 
         //Check for available updates
-//        new UpdateChecker(97163).getVersion(version -> {
-//            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix");
-//            String PREFIX_PLACEHOLDER = "%PREFIX%";
-//            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
-//                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
-//            }else {
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
-//                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
-//            }
-//        });
+        new UpdateChecker(109590).getVersion(version -> {
+            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix");
+            String PREFIX_PLACEHOLDER = "%PREFIX%";
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
+                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
+                logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
+            }else {
+                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
+                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
+                logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
+            }
+        });
     }
 
     @Override

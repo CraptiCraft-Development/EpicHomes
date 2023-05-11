@@ -15,10 +15,7 @@ import me.loving11ish.epichomes.utils.TeleportationUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -137,10 +134,20 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-        }else {
-            logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
-                    .replace(PREFIX_PLACEHOLDER, prefix)));
-            return true;
+        }else if (sender instanceof ConsoleCommandSender) {
+            if (args.length == 1){
+                if (args[0].equalsIgnoreCase("reload")){
+                    return new ReloadSubCommand().reloadSubCommand();
+                }else {
+                    logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-6")
+                            .replace(PREFIX_PLACEHOLDER, prefix)));
+                    return true;
+                }
+            }else {
+                logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
         }
         return true;
     }
