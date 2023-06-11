@@ -16,6 +16,7 @@ import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -47,8 +48,9 @@ public final class EpicHomes extends JavaPlugin {
         if (!(Bukkit.getServer().getVersion().contains("1.13")||Bukkit.getServer().getVersion().contains("1.14")||
                 Bukkit.getServer().getVersion().contains("1.15")||Bukkit.getServer().getVersion().contains("1.16")||
                 Bukkit.getServer().getVersion().contains("1.17")||Bukkit.getServer().getVersion().contains("1.18")||
-                Bukkit.getServer().getVersion().contains("1.19"))){
+                Bukkit.getServer().getVersion().contains("1.19")||Bukkit.getServer().getVersion().contains("1.20"))){
             logger.warning(ColorUtils.translateColorCodes("&4-------------------------------------------"));
+            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getServer().getVersion()));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin is only supported on the Minecraft versions listed below:"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.13.x"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.14.x"));
@@ -57,6 +59,7 @@ public final class EpicHomes extends JavaPlugin {
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.17.x"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.18.x"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.19.x"));
+            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.20.x"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4Is now disabling!"));
             logger.warning(ColorUtils.translateColorCodes("&4-------------------------------------------"));
             Bukkit.getPluginManager().disablePlugin(this);
@@ -64,6 +67,7 @@ public final class EpicHomes extends JavaPlugin {
         }else {
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &aA supported Minecraft version has been detected"));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getServer().getVersion()));
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
         }
@@ -212,6 +216,9 @@ public final class EpicHomes extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
 
+        //Unregister event listeners
+        HandlerList.unregisterAll(this);
+
         //Safely stop the background tasks if running
         logger.info(ColorUtils.translateColorCodes("-------------------------------------------"));
         logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin by: &b&lLoving11ish"));
@@ -240,17 +247,19 @@ public final class EpicHomes extends JavaPlugin {
         }
 
         //Saver usermap to usermap.yml
-        if (!usermapStorageUtil.getRawUsermapList().isEmpty()){
-            try {
-                usermapStorageUtil.saveUsermap();
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3All users data saved to usermap.yml successfully!"));
-            } catch (IOException e) {
-                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to save usermap data to usermap.yml!"));
-                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4See below error for reason!"));
-                e.printStackTrace();
+        if (usermapStorageUtil != null){
+            if (!usermapStorageUtil.getRawUsermapList().isEmpty()){
+                try {
+                    usermapStorageUtil.saveUsermap();
+                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3All users data saved to usermap.yml successfully!"));
+                } catch (IOException e) {
+                    logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to save usermap data to usermap.yml!"));
+                    logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4See below error for reason!"));
+                    e.printStackTrace();
+                }
+            }else {
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Usermap storage was empty, skipping saving!"));
             }
-        }else {
-            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Usermap storage was empty, skipping saving!"));
         }
 
         //Final plugin shutdown message

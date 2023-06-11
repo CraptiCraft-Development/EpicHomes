@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -38,11 +38,11 @@
                     <relocations>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.EpicHomes.paperlib</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>me.loving11ish.epichomes.paperlib</shadedPattern> <!-- Replace this -->
                         </relocation>
                         <relocation>
                             <pattern>com.tcoded.folialib</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.EpicHomes.folialib</shadedPattern>
+                            <shadedPattern>me.loving11ish.epichomes.folialib</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -96,13 +96,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

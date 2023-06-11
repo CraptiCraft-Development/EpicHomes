@@ -35,12 +35,11 @@ public class ReloadSubCommand {
                 }
             }
             FoliaLib foliaLib = new FoliaLib(EpicHomes.getPlugin());
-            EpicHomes plugin = EpicHomes.getPlugin();
             EpicHomes.getPlugin().onDisable();
             foliaLib.getImpl().runLater(new Runnable() {
                 @Override
                 public void run() {
-                    plugin.onEnable();
+                    Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable();
                 }
             },5L, TimeUnit.SECONDS);
             foliaLib.getImpl().runLater(new Runnable() {
@@ -73,12 +72,11 @@ public class ReloadSubCommand {
             }
         }
         FoliaLib foliaLib = new FoliaLib(EpicHomes.getPlugin());
-        EpicHomes plugin = EpicHomes.getPlugin();
         EpicHomes.getPlugin().onDisable();
         foliaLib.getImpl().runLater(new Runnable() {
             @Override
             public void run() {
-                plugin.onEnable();
+                Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable();
             }
         },5L, TimeUnit.SECONDS);
         foliaLib.getImpl().runLater(new Runnable() {
