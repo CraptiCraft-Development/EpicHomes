@@ -65,9 +65,12 @@ public class TeleportationUtils {
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleporting-complete")
                             .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
                             .replace(HOME_NAME_PLACEHOLDER, homeName)));
-                    fireHomeTeleportEvent(true, player, user, homeName, location);
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
-                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in async mode"));
+                    if (foliaLib.isFolia()){
+                        fireHomeTeleportEvent(true, player, user, homeName, location);
+                        if (config.getBoolean("general.developer-debug-mode.enabled")) {
+                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aDetected running on Folia"));
+                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in async mode"));
+                        }
                     }
                     getWrappedTask().cancel();
                     if (config.getBoolean("general.developer-debug-mode.enabled")){
