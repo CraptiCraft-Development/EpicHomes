@@ -21,8 +21,7 @@ public class ListSubCommand {
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean listSubCommand(CommandSender sender) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
             if (user != null){
                 List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
@@ -40,5 +39,4 @@ public class ListSubCommand {
         }
         return true;
     }
-
 }

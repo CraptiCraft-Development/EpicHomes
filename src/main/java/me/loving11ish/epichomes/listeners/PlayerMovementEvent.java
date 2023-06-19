@@ -29,30 +29,34 @@ public class PlayerMovementEvent implements Listener {
         if (!config.getBoolean("homes.teleportation.delay-before-teleport.cancel-teleport-on-move")){
             return;
         }
-        if (EpicHomes.getPlugin().teleportQueue.containsKey(uuid)){
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has a pending teleport"));
-            }
-            try {
-                WrappedTask wrappedTask = EpicHomes.getPlugin().teleportQueue.get(uuid);
+        if (event.getFrom().getX() != event.getTo().getX()
+                ||event.getFrom().getY() != event.getTo().getY()
+                ||event.getFrom().getZ() != event.getTo().getZ()){
+            if (EpicHomes.getPlugin().teleportQueue.containsKey(uuid)){
                 if (config.getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
+                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has a pending teleport"));
                 }
-                wrappedTask.cancel();
-                if (config.getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task canceled"));
-                }
-                EpicHomes.getPlugin().teleportQueue.remove(uuid);
-                if (config.getBoolean("general.developer-debug-mode.enabled")){
-                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + player.getName() + " has had teleport canceled and removed from queue"));
-                }
-                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleport-failed-player-moved")
-                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                try {
+                    WrappedTask wrappedTask = EpicHomes.getPlugin().teleportQueue.get(uuid);
+                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
+                    }
+                    wrappedTask.cancel();
+                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task canceled"));
+                    }
+                    EpicHomes.getPlugin().teleportQueue.remove(uuid);
+                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + player.getName() + " has had teleport canceled and removed from queue"));
+                    }
+                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleport-failed-player-moved")
+                            .replace(PREFIX_PLACEHOLDER, prefix)));
 
-            }catch (Exception e){
-                logger.severe(ColorUtils.translateColorCodes(messagesConfig.getString("move-event-cancel-failed")
-                        .replace(PREFIX_PLACEHOLDER, prefix)));
-                e.printStackTrace();
+                }catch (Exception e){
+                    logger.severe(ColorUtils.translateColorCodes(messagesConfig.getString("move-event-cancel-failed")
+                            .replace(PREFIX_PLACEHOLDER, prefix)));
+                    e.printStackTrace();
+                }
             }
         }
     }

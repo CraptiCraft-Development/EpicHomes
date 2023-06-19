@@ -28,8 +28,7 @@ public class SetSubCommand {
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean setSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             if (args.length >= 2){
                 String homeName = args[1];
                 if (homeName != null){
@@ -37,51 +36,14 @@ public class SetSubCommand {
                     User user = usermapStorageUtil.getUserByOnlinePlayer(player);
                     if (user != null){
                         List<String> homesList = usermapStorageUtil.getHomeNamesListByUser(user);
-                        if (!player.hasPermission("epichomes.maxhomes.*")||!player.hasPermission("epichomes.maxhomes")
-                                ||!player.hasPermission("epichomes.*")||!player.isOp()){
-                            if (!config.getBoolean("homes.permission-based-homes-max-amount.enabled")){
+                        if (!player.hasPermission("epichomes.maxhomes.*")||!player.hasPermission("epichomes.*")||!player.isOp()){
+                            if (config.getBoolean("homes.permission-based-homes-max-amount.enabled")){
+                                return isMaxHomesReached(player, homesList);
+                            }else {
                                 if (homesList.size() >= config.getInt("homes.default-max-homes")){
                                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
                                             .replace(PREFIX_PLACEHOLDER, prefix)));
                                     return true;
-                                }
-                            }else {
-                                if (player.hasPermission("epichomes.maxhomes.group6")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-6")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group5")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-5")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group4")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-4")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group3")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-3")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group2")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-2")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group1")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-1")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
                                 }
                             }
                         }
@@ -102,59 +64,21 @@ public class SetSubCommand {
     }
 
     public boolean setHomeSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             String homeName = args[0];
             if (homeName != null){
                 Location location = player.getLocation();
                 User user = usermapStorageUtil.getUserByOnlinePlayer(player);
                 if (user != null){
                     List<String> homesList = usermapStorageUtil.getHomeNamesListByUser(user);
-                    if (!player.hasPermission("epichomes.maxhomes.*")||!player.hasPermission("epichomes.maxhomes")
-                            ||!player.hasPermission("epichomes.*")||!player.isOp()){
-                        if (!config.getBoolean("homes.permission-based-homes-max-amount.enabled")){
+                    if (!player.hasPermission("epichomes.maxhomes.*")||!player.hasPermission("epichomes.*")||!player.isOp()){
+                        if (config.getBoolean("homes.permission-based-homes-max-amount.enabled")){
+                            return isMaxHomesReached(player, homesList);
+                            }else {
                             if (homesList.size() >= config.getInt("homes.default-max-homes")){
                                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
                                         .replace(PREFIX_PLACEHOLDER, prefix)));
                                 return true;
-                            }else {
-                                if (player.hasPermission("epichomes.maxhomes.group6")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-6")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group5")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-5")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group4")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-4")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group3")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-3")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group2")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-2")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }else if (player.hasPermission("epichomes.maxhomes.group1")){
-                                    if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-1")){
-                                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
-                                                .replace(PREFIX_PLACEHOLDER, prefix)));
-                                        return true;
-                                    }
-                                }
                             }
                         }
                     }
@@ -168,6 +92,47 @@ public class SetSubCommand {
                         }
                     }
                 }
+            }
+        }
+        return true;
+    }
+
+    private boolean isMaxHomesReached(Player player, List<String> homesList) {
+        if (player.hasPermission("epichomes.maxhomes.group6")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-6")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
+        }else if (player.hasPermission("epichomes.maxhomes.group5")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-5")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
+        }else if (player.hasPermission("epichomes.maxhomes.group4")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-4")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
+        }else if (player.hasPermission("epichomes.maxhomes.group3")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-3")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
+        }else if (player.hasPermission("epichomes.maxhomes.group2")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-2")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
+            }
+        }else if (player.hasPermission("epichomes.maxhomes.group1")){
+            if (homesList.size() >= config.getInt("homes.permission-based-homes-max-amount.permission-group-list.group-1")){
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-max-homes-reached")
+                        .replace(PREFIX_PLACEHOLDER, prefix)));
+                return true;
             }
         }
         return true;

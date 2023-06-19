@@ -28,8 +28,7 @@ public class DeleteSubCommand {
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean deleteSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             if (args.length >= 2) {
                 String homeName = args[1];
                 if (homeName != null) {
@@ -65,8 +64,7 @@ public class DeleteSubCommand {
     }
 
     public boolean deleteHomeSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             String homeName = args[0];
             if (homeName != null) {
                 User user = usermapStorageUtil.getUserByOnlinePlayer(player);

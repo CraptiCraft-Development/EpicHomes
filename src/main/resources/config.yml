@@ -69,6 +69,14 @@ general:
       #- EssentialsX
     import-from: EssentialsX
 
+  run-auto-save-task:
+    #Do you want to enable the plugins ability to auto save the usermap to disk? [Default value: true]
+    #ONLY DISABLE THIS IF YOU KNOW WHAT YOU ARE DOING!
+    enabled: true
+  show-auto-save-task-message:
+    #Do you want to see notifications in console when the auto-save task runs? [Default value: true]
+    enabled: true
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 gui-system:

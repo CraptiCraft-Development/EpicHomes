@@ -21,8 +21,7 @@ public class SetHomeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             if (args.length < 1){
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-sethome-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));

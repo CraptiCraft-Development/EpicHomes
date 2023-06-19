@@ -12,6 +12,7 @@ import me.loving11ish.epichomes.listeners.*;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.updatesystem.JoinEvent;
 import me.loving11ish.epichomes.updatesystem.UpdateChecker;
+import me.loving11ish.epichomes.utils.AutoSaveTaskUtils;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public final class EpicHomes extends JavaPlugin {
@@ -45,12 +47,9 @@ public final class EpicHomes extends JavaPlugin {
         plugin = this;
 
         //Server version compatibility check
-        if (!(Bukkit.getServer().getVersion().contains("1.13")||Bukkit.getServer().getVersion().contains("1.14")||
-                Bukkit.getServer().getVersion().contains("1.15")||Bukkit.getServer().getVersion().contains("1.16")||
-                Bukkit.getServer().getVersion().contains("1.17")||Bukkit.getServer().getVersion().contains("1.18")||
-                Bukkit.getServer().getVersion().contains("1.19")||Bukkit.getServer().getVersion().contains("1.20"))){
+        if (!(isServerVersionCompatible(Bukkit.getVersion()))){
             logger.warning(ColorUtils.translateColorCodes("&4-------------------------------------------"));
-            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getServer().getVersion()));
+            logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getVersion()));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin is only supported on the Minecraft versions listed below:"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.13.x"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &41.14.x"));
@@ -67,7 +66,7 @@ public final class EpicHomes extends JavaPlugin {
         }else {
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &aA supported Minecraft version has been detected"));
-            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getServer().getVersion()));
+            logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getVersion()));
             logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
             logger.info(ColorUtils.translateColorCodes("&a-------------------------------------------"));
         }
@@ -128,17 +127,19 @@ public final class EpicHomes extends JavaPlugin {
         usermapStorageUtil = new UsermapStorageUtil();
 
         //Load usermap contents to memory
-        if (usermapFileManager.getUsermapConfig().contains("users.data")){
-            try {
-                usermapStorageUtil.loadUsermap();
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Successfully loaded usermap to memory."));
-            } catch (IOException e) {
-                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to load data from usermap.yml!"));
-                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4See below for errors!"));
-                logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Disabling Plugin!"));
-                e.printStackTrace();
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
+        if (usermapFileManager != null){
+            if (usermapFileManager.getUsermapConfig().contains("users.data")){
+                try {
+                    usermapStorageUtil.loadUsermap();
+                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes: &3Successfully loaded usermap to memory."));
+                } catch (IOException e) {
+                    logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to load data from usermap.yml!"));
+                    logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4See below for errors!"));
+                    logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Disabling Plugin!"));
+                    e.printStackTrace();
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
             }
         }
 
@@ -210,6 +211,17 @@ public final class EpicHomes extends JavaPlugin {
                 logger.warning(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
             }
         });
+
+        //Start auto save task
+        if (getConfig().getBoolean("general.run-auto-save-task.enabled")){
+            foliaLib.getImpl().runLaterAsync(new Runnable() {
+                @Override
+                public void run() {
+                    AutoSaveTaskUtils.runAutoSaveTaskOne();
+                    logger.info(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-save-started")));
+                }
+            }, 5L, TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -273,6 +285,19 @@ public final class EpicHomes extends JavaPlugin {
         usermapFileManager = null;
         messagesFileManager = null;
         plugin = null;
+    }
+
+    public boolean isServerVersionCompatible(String serverVersion) {
+        List<String> compatibleVersions = new ArrayList<>();
+        compatibleVersions.add("1.13");
+        compatibleVersions.add("1.14");
+        compatibleVersions.add("1.15");
+        compatibleVersions.add("1.16");
+        compatibleVersions.add("1.17");
+        compatibleVersions.add("1.18");
+        compatibleVersions.add("1.19");
+        compatibleVersions.add("1.20");
+        return compatibleVersions.contains(serverVersion);
     }
 
     public static PlayerMenuUtility getPlayerMenuUtility(Player player) {

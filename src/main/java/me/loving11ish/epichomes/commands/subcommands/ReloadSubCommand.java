@@ -22,8 +22,7 @@ public class ReloadSubCommand {
     private ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 
     public boolean reloadSubCommand(CommandSender sender) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-start").replace(PREFIX_PLACEHOLDER, prefix)));
             logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-start").replace(PREFIX_PLACEHOLDER, prefix)));
             for (Player p : onlinePlayers){

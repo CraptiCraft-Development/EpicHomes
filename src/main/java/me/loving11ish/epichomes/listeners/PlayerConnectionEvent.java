@@ -29,7 +29,7 @@ public class PlayerConnectionEvent implements Listener {
             User user = usermapStorageUtil.addToUsermap(player);
             fireUserAddedToUsermapEvent(player, user);
             if (config.getBoolean("general.developer-debug-mode.enabled")){
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired PlayerNameChangedEvent"));
+                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired UserAddedToUsermapEvent"));
             }
             return;
         }

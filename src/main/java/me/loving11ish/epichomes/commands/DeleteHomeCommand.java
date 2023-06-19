@@ -33,8 +33,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player){
-            Player player = (Player) sender;
+        if (sender instanceof Player player){
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
             if (args.length < 1){
                 if (config.getBoolean("gui-system.use-global-gui.enabled")){

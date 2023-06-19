@@ -33,8 +33,7 @@ public class HomeImportCommand implements CommandExecutor {
                     .replace(PREFIX_PLACEHOLDER, prefix)));
             return true;
         }
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             if (player.hasPermission("epichomes.command.import")
                     || player.hasPermission("epichomes.command.*")
                     || player.hasPermission("epichomes.*")
