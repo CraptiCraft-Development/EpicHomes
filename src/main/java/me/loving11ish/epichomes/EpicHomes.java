@@ -47,7 +47,9 @@ public final class EpicHomes extends JavaPlugin {
         plugin = this;
 
         //Server version compatibility check
-        if (!(isServerVersionCompatible(Bukkit.getVersion()))){
+        if (!(Bukkit.getVersion().contains("1.13")||Bukkit.getVersion().contains("1.14")||Bukkit.getVersion().contains("1.15")
+                ||Bukkit.getVersion().contains("1.16")||Bukkit.getVersion().contains("1.17")||Bukkit.getVersion().contains("1.18")
+                ||Bukkit.getVersion().contains("1.19")||Bukkit.getVersion().contains("1.20"))){
             logger.warning(ColorUtils.translateColorCodes("&4-------------------------------------------"));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: " + Bukkit.getVersion()));
             logger.warning(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin is only supported on the Minecraft versions listed below:"));
@@ -285,19 +287,6 @@ public final class EpicHomes extends JavaPlugin {
         usermapFileManager = null;
         messagesFileManager = null;
         plugin = null;
-    }
-
-    public boolean isServerVersionCompatible(String serverVersion) {
-        List<String> compatibleVersions = new ArrayList<>();
-        compatibleVersions.add("1.13");
-        compatibleVersions.add("1.14");
-        compatibleVersions.add("1.15");
-        compatibleVersions.add("1.16");
-        compatibleVersions.add("1.17");
-        compatibleVersions.add("1.18");
-        compatibleVersions.add("1.19");
-        compatibleVersions.add("1.20");
-        return compatibleVersions.contains(serverVersion);
     }
 
     public static PlayerMenuUtility getPlayerMenuUtility(Player player) {
