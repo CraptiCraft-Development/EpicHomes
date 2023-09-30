@@ -27,6 +27,11 @@ homes:
       group-4: 16   #Perm: 'epichomes.maxhomes.group4'
       group-5: 20   #Perm: 'epichomes.maxhomes.group5'
       group-6: 24   #Perm: 'epichomes.maxhomes.group6'
+  #Set below names that are not allowed to be used in home names. [They ARE case & syntax sensitive]
+  disallowed-home-names:
+    - "Gamers"
+    - "Rise"
+    - "Up"
 
   teleportation:
     delay-before-teleport:
@@ -69,10 +74,6 @@ general:
       #- EssentialsX
     import-from: EssentialsX
 
-  run-auto-save-task:
-    #Do you want to enable the plugins ability to auto save the usermap to disk? [Default value: true]
-    #ONLY DISABLE THIS IF YOU KNOW WHAT YOU ARE DOING!
-    enabled: true
   show-auto-save-task-message:
     #Do you want to see notifications in console when the auto-save task runs? [Default value: true]
     enabled: true

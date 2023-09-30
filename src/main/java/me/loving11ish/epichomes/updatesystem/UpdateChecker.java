@@ -3,6 +3,8 @@ package me.loving11ish.epichomes.updatesystem;
 import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.utils.ColorUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.util.Consumer;
 
@@ -10,13 +12,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 public class UpdateChecker {
 
-    private int resourceId;
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+    FoliaLib foliaLib = EpicHomes.getFoliaLib();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
-    Logger logger = EpicHomes.getPlugin().getLogger();
+
+    private int resourceId;
 
     private String prefix = messagesConfig.getString("global-prefix");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
@@ -26,14 +30,13 @@ public class UpdateChecker {
     }
 
     public void getVersion(final Consumer<String> consumer) {
-        FoliaLib foliaLib = new FoliaLib(EpicHomes.getPlugin());
-        foliaLib.getImpl().runAsync(() -> {
+        foliaLib.getImpl().runAsync((task) -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException exception) {
-                logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("update-check-failure").replace(PREFIX_PLACEHOLDER, prefix) + exception.getMessage()));
+                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-check-failure").replace(PREFIX_PLACEHOLDER, prefix) + exception.getMessage()));
             }
         });
     }

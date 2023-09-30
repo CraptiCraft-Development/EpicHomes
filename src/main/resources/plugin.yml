@@ -35,12 +35,27 @@ commands:
 permissions:
   epichomes.maxhomes.group1:
     default: true
+
   epichomes.*:
     default: op
     children:
+      epichomes.update:
+        default: op
+      epichomes.maxhomes.*:
+        default: op
+
       epichomes.command.*:
         default: op
-      epichomes.command.reload:
+        children:
+          epichomes.command.reload:
+            default: op
+          epichomes.command.import:
+            default: op
+
+      epichomes.bypass.*:
         default: op
-      epichomes.command.import:
-        default: op
+        children:
+          epichomes.bypass.cooldown:
+            default: op
+          epichomes.bypass.movement:
+            default: op

@@ -6,17 +6,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class UsermapStorageUtil {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
 
@@ -35,7 +35,7 @@ public class UsermapStorageUtil {
             if (!entry.getValue().getHomesList().isEmpty()){
                 for (Map.Entry<String, Location> homeEntry : homeLocations.entrySet()) {
                     if (homeEntry.getValue().getWorld() == null){
-                        logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("usermap-file-save-failure")
+                        console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("usermap-file-save-failure")
                                 .replace(PREFIX_PLACEHOLDER, prefix)
                                 .replace("%PLAYER%", entry.getValue().getLastKnownName())));
                         continue;
@@ -166,7 +166,8 @@ public class UsermapStorageUtil {
             if (home.getKey().equalsIgnoreCase(homeName)){
                 Player player = getBukkitPlayerByUser(user);
                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-home-exists")
-                        .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix).replace(HOME_NAME_PLACEHOLDER, homeName))));
+                        .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
+                        .replace(HOME_NAME_PLACEHOLDER, ColorUtils.translateColorCodes(homeName))));
                 return false;
             }
         }

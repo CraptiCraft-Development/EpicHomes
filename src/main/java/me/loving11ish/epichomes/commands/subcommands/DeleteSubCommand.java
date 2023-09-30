@@ -7,16 +7,16 @@ import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class DeleteSubCommand {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
@@ -28,7 +28,8 @@ public class DeleteSubCommand {
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean deleteSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player player){
+        if (sender instanceof Player){
+            Player player = (Player) sender;
             if (args.length >= 2) {
                 String homeName = args[1];
                 if (homeName != null) {
@@ -41,7 +42,7 @@ public class DeleteSubCommand {
                                     if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                         fireHomeDeleteEvent(player, user, homeName);
                                         if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                         }
                                         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
                                                 .replace(PREFIX_PLACEHOLDER, prefix)
@@ -64,7 +65,8 @@ public class DeleteSubCommand {
     }
 
     public boolean deleteHomeSubCommand(CommandSender sender, String[] args) {
-        if (sender instanceof Player player) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
             String homeName = args[0];
             if (homeName != null) {
                 User user = usermapStorageUtil.getUserByOnlinePlayer(player);
@@ -76,7 +78,7 @@ public class DeleteSubCommand {
                                 if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                     fireHomeDeleteEvent(player, user, homeName);
                                     if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                        logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                     }
                                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
                                             .replace(PREFIX_PLACEHOLDER, prefix)

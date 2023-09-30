@@ -7,18 +7,18 @@ import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.logging.Logger;
-
 public class PlayerConnectionEvent implements Listener {
 
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    Logger logger = EpicHomes.getPlugin().getLogger();
 
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
@@ -29,7 +29,7 @@ public class PlayerConnectionEvent implements Listener {
             User user = usermapStorageUtil.addToUsermap(player);
             fireUserAddedToUsermapEvent(player, user);
             if (config.getBoolean("general.developer-debug-mode.enabled")){
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired UserAddedToUsermapEvent"));
+                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired UserAddedToUsermapEvent"));
             }
             return;
         }
@@ -39,7 +39,7 @@ public class PlayerConnectionEvent implements Listener {
             String newPlayerName = player.getName();
             firePlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
             if (config.getBoolean("general.developer-debug-mode.enabled")){
-                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired PlayerNameChangedEvent"));
+                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired PlayerNameChangedEvent"));
             }
             usermapStorageUtil.updatePlayerName(player);
         }

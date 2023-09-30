@@ -23,6 +23,9 @@ non-timed-teleporting-complete: "%PREFIX% &aSuccessfully arrived at &e%HOME%&a."
 home-set-successfully: "%PREFIX% &aSuccessfully set home &e%HOME% &aat your current location."
 home-set-failed-home-exists: "%PREFIX% &e%HOME% &calready exists!"
 home-set-failed-max-homes-reached: "%PREFIX% &cSorry, you have reached the max allowed homes."
+home-set-failed-max-tiered-reached: "%PREFIX% &cSorry, you have reached the total homes your tier can set!\n%PREFIX% &cYou can set a total of &e%LIMIT% &chomes."
+home-set-failed-invalid-name: "%PREFIX% &cSorry, your home cannot contain colours or the following characters: &d."
+home-set-failed-name-not-allowed: "%PREFIX% &cSorry, that home name is not allowed. Please choose another!"
 
 #Home delete
 home-delete-successful: "%PREFIX% &aSuccessfully deleted &e%HOME%&a."

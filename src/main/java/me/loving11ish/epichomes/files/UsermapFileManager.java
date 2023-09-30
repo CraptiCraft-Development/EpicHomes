@@ -2,6 +2,8 @@ package me.loving11ish.epichomes.files;
 
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.utils.ColorUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -9,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Logger;
 
 public class UsermapFileManager {
 
@@ -17,7 +18,7 @@ public class UsermapFileManager {
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public void UsermapFileManager(EpicHomes plugin){
         this.plugin = plugin;
@@ -50,8 +51,8 @@ public class UsermapFileManager {
         try {
             this.getUsermapConfig().save(this.configFile);
         }catch (IOException e){
-            logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Could not save usermap.yml"));
-            logger.severe(ColorUtils.translateColorCodes("&6EpicHomes: &4Check the below message for the reasons!"));
+            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Could not save usermap.yml"));
+            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Check the below message for the reasons!"));
             e.printStackTrace();
         }
     }

@@ -25,7 +25,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
+        return EpicHomes.getPlugin().getDescription().getAuthors().toString();
     }
 
     @Override
@@ -56,6 +56,16 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         if (params.equalsIgnoreCase("pluginAuthor")){
             //%epicHomes_pluginAuthor%
             return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
+        }
+
+        if (params.equalsIgnoreCase("baseServerVersion")){
+            //%epicHomes_baseServerVersion%
+            return String.valueOf(EpicHomes.getVersionCheckerUtils().getVersion());
+        }
+
+        if (params.equalsIgnoreCase("serverPackage")){
+            //%epicHomes_serverPackage%
+            return EpicHomes.getVersionCheckerUtils().getServerPackage();
         }
 
         if (params.equalsIgnoreCase("totalPlayerJoined")){

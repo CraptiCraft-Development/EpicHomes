@@ -1,5 +1,6 @@
 package me.loving11ish.epichomes.commands;
 
+import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.api.HomePreTeleportEvent;
 import me.loving11ish.epichomes.commands.subcommands.DeleteSubCommand;
@@ -21,25 +22,35 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+
+    private static FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private static List<String> bannedNames;
 
     private String prefix = messagesConfig.getString("global-prefix");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
+    public static void updateBannedNamesList() {
+        foliaLib.getImpl().runLaterAsync(() ->
+                bannedNames = EpicHomes.getPlugin().getConfig().getStringList("homes.disallowed-home-names"), 50L, TimeUnit.MILLISECONDS);
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player player) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
             if (args.length < 1){
-                if (config.getBoolean("gui-system.use-global-gui.enabled")){
+                if (EpicHomes.isGUIEnabled()){
                     new HomeListGUI(EpicHomes.getPlayerMenuUtility(player)).open();
                 }else {
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
@@ -58,7 +69,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     case "set":
                         if (args.length == 2){
                             if (args[1] != null){
-                                return new SetSubCommand().setSubCommand(sender, args);
+                                return new SetSubCommand().setSubCommand(sender, args, bannedNames);
                             }else {
                                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-3").replace(PREFIX_PLACEHOLDER, prefix)));
                                 return true;
@@ -70,7 +81,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     case "delete":
                         if (args.length == 2){
                             if (args[1] != null){
-                                if (config.getBoolean("gui-system.use-global-gui.enabled")){
+                                if (EpicHomes.isGUIEnabled()){
                                     PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
                                     playerMenuUtility.setUser(user);
                                     playerMenuUtility.setHomeName(args[1]);
@@ -118,14 +129,14 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                             TeleportationUtils teleportationUtils = new TeleportationUtils();
                             fireHomePreTeleportEvent(player, user, args[0], homeLocation, player.getLocation());
                             if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
+                                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                             }
                             teleportationUtils.teleportPlayerAsyncTimed(player, homeLocation, args[0]);
                         }else {
                             TeleportationUtils teleportationUtils = new TeleportationUtils();
                             fireHomePreTeleportEvent(player, user, args[0], homeLocation, player.getLocation());
                             if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
+                                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                             }
                             teleportationUtils.teleportPlayerAsync(player, homeLocation, args[0]);
                         }
@@ -138,12 +149,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 if (args[0].equalsIgnoreCase("reload")){
                     return new ReloadSubCommand().reloadSubCommand();
                 }else {
-                    logger.info(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-6")
+                    console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-6")
                             .replace(PREFIX_PLACEHOLDER, prefix)));
                     return true;
                 }
             }else {
-                logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
+                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
                         .replace(PREFIX_PLACEHOLDER, prefix)));
                 return true;
             }

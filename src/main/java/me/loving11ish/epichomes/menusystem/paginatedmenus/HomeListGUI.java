@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,11 +23,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class HomeListGUI extends PaginatedMenu {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
@@ -75,7 +75,7 @@ public class HomeListGUI extends PaginatedMenu {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
                         fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
                         if (config.getBoolean("general.developer-debug-mode.enabled")){
-                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
+                            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                         }
                         teleportationUtils.teleportPlayerAsyncTimed(player, homeLocation, homeName);
                         player.closeInventory();
@@ -83,7 +83,7 @@ public class HomeListGUI extends PaginatedMenu {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
                         fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
                         if (config.getBoolean("general.developer-debug-mode.enabled")){
-                            logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
+                            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                         }
                         teleportationUtils.teleportPlayerAsync(player, homeLocation, homeName);
                         player.closeInventory();

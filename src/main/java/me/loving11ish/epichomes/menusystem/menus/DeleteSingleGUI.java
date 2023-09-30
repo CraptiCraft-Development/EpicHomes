@@ -10,6 +10,7 @@ import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -19,11 +20,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class DeleteSingleGUI extends Menu {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
@@ -66,7 +67,7 @@ public class DeleteSingleGUI extends Menu {
                             if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                 fireHomeDeleteEvent(player, user, homeName);
                                 if (config.getBoolean("general.developer-debug-mode.enabled")){
-                                    logger.info(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
+                                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                 }
                                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
                                         .replace(PREFIX_PLACEHOLDER, prefix)

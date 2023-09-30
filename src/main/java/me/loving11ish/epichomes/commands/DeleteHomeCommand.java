@@ -8,21 +8,19 @@ import me.loving11ish.epichomes.menusystem.paginatedmenus.DeleteHomesListGUI;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
 
-    Logger logger = EpicHomes.getPlugin().getLogger();
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
@@ -33,10 +31,11 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player player){
+        if (sender instanceof Player){
+            Player player = (Player) sender;
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
             if (args.length < 1){
-                if (config.getBoolean("gui-system.use-global-gui.enabled")){
+                if (EpicHomes.isGUIEnabled()){
                     new DeleteHomesListGUI(EpicHomes.getPlayerMenuUtility(player)).open();
                 }else {
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-delhome-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
@@ -45,7 +44,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
                 return true;
             }else {
                 if (args[0] != null){
-                    if (config.getBoolean("gui-system.use-global-gui.enabled")){
+                    if (EpicHomes.isGUIEnabled()){
                         PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
                         playerMenuUtility.setUser(user);
                         playerMenuUtility.setHomeName(args[0]);
@@ -68,7 +67,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
                 }
             }
         }else {
-            logger.warning(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
+            console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
                     .replace(PREFIX_PLACEHOLDER, prefix)));
         }
         return true;
