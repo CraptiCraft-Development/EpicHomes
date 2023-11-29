@@ -1,7 +1,7 @@
 package me.loving11ish.epichomes.menusystem.paginatedmenus;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomePreTeleportEvent;
+import me.loving11ish.epichomes.api.events.HomePreTeleportEvent;
 import me.loving11ish.epichomes.menusystem.PaginatedMenu;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.menusystem.menus.DeleteSingleGUI;
@@ -38,7 +38,7 @@ public class HomeListGUI extends PaginatedMenu {
     private static final String HOME_LOCATION_PLACEHOLDER_Y = "%LOCATION-Y%";
     private static final String HOME_LOCATION_PLACEHOLDER_Z = "%LOCATION-Z%";
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
 
@@ -74,7 +74,7 @@ public class HomeListGUI extends PaginatedMenu {
                     if (config.getBoolean("homes.teleportation.delay-before-teleport.enabled")){
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
                         fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
-                        if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                         }
                         teleportationUtils.teleportPlayerAsyncTimed(player, homeLocation, homeName);
@@ -82,7 +82,7 @@ public class HomeListGUI extends PaginatedMenu {
                     }else {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
                         fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
-                        if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomePreTeleportEvent"));
                         }
                         teleportationUtils.teleportPlayerAsync(player, homeLocation, homeName);

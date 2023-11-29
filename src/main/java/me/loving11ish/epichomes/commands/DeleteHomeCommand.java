@@ -21,11 +21,10 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
 
     ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_PLACEHOLDER = "%HOME%";
 

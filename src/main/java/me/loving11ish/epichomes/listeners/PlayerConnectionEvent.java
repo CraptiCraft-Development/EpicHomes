@@ -1,8 +1,8 @@
 package me.loving11ish.epichomes.listeners;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.PlayerNameChangedEvent;
-import me.loving11ish.epichomes.api.UserAddedToUsermapEvent;
+import me.loving11ish.epichomes.api.events.PlayerNameChangedEvent;
+import me.loving11ish.epichomes.api.events.UserAddedToUsermapEvent;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
@@ -28,7 +28,7 @@ public class PlayerConnectionEvent implements Listener {
         if (!usermapStorageUtil.isUserExisting(player)){
             User user = usermapStorageUtil.addToUsermap(player);
             fireUserAddedToUsermapEvent(player, user);
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired UserAddedToUsermapEvent"));
             }
             return;
@@ -38,7 +38,7 @@ public class PlayerConnectionEvent implements Listener {
             String lastPlayerName = user.getLastKnownName();
             String newPlayerName = player.getName();
             firePlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired PlayerNameChangedEvent"));
             }
             usermapStorageUtil.updatePlayerName(player);

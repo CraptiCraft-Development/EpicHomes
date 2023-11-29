@@ -32,7 +32,7 @@ public class DeleteHomesListGUI extends PaginatedMenu {
     private static final String HOME_LOCATION_PLACEHOLDER_Y = "%LOCATION-Y%";
     private static final String HOME_LOCATION_PLACEHOLDER_Z = "%LOCATION-Z%";
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
 

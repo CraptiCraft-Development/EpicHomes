@@ -31,14 +31,19 @@ import java.util.concurrent.TimeUnit;
 
 public final class EpicHomes extends JavaPlugin {
 
+    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     private static EpicHomes plugin;
     private static FoliaLib foliaLib;
     private static VersionCheckerUtils versionCheckerUtils;
     private static boolean GUIEnabled = false;
+    private static boolean onlineMode = false;
+
+    private boolean updateAvailable;
+
     public MessagesFileManager messagesFileManager;
     public UsermapFileManager usermapFileManager;
     public UsermapStorageUtil usermapStorageUtil;
@@ -51,7 +56,7 @@ public final class EpicHomes extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        foliaLib = new FoliaLib(plugin);
+        foliaLib = new FoliaLib(this);
         versionCheckerUtils = new VersionCheckerUtils();
         versionCheckerUtils.setVersion();
 
@@ -86,7 +91,7 @@ public final class EpicHomes extends JavaPlugin {
         }
 
         //Check if PlugManX is enabled
-        if (Bukkit.getPluginManager().isPluginEnabled("PlugManX")|| PlugManXAPI.isPlugManXEnabled()){
+        if (Bukkit.getPluginManager().isPluginEnabled("PlugManX")||PlugManXAPI.isPlugManXEnabled()){
             if (!PlugManAPI.iDoNotWantToBeUnOrReloaded("EpicHomes")){
                 console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
                 console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
@@ -153,7 +158,7 @@ public final class EpicHomes extends JavaPlugin {
 
         //Check for PersistentDataContainers for GUI system
         if (versionCheckerUtils.getVersion() >= 14) {
-            GUIEnabled = getConfig().getBoolean("gui-system.use-global-gui.enabled");
+            GUIEnabled = getConfig().getBoolean("gui-system.use-global-gui.enabled", true);
             if (GUIEnabled){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Global GUI system enabled!"));
             }else {
@@ -181,11 +186,12 @@ public final class EpicHomes extends JavaPlugin {
         pluginCommands.add("/delhome");
         pluginCommands.add("/homes");
         pluginCommands.add("/epichomes");
-        getServer().getPluginManager().registerEvents(new PlayerConnectionEvent(), this);
-        getServer().getPluginManager().registerEvents(new PlayerDisconnectionEvent(), this);
-        getServer().getPluginManager().registerEvents(new PlayerMovementEvent(), this);
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
+        getServer().getPluginManager().registerEvents(new PlayerMovementEvent(), this);
+        getServer().getPluginManager().registerEvents(new PlayerConnectionEvent(), this);
+        getServer().getPluginManager().registerEvents(new PlayerPreConnectionEvent(), this);
+        getServer().getPluginManager().registerEvents(new PlayerDisconnectionEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerCommandSendEvent(pluginCommands), this);
 
         //Update banned names lists
@@ -193,7 +199,7 @@ public final class EpicHomes extends JavaPlugin {
         SetHomeCommand.updateBannedNamesList();
 
         //Register PlaceHolderAPI hooks
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")|| PlaceholderAPI.isPlaceholderAPIEnabled()){
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")||PlaceholderAPI.isPlaceholderAPIEnabled()){
             new PlaceholderAPIHook().register();
             console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3PlaceholderAPI found!"));
@@ -213,7 +219,7 @@ public final class EpicHomes extends JavaPlugin {
         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin by: &b&lLoving11ish"));
         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3has been loaded successfully"));
         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin Version: &d&l" + pluginVersion));
-        if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
+        if (getConfig().getBoolean("general.developer-debug-mode.enabled", false)){
             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aDeveloper debug mode enabled!"));
             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aThis WILL fill the console"));
             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &awith additional EpicHomes information!"));
@@ -224,34 +230,33 @@ public final class EpicHomes extends JavaPlugin {
 
         //Check for available updates
         new UpdateChecker(109590).getVersion(version -> {
-            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix");
+            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
             String PREFIX_PLACEHOLDER = "%PREFIX%";
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
+                this.updateAvailable = false;
             }else {
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
                 console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
+                this.updateAvailable = true;
             }
         });
 
         //Start auto save task
-        foliaLib.getImpl().runLaterAsync(new Runnable() {
-            @Override
-            public void run() {
-                AutoSaveTaskUtils.runAutoSaveTask();
-                String PREFIX_PLACEHOLDER = "%PREFIX%";
-                String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix");
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-save-started").replace(PREFIX_PLACEHOLDER, prefix)));
-            }
+        foliaLib.getImpl().runLaterAsync(() -> {
+            AutoSaveTaskUtils.runAutoSaveTask();
+            String PREFIX_PLACEHOLDER = "%PREFIX%";
+            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+            console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-save-started").replace(PREFIX_PLACEHOLDER, prefix)));
         }, 5L, TimeUnit.SECONDS);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        //Plugin shutdown logic
 
         //Unregister event listeners
         HandlerList.unregisterAll(this);
@@ -345,5 +350,21 @@ public final class EpicHomes extends JavaPlugin {
 
     public static boolean isGUIEnabled() {
         return GUIEnabled;
+    }
+
+    public static void setGUIEnabled(boolean GUIEnabled) {
+        EpicHomes.GUIEnabled = GUIEnabled;
+    }
+
+    public static boolean isOnlineMode() {
+        return onlineMode;
+    }
+
+    public static void setOnlineMode(boolean onlineMode) {
+        EpicHomes.onlineMode = onlineMode;
+    }
+
+    public boolean isUpdateAvailable() {
+        return updateAvailable;
     }
 }

@@ -1,7 +1,7 @@
 package me.loving11ish.epichomes.menusystem.menus;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomeDeleteEvent;
+import me.loving11ish.epichomes.api.events.HomeDeleteEvent;
 import me.loving11ish.epichomes.menusystem.Menu;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.models.User;
@@ -30,7 +30,7 @@ public class DeleteSingleGUI extends Menu {
 
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_PLACEHOLDER = "%HOME%";
     private static final String HOME_LOCATION_PLACEHOLDER_WORLD = "%LOCATION-WORLD%";
@@ -66,7 +66,7 @@ public class DeleteSingleGUI extends Menu {
                         try {
                             if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                 fireHomeDeleteEvent(player, user, homeName);
-                                if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                 }
                                 player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")

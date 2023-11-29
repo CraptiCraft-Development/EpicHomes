@@ -24,7 +24,7 @@ public class SetHomeCommand implements CommandExecutor {
     private static FoliaLib foliaLib = EpicHomes.getFoliaLib();
     private static List<String> bannedNames;
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
     public static void updateBannedNamesList() {

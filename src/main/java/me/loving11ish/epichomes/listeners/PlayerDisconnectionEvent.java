@@ -25,15 +25,15 @@ public class PlayerDisconnectionEvent implements Listener {
         UUID uuid = player.getUniqueId();
         if (EpicHomes.getPlugin().teleportQueue.containsKey(uuid)){
             WrappedTask wrappedTask = EpicHomes.getPlugin().teleportQueue.get(uuid);
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
             }
             wrappedTask.cancel();
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task canceled"));
             }
             EpicHomes.getPlugin().teleportQueue.remove(uuid);
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + player.getName() + " has had teleport canceled and removed from queue"));
             }
         }

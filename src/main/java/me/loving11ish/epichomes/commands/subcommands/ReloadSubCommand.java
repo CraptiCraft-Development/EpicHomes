@@ -20,7 +20,7 @@ public class ReloadSubCommand {
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 
     public boolean reloadSubCommand(CommandSender sender) {
@@ -37,26 +37,19 @@ public class ReloadSubCommand {
                 }
             }
             EpicHomes.getPlugin().onDisable();
-            foliaLib.getImpl().runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable();
-                }
-            },5L, TimeUnit.SECONDS);
-            foliaLib.getImpl().runLater(new Runnable() {
-                @Override
-                public void run() {
-                    EpicHomes.getPlugin().reloadConfig();
-                    EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-                    console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-                    for (Player p : onlinePlayers){
-                        if (p.getName().equalsIgnoreCase(player.getName())){
-                            continue;
-                        }
-                        if (!onlinePlayers.isEmpty()){
-                            p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-                        }
+            foliaLib.getImpl().runLater(() ->
+                    Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable(),5L, TimeUnit.SECONDS);
+            foliaLib.getImpl().runLater(() -> {
+                EpicHomes.getPlugin().reloadConfig();
+                EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
+                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+                for (Player p : onlinePlayers){
+                    if (p.getName().equalsIgnoreCase(player.getName())){
+                        continue;
+                    }
+                    if (!onlinePlayers.isEmpty()){
+                        p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
                     }
                 }
             }, 5L, TimeUnit.SECONDS);
@@ -73,22 +66,15 @@ public class ReloadSubCommand {
             }
         }
         EpicHomes.getPlugin().onDisable();
-        foliaLib.getImpl().runLater(new Runnable() {
-            @Override
-            public void run() {
-                Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable();
-            }
-        },5L, TimeUnit.SECONDS);
-        foliaLib.getImpl().runLater(new Runnable() {
-            @Override
-            public void run() {
-                EpicHomes.getPlugin().reloadConfig();
-                EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
-                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-                for (Player p : onlinePlayers){
-                    if (!onlinePlayers.isEmpty()){
-                        p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
-                    }
+        foliaLib.getImpl().runLater(() ->
+                Bukkit.getPluginManager().getPlugin("EpicHomes").onEnable(),5L, TimeUnit.SECONDS);
+        foliaLib.getImpl().runLater(() -> {
+            EpicHomes.getPlugin().reloadConfig();
+            EpicHomes.getPlugin().messagesFileManager.reloadMessagesConfig();
+            console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
+            for (Player p : onlinePlayers){
+                if (!onlinePlayers.isEmpty()){
+                    p.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("plugin-reload-complete").replace(PREFIX_PLACEHOLDER, prefix)));
                 }
             }
         }, 5L, TimeUnit.SECONDS);

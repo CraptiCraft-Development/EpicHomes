@@ -1,7 +1,7 @@
 package me.loving11ish.epichomes.commands.subcommands;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomeSetEvent;
+import me.loving11ish.epichomes.api.events.HomeSetEvent;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
@@ -26,7 +26,7 @@ public class SetSubCommand {
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
     private static final String LIMIT_PLACEHOLDER = "%LIMIT%";
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean setSubCommand(CommandSender sender, String[] args, List<String> bannedNames) {
@@ -106,7 +106,7 @@ public class SetSubCommand {
                                     .replace(PREFIX_PLACEHOLDER, prefix)
                                     .replace(HOME_NAME_PLACEHOLDER, homeName)));
                             fireHomeSetEvent(player, user, homeName, location);
-                            if (config.getBoolean("general.developer-debug-mode.enabled")){
+                            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeSetEvent"));
                             }
                         }
@@ -193,7 +193,7 @@ public class SetSubCommand {
                                 .replace(PREFIX_PLACEHOLDER, prefix)
                                 .replace(HOME_NAME_PLACEHOLDER, homeName)));
                         fireHomeSetEvent(player, user, homeName, location);
-                        if (config.getBoolean("general.developer-debug-mode.enabled")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeSetEvent"));
                         }
                     }

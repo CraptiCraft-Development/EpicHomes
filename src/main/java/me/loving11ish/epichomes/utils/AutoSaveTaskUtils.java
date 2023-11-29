@@ -25,17 +25,17 @@ public class AutoSaveTaskUtils {
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
-    private static String prefix = messagesConfig.getString("global-prefix");
+    private static String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     public static void runAutoSaveTask() {
         autoSaveTask = foliaLib.getImpl().runTimerAsync(() -> {
             try {
                 usermapStorageUtil.saveUsermap();
-                if (config.getBoolean("general.show-auto-save-task-message.enabled")){
+                if (config.getBoolean("general.show-auto-save-task-message.enabled", true)){
                     console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("auto-save-complete")
                             .replace(PREFIX_PLACEHOLDER, prefix)));
                 }
-                if (config.getBoolean("general.developer-debug-mode.enabled")){
+                if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + autoSaveTask.toString()));
                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aAuto save timed task run successfully"));
                 }

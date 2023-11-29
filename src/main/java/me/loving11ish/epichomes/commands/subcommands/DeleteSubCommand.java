@@ -1,7 +1,7 @@
 package me.loving11ish.epichomes.commands.subcommands;
 
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomeDeleteEvent;
+import me.loving11ish.epichomes.api.events.HomeDeleteEvent;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
@@ -24,7 +24,7 @@ public class DeleteSubCommand {
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public boolean deleteSubCommand(CommandSender sender, String[] args) {
@@ -41,7 +41,7 @@ public class DeleteSubCommand {
                                 try {
                                     if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                         fireHomeDeleteEvent(player, user, homeName);
-                                        if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                        if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                         }
                                         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")
@@ -77,7 +77,7 @@ public class DeleteSubCommand {
                             try {
                                 if (usermapStorageUtil.removeHomeFromUser(user, homeName)){
                                     fireHomeDeleteEvent(player, user, homeName);
-                                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeDeleteEvent"));
                                     }
                                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-delete-successful")

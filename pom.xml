@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -43,6 +43,10 @@
                         <relocation>
                             <pattern>com.tcoded.folialib</pattern>
                             <shadedPattern>me.loving11ish.epichomes.folialib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.github.lightlibs</pattern>
+                            <shadedPattern>me.loving11ish.epichomes.lightlibs</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -90,6 +94,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -115,8 +123,13 @@
         <dependency>
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.lightlibs</groupId>
+            <artifactId>simplehttpwrapper</artifactId>
+            <version>0.0.3-alpha</version>
         </dependency>
         <dependency>
             <groupId>com.rylinaux</groupId>

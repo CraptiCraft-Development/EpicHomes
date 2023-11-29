@@ -15,13 +15,13 @@ public class PlugManXAPI {
     public static boolean isPlugManXEnabled() {
         try {
             Class.forName("com.rylinaux.plugman.PlugMan");
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound PlugManX main class at:"));
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dcom.rylinaux.plugman.PlugMan"));
             }
             return true;
         }catch (ClassNotFoundException e){
-            if (config.getBoolean("general.developer-debug-mode.enabled")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aCould not find PlugManX main class at:"));
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &dcom.rylinaux.plugman.PlugMan"));
             }

@@ -5,7 +5,7 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.papermc.lib.PaperLib;
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.HomeTeleportEvent;
+import me.loving11ish.epichomes.api.events.HomeTeleportEvent;
 import me.loving11ish.epichomes.models.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,13 +29,13 @@ public class TeleportationUtils {
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     public void teleportPlayerAsync(Player player, Location location, String homeName) {
         User user = EpicHomes.getPlugin().usermapStorageUtil.getUserByOnlinePlayer(player);
         PaperLib.teleportAsync(player, location);
         fireAsyncHomeTeleportEvent(false, player, user, homeName, location);
-        if (config.getBoolean("general.developer-debug-mode.enabled")){
+        if (config.getBoolean("general.developer-debug-mode.enabled", false)){
             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in sync mode"));
         }
         player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("non-timed-teleporting-complete")
@@ -53,13 +53,13 @@ public class TeleportationUtils {
             public void run() {
                 if (!EpicHomes.getPlugin().teleportQueue.containsKey(player.getUniqueId())){
                     EpicHomes.getPlugin().teleportQueue.put(player.getUniqueId(), getWrappedTask());
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has been added to teleport queue"));
                     }
                 }
                 if (time == 0) {
                     EpicHomes.getPlugin().teleportQueue.remove(player.getUniqueId());
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has been removed from the teleport queue"));
                     }
                     PaperLib.teleportAsync(player, location);
@@ -68,20 +68,28 @@ public class TeleportationUtils {
                             .replace(HOME_NAME_PLACEHOLDER, homeName)));
                     if (foliaLib.isFolia()){
                         fireAsyncHomeTeleportEvent(true, player, user, homeName, location);
-                        if (config.getBoolean("general.developer-debug-mode.enabled")) {
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)) {
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aDetected running on Folia"));
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in async mode"));
                         }
+                    }else {
+                        foliaLib.getImpl().runNextTick((task) -> {
+                            fireAsyncHomeTeleportEvent(false, player, user, homeName, location);
+                            if (config.getBoolean("general.developer-debug-mode.enabled", false)) {
+                                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aDetected not running on Folia"));
+                                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired HomeTeleportEvent in sync mode"));
+                            }
+                        });
                     }
                     getWrappedTask().cancel();
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + getWrappedTask().toString()));
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &ateleportPlayerAsyncTimed task canceled"));
                     }
                     return;
                 }else {
                     time --;
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &ateleportPlayerAsyncTimed task running"));
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + getWrappedTask().toString()));
                     }

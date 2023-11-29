@@ -21,7 +21,7 @@ public class PlayerMovementEvent implements Listener {
     FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-    private String prefix = messagesConfig.getString("global-prefix");
+    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -37,20 +37,20 @@ public class PlayerMovementEvent implements Listener {
             if (event.getFrom().getX() != event.getTo().getX()
                     ||event.getFrom().getY() != event.getTo().getY()
                     ||event.getFrom().getZ() != event.getTo().getZ()){
-                if (config.getBoolean("general.developer-debug-mode.enabled")){
+                if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has a pending teleport"));
                 }
                 try {
                     WrappedTask wrappedTask = EpicHomes.getPlugin().teleportQueue.get(uuid);
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
                     }
                     wrappedTask.cancel();
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task canceled"));
                     }
                     EpicHomes.getPlugin().teleportQueue.remove(uuid);
-                    if (config.getBoolean("general.developer-debug-mode.enabled")){
+                    if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                         console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + player.getName() + " has had teleport canceled and removed from queue"));
                     }
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("timed-teleport-failed-player-moved")

@@ -45,7 +45,7 @@ public class StormerHomesDataReader {
             File stormerData = Bukkit.getServer().getPluginManager().getPlugin("StormerHomes").getDataFolder();
             File stormerConfig = new File(stormerData, "config.yml");
             fileReader.load(stormerConfig);
-            if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+            if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                 console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound StormerHomes config.yml and loaded successfully."));
             }
             if (loadHomes()){
@@ -67,48 +67,48 @@ public class StormerHomesDataReader {
     private boolean loadHomes() {
         try {
             if (fileReader.getConfigurationSection("homes2") != null){
-                if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound homes2 section in StormerHomes config.yml"));
                 }
                 fileReader.getConfigurationSection("homes2").getKeys(false).forEach(key -> {
                     HashMap<String, Location> homes = new HashMap<>();
                     fileReader.getConfigurationSection("homes2." + key).getKeys(false).forEach(home -> {
                         homeName = home;
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound home name entry of: " + home + " &afor UUID: " + key));
                         }
                         world = fileReader.getString("homes2." + key + "." + home + "." + "world");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound world entry for home: " + home + ". &aWorld entry: " + world));
                         }
                         playerName = fileReader.getString("homes2." + key + "." + home + "." + "playername");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound playername entry for home: " + home + ". &aPlayerName entry: " + playerName));
                         }
                         x = fileReader.getDouble("homes2." + key + "." + home + "." + "x");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound x entry for home: " + home + ". &aX entry: " + x));
                         }
                         y = fileReader.getDouble("homes2." + key + "." + home + "." + "y");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound y entry for home: " + home + ". &aY entry: " + y));
                         }
                         z = fileReader.getDouble("homes2." + key + "." + home + "." + "z");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound z entry for home: " + home + ". &aZ entry: " + z));
                         }
                         yaw = (float) fileReader.getDouble("homes2." + key + "." + home + "." + "yaw");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound yaw entry for home: " + home + ". &aYaw entry: " + yaw));
                         }
                         pitch = (float) fileReader.getDouble("homes2." + key + "." + home + "." + "pitch");
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFound pitch entry for home: " + home + ". &aPitch entry: " + pitch));
                         }
                         World homeWorld = Bukkit.getWorld(world);
                         Location location = new Location(homeWorld, x, y, z, yaw, pitch);
                         homes.put(homeName, location);
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aHome: " + home + " &ahas been successfully created for player: " + playerName));
                         }
                     });
@@ -120,12 +120,12 @@ public class StormerHomesDataReader {
                         for (Map.Entry<String, Location> homesList : homes.entrySet()){
                             if (!usersCurrentHomes.containsKey(homesList.getKey())){
                                 usersCurrentHomes.put(homesList.getKey(), homesList.getValue());
-                                if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                                if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + user.getLastKnownName() + " already exists in the usermap"));
                                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aSuccessfully added new home: " + homeName + " to player."));
                                 }
                             }else {
-                                if (config.getBoolean("general.developer-debug-mode.enabled") || !usermapConfig.getBoolean("import-completed")) {
+                                if (config.getBoolean("general.developer-debug-mode.enabled", false) || !usermapConfig.getBoolean("import-completed")) {
                                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + user.getLastKnownName() + " already exists in the usermap"));
                                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aThe current home iteration already exists! Skipping..."));
                                 }
@@ -137,7 +137,7 @@ public class StormerHomesDataReader {
                         User user = new User(key, playerName);
                         user.setHomesList(homes);
                         usermapStorageUtil.getUsermapStorage().put(UUID.fromString(key), user);
-                        if (config.getBoolean("general.developer-debug-mode.enabled")||!usermapConfig.getBoolean("import-completed")){
+                        if (config.getBoolean("general.developer-debug-mode.enabled", false)||!usermapConfig.getBoolean("import-completed")){
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer " + user.getLastKnownName() + " has never joined this server before!"));
                             console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aThey have been added to the usermap and had their homes stored!"));
                         }

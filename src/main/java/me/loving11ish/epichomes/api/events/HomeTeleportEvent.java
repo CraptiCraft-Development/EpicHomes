@@ -1,4 +1,4 @@
-package me.loving11ish.epichomes.api;
+package me.loving11ish.epichomes.api.events;
 
 import me.loving11ish.epichomes.models.User;
 import org.bukkit.Location;
@@ -6,21 +6,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class HomePreTeleportEvent extends Event {
+public class HomeTeleportEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player createdBy;
     private final User user;
     private final String homeName;
     private final Location homeLocation;
-    private final Location oldLocation;
 
-    public HomePreTeleportEvent(Player createdBy, User user, String homeName, Location homeLocation, Location oldLocation) {
+    public HomeTeleportEvent(boolean isAsync, Player createdBy, User user, String homeName, Location homeLocation) {
+        super(isAsync);
         this.createdBy = createdBy;
         this.user = user;
         this.homeName = homeName;
         this.homeLocation = homeLocation;
-        this.oldLocation = oldLocation;
     }
 
     public static HandlerList getHandlerList() {
@@ -46,9 +45,5 @@ public class HomePreTeleportEvent extends Event {
 
     public Location getHomeLocation() {
         return homeLocation;
-    }
-
-    public Location getOldLocation() {
-        return oldLocation;
     }
 }
