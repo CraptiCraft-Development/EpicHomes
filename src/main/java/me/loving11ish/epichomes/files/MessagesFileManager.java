@@ -14,11 +14,11 @@ import java.io.InputStreamReader;
 
 public class MessagesFileManager {
 
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     private EpicHomes plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
-
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public void MessagesFileManager(EpicHomes plugin){
         this.plugin = plugin;

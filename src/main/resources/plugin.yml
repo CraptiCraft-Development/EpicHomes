@@ -9,12 +9,18 @@ softdepend: [ PlugManX, PlaceholderAPI ]
 commands:
   home:
     description: This is the main command for the plugin.
-    usage: "/home [<home-name>|set|delete|list|reload]"
+    usage: "/home [<home-name>|set|delete|list]"
     aliases:
       - h
       - eh
       - homes
       - epichomes
+  homeadmin:
+    description: This is the command to access all admin features.
+    usage: "/homeadmin [delete|visit|list|reload]"
+    permission: epichomes.admin
+    aliases:
+      - ha
   sethome:
     description: This command lets a player st at home at their current location.
     usage: "/sethome <home-name>"
@@ -39,23 +45,32 @@ permissions:
   epichomes.*:
     default: op
     children:
-      epichomes.update:
-        default: op
-      epichomes.maxhomes.*:
-        default: op
-
-      epichomes.command.*:
+      epichomes.admin:
         default: op
         children:
-          epichomes.command.reload:
+          epichomes.update:
             default: op
-          epichomes.command.import:
+          epichomes.maxhomes.*:
             default: op
 
-      epichomes.bypass.*:
-        default: op
-        children:
-          epichomes.bypass.cooldown:
+          epichomes.command.*:
             default: op
-          epichomes.bypass.movement:
+            children:
+              epichomes.command.deleteothers:
+                default: op
+              epichomes.command.visitothers:
+                default: op
+              epichomes.command.listothers:
+                default: op
+              epichomes.command.reload:
+                default: op
+              epichomes.command.import:
+                default: op
+
+          epichomes.bypass.*:
             default: op
+            children:
+              epichomes.bypass.cooldown:
+                default: op
+              epichomes.bypass.movement:
+                default: op

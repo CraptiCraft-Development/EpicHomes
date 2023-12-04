@@ -10,10 +10,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinEvent implements Listener {
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private final String prefix = messagesConfig.getString("global-prefix");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
     @EventHandler

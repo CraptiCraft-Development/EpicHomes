@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public abstract class PaginatedMenu extends Menu {
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
 
     protected int page = 0;
     protected int maxItemsPerPage = 45;

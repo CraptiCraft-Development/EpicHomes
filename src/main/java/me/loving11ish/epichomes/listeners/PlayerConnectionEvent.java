@@ -16,11 +16,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerConnectionEvent implements Listener {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
 
-    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     @EventHandler
     public void onPlayerConnection(PlayerJoinEvent event) {

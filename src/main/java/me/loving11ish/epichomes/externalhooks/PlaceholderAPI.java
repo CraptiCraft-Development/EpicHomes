@@ -8,9 +8,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class PlaceholderAPI {
 
-    static ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    static FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private static final FileConfiguration config = EpicHomes.getPlugin().getConfig();
 
     public static boolean isPlaceholderAPIEnabled() {
         try {

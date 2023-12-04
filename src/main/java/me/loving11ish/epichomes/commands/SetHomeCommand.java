@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 public class SetHomeCommand implements CommandExecutor {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
-    private static FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private static final FoliaLib foliaLib = EpicHomes.getFoliaLib();
     private static List<String> bannedNames;
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
     public static void updateBannedNamesList() {

@@ -29,7 +29,9 @@ home-set-failed-name-not-allowed: "%PREFIX% &cSorry, that home name is not allow
 
 #Home delete
 home-delete-successful: "%PREFIX% &aSuccessfully deleted &e%HOME%&a."
+homeadmin-delete-successful: "%PREFIX% &aSuccessfully deleted &e%TARGET%'s %HOME%&a."
 home-delete-failed: "%PREFIX% &cFailed to delete &e%HOME%&c!\n%PREFIX% &cCheck console for errors!"
+homeadmin-delete-failed: "%PREFIX% &cFailed to delete &e%TARGET%'s %HOME%&c!\n%PREFIX% &cCheck console for errors!"
 
 #Home list
 list:
@@ -39,9 +41,19 @@ list:
   sub-footer: " \n"
   footer: "&3<======> %PREFIX% &3<======>\n"
 
+#Admin home list
+homeadmin-list:
+  header: "&3<======> %PREFIX% &3<======>\n"
+  sub-header: "&a%TARGET%'s homes: \n"
+  home: " &7>> &e%HOME%\n"
+  sub-footer: " \n"
+  footer: "&3<======> %PREFIX% &3<======>\n"
+
 #General messages
 no-permission: "%PREFIX% &cSorry, you don't have permission to do that."
 incorrect-command-usage: "%PREFIX% &cSorry, that is a player only command."
+homeadmin-unable-to-find-player: "%PREFIX% &cUnable to find an offline player by the name of &e%TARGET%&c!"
+homeadmin-unable-to-find-user: "%PREFIX% &cUnable to find a user for &e%TARGET%&c!"
 home-name-does-not-exist: "%PREFIX% &cSorry, you do not appear to have a home called &e%HOME%&c!"
 command-cool-down-time-left: "%PREFIX% &cSorry, you still have &e%TIMELEFT% &cseconds until you can use that command again."
 usermap-file-save-failure: "%PREFIX% &cInvalid home world name entry found for player &e%PLAYER%&c! &aSkipping current entry!"
@@ -70,7 +82,6 @@ incorrect-home-command-usage:
   line-3: "%PREFIX% &7- &6/home set <name>"
   line-4: "%PREFIX% &7- &6/home delete <name>"
   line-5: "%PREFIX% &7- &6/home list"
-  line-6: "%PREFIX% &7- &6/home reload"
 
 #Sethome command usage
 incorrect-sethome-command-usage:
@@ -81,6 +92,13 @@ incorrect-sethome-command-usage:
 incorrect-delhome-command-usage:
   line-1: "%PREFIX% &adelhome Usage:"
   line-2: "%PREFIX% &7- &6/delhome <name>"
+
+incorrect-homeadmin-command-usage:
+  line-1: "%PREFIX% &ahomeadmin Usage:"
+  line-2: "%PREFIX% &7- &6/homeadmin delete <player> <home-name>"
+  line-3: "%PREFIX% &7- &6/homeadmin visit <player> <home-name>"
+  line-4: "%PREFIX% &7- &6/homeadmin list <player>"
+  line-5: "%PREFIX% &7- &6/homeadmin reload"
 
 #Update Notification
 update-check-failure: "%PREFIX%: &4Unable to check for updates! - &c"

@@ -15,13 +15,13 @@ import java.util.UUID;
 
 public class PlayerMovementEvent implements Listener {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -35,8 +35,8 @@ public class PlayerMovementEvent implements Listener {
         }
         if (EpicHomes.getPlugin().teleportQueue.containsKey(uuid)){
             if (event.getFrom().getX() != event.getTo().getX()
-                    ||event.getFrom().getY() != event.getTo().getY()
-                    ||event.getFrom().getZ() != event.getTo().getZ()){
+                    &&event.getFrom().getY() != event.getTo().getY()
+                    &&event.getFrom().getZ() != event.getTo().getZ()){
                 if (config.getBoolean("general.developer-debug-mode.enabled", false)){
                     console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aPlayer "  + player.getName() + " has a pending teleport"));
                 }

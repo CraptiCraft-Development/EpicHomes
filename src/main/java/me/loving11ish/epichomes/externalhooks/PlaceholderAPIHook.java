@@ -13,10 +13,10 @@ import java.util.List;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     @Override
     public @NotNull String getIdentifier() {

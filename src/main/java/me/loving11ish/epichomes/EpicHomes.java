@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class EpicHomes extends JavaPlugin {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
@@ -171,8 +171,11 @@ public final class EpicHomes extends JavaPlugin {
 
         //Register commands
         HomeCommand homeCommand = new HomeCommand();
+        HomeAdminCommand homeAdminCommand = new HomeAdminCommand();
         getCommand("home").setExecutor(homeCommand);
         getCommand("home").setTabCompleter(homeCommand);
+        getCommand("homeadmin").setExecutor(homeAdminCommand);
+        getCommand("homeadmin").setTabCompleter(homeAdminCommand);
         getCommand("sethome").setExecutor(new SetHomeCommand());
         getCommand("delhome").setExecutor(new DeleteHomeCommand());
         getCommand("importhomes").setExecutor(new HomeImportCommand());
@@ -186,6 +189,8 @@ public final class EpicHomes extends JavaPlugin {
         pluginCommands.add("/delhome");
         pluginCommands.add("/homes");
         pluginCommands.add("/epichomes");
+        pluginCommands.add("homeadmin");
+        pluginCommands.add("/ha");
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerMovementEvent(), this);
@@ -283,6 +288,7 @@ public final class EpicHomes extends JavaPlugin {
                 }
                 AutoSaveTaskUtils.getAutoSaveTask().cancel();
             }
+            foliaLib.getImpl().cancelAllTasks();
             if (foliaLib.isUnsupported()){
                 Bukkit.getScheduler().cancelTasks(this);
                 if (getConfig().getBoolean("general.developer-debug-mode.enabled")){

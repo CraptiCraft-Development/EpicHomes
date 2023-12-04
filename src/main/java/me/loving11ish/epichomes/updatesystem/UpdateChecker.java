@@ -15,14 +15,14 @@ import java.util.function.Consumer;
 
 public class UpdateChecker {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FoliaLib foliaLib = EpicHomes.getFoliaLib();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
-    private int resourceId;
+    private final int resourceId;
 
-    private String prefix = messagesConfig.getString("global-prefix");
+    private final String prefix = messagesConfig.getString("global-prefix");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
     public UpdateChecker(int resourceId) {

@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
 
 public class ReloadSubCommand {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FoliaLib foliaLib = EpicHomes.getFoliaLib();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-    private ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 
     public boolean reloadSubCommand(CommandSender sender) {
         if (sender instanceof Player){

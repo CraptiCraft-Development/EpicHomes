@@ -19,14 +19,14 @@ import java.util.*;
 
 public class StormerHomesDataReader {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
 
     public boolean homesImportSuccessful = false;
 
-    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     private YamlConfiguration fileReader;
 

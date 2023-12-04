@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerMenuUtility {
 
-    private Player owner;
+    private final Player owner;
     public User user;
     public String homeName;
     public Location homeLocation;

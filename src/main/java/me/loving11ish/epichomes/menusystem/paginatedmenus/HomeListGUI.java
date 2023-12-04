@@ -26,10 +26,10 @@ import java.util.List;
 
 public class HomeListGUI extends PaginatedMenu {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
@@ -38,8 +38,8 @@ public class HomeListGUI extends PaginatedMenu {
     private static final String HOME_LOCATION_PLACEHOLDER_Y = "%LOCATION-Y%";
     private static final String HOME_LOCATION_PLACEHOLDER_Z = "%LOCATION-Z%";
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
 
     public HomeListGUI(PlayerMenuUtility playerMenuUtility) {

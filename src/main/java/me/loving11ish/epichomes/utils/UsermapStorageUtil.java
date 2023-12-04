@@ -16,16 +16,16 @@ import java.util.*;
 
 public class UsermapStorageUtil {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
-    FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
-    private HashMap<UUID, User> usermapStorage = new HashMap<>();
+    private final HashMap<UUID, User> usermapStorage = new HashMap<>();
 
     public void saveUsermap() throws IOException {
         for (Map.Entry<UUID, User> entry : usermapStorage.entrySet()) {

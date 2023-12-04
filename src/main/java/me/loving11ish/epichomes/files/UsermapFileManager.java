@@ -14,11 +14,11 @@ import java.io.InputStreamReader;
 
 public class UsermapFileManager {
 
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+
     private EpicHomes plugin;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
-
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public void UsermapFileManager(EpicHomes plugin){
         this.plugin = plugin;

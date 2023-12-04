@@ -26,18 +26,18 @@ import java.util.concurrent.TimeUnit;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
-    private static FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private static final FoliaLib foliaLib = EpicHomes.getFoliaLib();
     private static List<String> bannedNames;
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
-    private UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public static void updateBannedNamesList() {
         foliaLib.getImpl().runLaterAsync(() ->
@@ -58,7 +58,6 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-3").replace(PREFIX_PLACEHOLDER, prefix)));
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-4").replace(PREFIX_PLACEHOLDER, prefix)));
                     player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-5").replace(PREFIX_PLACEHOLDER, prefix)));
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-6").replace(PREFIX_PLACEHOLDER, prefix)));
                 }
                 return true;
             }else if (args[0].equalsIgnoreCase("set")
@@ -102,17 +101,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         }
                     case "list":
                         return new ListSubCommand().listSubCommand(sender);
-                    case "reload":
-                        if (player.hasPermission("epichomes.command.reload")
-                                ||player.hasPermission("epichomes.command.*")
-                                ||player.hasPermission("epichomes.*")
-                                ||player.isOp()){
-                            return new ReloadSubCommand().reloadSubCommand(sender);
-                        }else {
-                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("no-permission")
-                                    .replace(PREFIX_PLACEHOLDER, prefix)));
-                            return true;
-                        }
+                    default:
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-3").replace(PREFIX_PLACEHOLDER, prefix)));
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-4").replace(PREFIX_PLACEHOLDER, prefix)));
+                        player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-5").replace(PREFIX_PLACEHOLDER, prefix)));
                 }
             }else {
                 List<String> userHomesList = usermapStorageUtil.getHomeNamesListByUser(user);
@@ -145,19 +139,9 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 }
             }
         }else if (sender instanceof ConsoleCommandSender) {
-            if (args.length == 1){
-                if (args[0].equalsIgnoreCase("reload")){
-                    return new ReloadSubCommand().reloadSubCommand();
-                }else {
-                    console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-home-command-usage.line-6")
-                            .replace(PREFIX_PLACEHOLDER, prefix)));
-                    return true;
-                }
-            }else {
-                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
-                        .replace(PREFIX_PLACEHOLDER, prefix)));
-                return true;
-            }
+            console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
+                    .replace(PREFIX_PLACEHOLDER, prefix)));
+            return true;
         }
         return true;
     }
@@ -177,12 +161,6 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         arguments.add("set");
         arguments.add("delete");
         arguments.add("list");
-        if (player.hasPermission("epichomes.command.reload")
-                ||player.hasPermission("epichomes.command.*")
-                ||player.hasPermission("epichomes.*")
-                ||player.isOp()){
-            arguments.add("reload");
-        }
 
         List<String> result = new ArrayList<>();
 

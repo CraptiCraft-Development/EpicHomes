@@ -13,19 +13,19 @@ import java.util.concurrent.TimeUnit;
 
 public class AutoSaveTaskUtils {
 
-    private static ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    private static FoliaLib foliaLib = EpicHomes.getFoliaLib();
-    private static UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private static final FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private static final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
 
     public static WrappedTask autoSaveTask;
 
-    private static FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    private static FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private static final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private static final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
-    private static String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private static final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     public static void runAutoSaveTask() {
         autoSaveTask = foliaLib.getImpl().runTimerAsync(() -> {

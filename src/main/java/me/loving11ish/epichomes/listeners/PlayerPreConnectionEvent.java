@@ -15,9 +15,9 @@ import java.util.UUID;
 
 public class PlayerPreConnectionEvent implements Listener {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
 
     private boolean firstPlayerConnected = true;
 

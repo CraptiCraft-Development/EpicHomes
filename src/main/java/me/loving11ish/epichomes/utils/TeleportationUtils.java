@@ -17,19 +17,19 @@ import java.util.concurrent.TimeUnit;
 
 public class TeleportationUtils {
 
-    ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-    private FoliaLib foliaLib = EpicHomes.getFoliaLib();
+    private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
 
     public WrappedTask wrappedTask;
 
-    FileConfiguration config = EpicHomes.getPlugin().getConfig();
-    FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
+    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
+    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
 
-    private String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
 
     public void teleportPlayerAsync(Player player, Location location, String homeName) {
         User user = EpicHomes.getPlugin().usermapStorageUtil.getUserByOnlinePlayer(player);
