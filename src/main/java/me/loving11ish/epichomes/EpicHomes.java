@@ -39,8 +39,8 @@ public final class EpicHomes extends JavaPlugin {
     private static EpicHomes plugin;
     private static FoliaLib foliaLib;
     private static VersionCheckerUtils versionCheckerUtils;
-    private static boolean GUIEnabled = false;
-    private static boolean onlineMode = false;
+    private static boolean GUIEnabled = true;
+    private static boolean onlineMode = true;
 
     private boolean updateAvailable;
 
