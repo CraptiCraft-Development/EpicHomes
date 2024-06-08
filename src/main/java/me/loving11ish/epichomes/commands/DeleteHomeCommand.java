@@ -7,73 +7,83 @@ import me.loving11ish.epichomes.menusystem.menus.DeleteSingleGUI;
 import me.loving11ish.epichomes.menusystem.paginatedmenus.DeleteHomesListGUI;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.*;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
 
-    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
-    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
-
-    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
     private static final String HOME_PLACEHOLDER = "%HOME%";
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player){
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
-            if (args.length < 1){
-                if (EpicHomes.isGUIEnabled()){
+            if (args.length < 1) {
+
+                if (EpicHomes.getPlugin().isGUIEnabled()) {
                     new DeleteHomesListGUI(EpicHomes.getPlayerMenuUtility(player)).open();
-                }else {
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-delhome-command-usage.line-1").replace(PREFIX_PLACEHOLDER, prefix)));
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-delhome-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));
+                }
+
+                else {
+                    MessageUtils.sendPlayerNoPrefix(player, sendUsage());
                 }
                 return true;
-            }else {
-                if (args[0] != null){
-                    if (EpicHomes.isGUIEnabled()){
+            }
+
+            else {
+                if (args[0] != null) {
+                    if (EpicHomes.getPlugin().isGUIEnabled()) {
+
                         PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
                         playerMenuUtility.setUser(user);
                         playerMenuUtility.setHomeName(args[0]);
                         Location location = usermapStorageUtil.getHomeLocationByHomeName(user, args[0]);
-                        if (location != null){
+
+                        if (location != null) {
                             playerMenuUtility.setHomeLocation(location);
                             new DeleteSingleGUI(playerMenuUtility).open();
-                        }else {
-                            player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-name-does-not-exist")
-                                    .replace(PREFIX_PLACEHOLDER, prefix)
-                                    .replace(HOME_PLACEHOLDER, args[0])));
+                        }
+
+                        else {
+                            MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager()
+                                    .getHomeNotFound().replace(HOME_PLACEHOLDER, args[0]));
                         }
                         return true;
-                    }else {
+                    }
+
+                    else {
                         return new DeleteSubCommand().deleteHomeSubCommand(sender, args);
                     }
-                }else {
-                    player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-delhome-command-usage.line-2").replace(PREFIX_PLACEHOLDER, prefix)));
+                }
+
+                else {
+                    MessageUtils.sendPlayerNoPrefix(player, sendUsage());
                     return true;
                 }
             }
-        }else {
-            console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("incorrect-command-usage")
-                    .replace(PREFIX_PLACEHOLDER, prefix)));
+        }
+
+        else {
+            MessageUtils.sendConsole(EpicHomes.getPlugin().getMessagesManager().getPlayerOnly());
         }
         return true;
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         User user = usermapStorageUtil.getUserByOnlinePlayer(player);
         List<String> homesList = usermapStorageUtil.getHomeNamesListByUser(user);
@@ -81,14 +91,23 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
         List<String> arguments = new ArrayList<>(homesList);
         List<String> result = new ArrayList<>();
 
-        if (args.length == 1){
-            for (String a : arguments){
-                if (a.toLowerCase().startsWith(args[0].toLowerCase())){
+        if (args.length == 1) {
+            for (String a : arguments) {
+                if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
                     result.add(a);
                 }
             }
             return result;
         }
         return null;
+    }
+
+    private String sendUsage() {
+        List<String> configList = EpicHomes.getPlugin().getMessagesManager().getDeleteHomeCommandList();
+        StringBuilder listString = new StringBuilder();
+        for (String line : configList) {
+            listString.append(ColorUtils.translateColorCodes(line));
+        }
+        return listString.toString();
     }
 }

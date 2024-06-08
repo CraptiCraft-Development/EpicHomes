@@ -20,13 +20,23 @@ homes:
   permission-based-homes-max-amount:
     #Enable the tiered system use. [Default value: false]
     enabled: false
+    #To set the max amount of homes for each permission group, use the system below.
+    #The permission group must be in the format of 'epichomes.maxhomes.groupX' where X is the group number.
+    #The permission group must be given to the player in order for the max amount to take effect.
+    #The highest priority group should be at the top of the list.
     permission-group-list:
-      group-1: 4    #Perm: 'epichomes.maxhomes.group1' [This perm is given by default]
-      group-2: 8    #Perm: 'epichomes.maxhomes.group2'
-      group-3: 12   #Perm: 'epichomes.maxhomes.group3'
-      group-4: 16   #Perm: 'epichomes.maxhomes.group4'
-      group-5: 20   #Perm: 'epichomes.maxhomes.group5'
-      group-6: 24   #Perm: 'epichomes.maxhomes.group6'
+      - group: "epichomes.maxhomes.group6"
+        maxAmount: 24
+      - group: "epichomes.maxhomes.group5"
+        maxAmount: 20
+      - group: "epichomes.maxhomes.group4"
+        maxAmount: 16
+      - group: "epichomes.maxhomes.group3"
+        maxAmount: 12
+      - group: "epichomes.maxhomes.group2"
+        maxAmount: 8
+      - group: "epichomes.maxhomes.group1"
+        maxAmount: 4
   #Set below names that are not allowed to be used in home names. [They ARE case & syntax sensitive]
   disallowed-home-names:
     - "Gamers"

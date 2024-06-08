@@ -1,25 +1,26 @@
 package me.loving11ish.epichomes;
 
-import com.rylinaux.plugman.api.PlugManAPI;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.papermc.lib.PaperLib;
 import me.loving11ish.epichomes.commands.*;
 import me.loving11ish.epichomes.externalhooks.PlaceholderAPI;
 import me.loving11ish.epichomes.externalhooks.PlaceholderAPIHook;
-import me.loving11ish.epichomes.externalhooks.PlugManXAPI;
-import me.loving11ish.epichomes.files.UsermapFileManager;
 import me.loving11ish.epichomes.files.MessagesFileManager;
+import me.loving11ish.epichomes.files.UsermapFileManager;
 import me.loving11ish.epichomes.listeners.*;
+import me.loving11ish.epichomes.managers.TeleportationManager;
+import me.loving11ish.epichomes.managers.filemanagers.ConfigManager;
+import me.loving11ish.epichomes.managers.filemanagers.MessagesManager;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.updatesystem.JoinEvent;
 import me.loving11ish.epichomes.updatesystem.UpdateChecker;
 import me.loving11ish.epichomes.utils.AutoSaveTaskUtils;
-import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import me.loving11ish.epichomes.utils.VersionCheckerUtils;
+import me.loving11ish.epichomes.versionsystems.ServerVersion;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -31,145 +32,136 @@ import java.util.concurrent.TimeUnit;
 
 public final class EpicHomes extends JavaPlugin {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
-
     private final PluginDescriptionFile pluginInfo = getDescription();
     private final String pluginVersion = pluginInfo.getVersion();
 
     private static EpicHomes plugin;
     private static FoliaLib foliaLib;
+    private static ServerVersion serverVersion;
     private static VersionCheckerUtils versionCheckerUtils;
-    private static boolean GUIEnabled = true;
-    private static boolean onlineMode = true;
+    private static PlaceholderAPIHook placeholderAPIHook = null;
 
-    private boolean updateAvailable;
+    private boolean isPluginEnabled = true;
+    private boolean isOnlineMode = true;
+    private boolean isGUIEnabled = true;
+    private boolean isUpdateAvailable = false;
 
-    public MessagesFileManager messagesFileManager;
-    public UsermapFileManager usermapFileManager;
-    public UsermapStorageUtil usermapStorageUtil;
+    private MessagesFileManager messagesFileManager;
+    private UsermapFileManager usermapFileManager;
+    private UsermapStorageUtil usermapStorageUtil;
 
-    public HashMap<UUID, WrappedTask> teleportQueue = new HashMap<>();
-    private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
+    private ConfigManager configManager;
+    private MessagesManager messagesManager;
+
+    private TeleportationManager teleportationManager;
+
     private final List<String> pluginCommands = new ArrayList<>();
+    private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         // Plugin startup logic
         plugin = this;
         foliaLib = new FoliaLib(this);
-        versionCheckerUtils = new VersionCheckerUtils();
-        versionCheckerUtils.setVersion();
 
-        //Server version compatibility check
-        if (versionCheckerUtils.getVersion() < 13||versionCheckerUtils.getVersion() > 20){
-            console.sendMessage(ColorUtils.translateColorCodes("&4-------------------------------------------"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Your server version is: &d" + Bukkit.getVersion()));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin is only supported on the Minecraft versions listed below:"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.13.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.14.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.15.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.16.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.17.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.18.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.19.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &41.20.x"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Is now disabling!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&4-------------------------------------------"));
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }else {
-            console.sendMessage(ColorUtils.translateColorCodes("&a-------------------------------------------"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &aA supported Minecraft version has been detected"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &aYour server version is: &d" + Bukkit.getVersion()));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-            console.sendMessage(ColorUtils.translateColorCodes("&a-------------------------------------------"));
-        }
-
-        //Suggest PaperMC if not using
-        if (foliaLib.isUnsupported()|| foliaLib.isSpigot()){
-            PaperLib.suggestPaper(this);
-        }
-
-        //Check if PlugManX is enabled
-        if (Bukkit.getPluginManager().isPluginEnabled("PlugManX")||PlugManXAPI.isPlugManXEnabled()){
-            if (!PlugManAPI.iDoNotWantToBeUnOrReloaded("EpicHomes")){
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&4WARNING WARNING WARNING WARNING!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4You appear to be using an unsupported version of &d&lPlugManX"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Please &4&lDO NOT USE PLUGMANX TO LOAD/UNLOAD/RELOAD THIS PLUGIN!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Please &4&lFULLY RESTART YOUR SERVER!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4This plugin &4&lHAS NOT &4been validated to use this version of PlugManX!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4&lNo official support will be given to you if you use this!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4&lUnless Loving11ish has explicitly agreed to help!"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Please add EpicHomes to the ignored-plugins list in PlugManX's config.yml"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&c-------------------------------------------"));
-            }else {
-                console.sendMessage(ColorUtils.translateColorCodes("&a-------------------------------------------"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &aSuccessfully hooked into PlugManX"));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &aSuccessfully added EpicHomes to ignoredPlugins list."));
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-                console.sendMessage(ColorUtils.translateColorCodes("&a-------------------------------------------"));
-            }
-        }else {
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cPlugManX not found!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cDisabling PlugManX hook loader"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-        }
-
-        //Load the plugin configs
+        // Load the plugin configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
-        //Load messages.yml
-        this.messagesFileManager = new MessagesFileManager();
-        messagesFileManager.MessagesFileManager(this);
+        // Load ConfigManager
+        setConfigManager(new ConfigManager(getConfig()));
+        getConfigManager().loadConfigValues();
 
-        //Load usermap.yml
-        this.usermapFileManager = new UsermapFileManager();
-        usermapFileManager.UsermapFileManager(this);
+        // Load messages.yml
+        setMessagesFileManager(new MessagesFileManager(this));
 
-        //Load internal plugin objects
-        usermapStorageUtil = new UsermapStorageUtil();
+        // Load MessagesManager
+        setMessagesManager(new MessagesManager(getMessagesFileManager().getMessagesConfig()));
+        getMessagesManager().loadMessagesValues();
+        MessageUtils.setDebug(getConfigManager().isDebugMode());
 
-        //Load usermap contents to memory
-        if (usermapFileManager != null){
-            if (usermapFileManager.getUsermapConfig().contains("users.data")){
+        // Load usermap.yml
+        setUsermapFileManager(new UsermapFileManager(this));
+
+        // Check server version and set it
+        setVersion();
+        versionCheckerUtils = new VersionCheckerUtils();
+        versionCheckerUtils.setVersion();
+
+        // Server version compatibility check
+        if (versionCheckerUtils.getVersion() != 20 || !versionCheckerUtils.isVersionCheckedSuccessfully()) {
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
+            MessageUtils.sendConsole("&4This plugin is only supported on the Minecraft versions listed below:");
+            MessageUtils.sendConsole("&41.16.x");
+            MessageUtils.sendConsole("&41.17.x");
+            MessageUtils.sendConsole("&41.18.x");
+            MessageUtils.sendConsole("&41.19.x");
+            MessageUtils.sendConsole("&41.20.x");
+            MessageUtils.sendConsole("&4Is now disabling!");
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            setPluginEnabled(false);
+            return;
+        } else {
+            MessageUtils.sendConsole("&a-------------------------------------------");
+            MessageUtils.sendConsole("&aA supported Minecraft version has been detected");
+            MessageUtils.sendConsole("&aYour server version is: &d" + Bukkit.getVersion());
+            MessageUtils.sendConsole("&6Continuing plugin startup");
+            MessageUtils.sendConsole("&a-------------------------------------------");
+        }
+
+        if (getFoliaLib().isUnsupported()) {
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            MessageUtils.sendConsole("&4Your server appears to running a version other than Spigot based!");
+            MessageUtils.sendConsole("&4This plugin uses features that your server most likely doesn't have!");
+            MessageUtils.sendConsole("&4Is now disabling!");
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            setPluginEnabled(false);
+            return;
+        }
+
+        if (getFoliaLib().isSpigot()) {
+            PaperLib.suggestPaper(this);
+        }
+
+        // Set GUI enabled status
+        setGUIEnabled(getConfigManager().isUseGUI());
+
+        // Signal end of onLoad method
+        MessageUtils.sendDebugConsole("End of onLoad method");
+    }
+
+    @Override
+    public void onEnable() {
+        // Load internal plugin objects
+        setUsermapStorageUtil(new UsermapStorageUtil());
+
+        // Load usermap contents to memory
+        if (getUsermapFileManager() != null) {
+            if (getUsermapFileManager().getUsermapConfig().contains("users.data")) {
                 try {
-                    usermapStorageUtil.loadUsermap();
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Successfully loaded usermap to memory."));
+                    getUsermapStorageUtil().loadUsermap();
+                    MessageUtils.sendConsole("-------------------------------------------");
+                    MessageUtils.sendConsole("&3Successfully loaded usermap to memory.");
                 } catch (IOException e) {
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to load data from usermap.yml!"));
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4See below for errors!"));
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Disabling Plugin!"));
+                    MessageUtils.sendConsole("-------------------------------------------");
+                    MessageUtils.sendConsole("error", "&4Failed to load data from usermap.yml!");
+                    MessageUtils.sendConsole("error", "&4See below for errors!");
+                    MessageUtils.sendConsole("error", "&4Disabling Plugin!");
                     e.printStackTrace();
+                    MessageUtils.sendConsole("-------------------------------------------");
                     Bukkit.getPluginManager().disablePlugin(this);
                     return;
                 }
             }
         }
 
-        //Check for PersistentDataContainers for GUI system
-        if (versionCheckerUtils.getVersion() >= 14) {
-            GUIEnabled = getConfig().getBoolean("gui-system.use-global-gui.enabled", true);
-            if (GUIEnabled){
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Global GUI system enabled!"));
-            }else {
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cGlobal GUI system disabled!"));
-            }
-        }else {
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cYour current server version does not support PersistentDataContainers!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &c&lGlobal GUI system disabled!"));
-        }
+        // Load teleportation manager
+        setTeleportationManager(new TeleportationManager());
 
-        //Register commands
+        // Register commands
         HomeCommand homeCommand = new HomeCommand();
         HomeAdminCommand homeAdminCommand = new HomeAdminCommand();
         getCommand("home").setExecutor(homeCommand);
@@ -180,7 +172,7 @@ public final class EpicHomes extends JavaPlugin {
         getCommand("delhome").setExecutor(new DeleteHomeCommand());
         getCommand("importhomes").setExecutor(new HomeImportCommand());
 
-        //Register events
+        // Register events
         pluginCommands.add("/home");
         pluginCommands.add("/sethome");
         pluginCommands.add("/delhome");
@@ -199,134 +191,140 @@ public final class EpicHomes extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDisconnectionEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerCommandSendEvent(pluginCommands), this);
 
-        //Update banned names lists
+        // Update banned names lists
         HomeCommand.updateBannedNamesList();
         SetHomeCommand.updateBannedNamesList();
 
-        //Register PlaceHolderAPI hooks
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")||PlaceholderAPI.isPlaceholderAPIEnabled()){
-            new PlaceholderAPIHook().register();
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3PlaceholderAPI found!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3External placeholders enabled!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-        }else {
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cPlaceholderAPI not found!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &cExternal placeholders disabled!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &6Continuing plugin startup"));
-            console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
+        // Register PlaceHolderAPI hooks
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") || PlaceholderAPI.isPlaceholderAPIEnabled()) {
+            placeholderAPIHook = new PlaceholderAPIHook();
+            placeholderAPIHook.register();
+            MessageUtils.sendConsole("-------------------------------------------");
+            MessageUtils.sendConsole("&3PlaceholderAPI found!");
+            MessageUtils.sendConsole("&3External placeholders enabled!");
+        } else {
+            MessageUtils.sendConsole("-------------------------------------------");
+            MessageUtils.sendConsole("&cPlaceholderAPI not found!");
+            MessageUtils.sendConsole("&cExternal placeholders disabled!");
         }
+        MessageUtils.sendConsole("&6Continuing plugin startup");
+        MessageUtils.sendConsole("-------------------------------------------");
 
-        //Plugin startup message
-        console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin by: &b&lLoving11ish"));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3has been loaded successfully"));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin Version: &d&l" + pluginVersion));
-        if (getConfig().getBoolean("general.developer-debug-mode.enabled", false)){
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aDeveloper debug mode enabled!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aThis WILL fill the console"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &awith additional EpicHomes information!"));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aThis setting is not intended for "));
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &acontinous use!"));
-        }
-        console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
+        // Plugin startup message
+        MessageUtils.sendConsole("-------------------------------------------");
+        MessageUtils.sendConsole("&3Plugin by: &b&lLoving11ish");
+        MessageUtils.sendConsole("&3has been loaded successfully");
+        MessageUtils.sendConsole("&3Plugin Version: &d&l" + pluginVersion);
+        MessageUtils.sendDebugConsole( "&aDeveloper debug mode enabled!");
+        MessageUtils.sendDebugConsole( "&aThis WILL fill the console");
+        MessageUtils.sendDebugConsole( "&awith additional EpicHomes information!");
+        MessageUtils.sendDebugConsole( "&aThis setting is not intended for ");
+        MessageUtils.sendDebugConsole( "&acontinous use!");
+        MessageUtils.sendConsole("-------------------------------------------");
 
-        //Check for available updates
+        // Check for available updates
         new UpdateChecker(109590).getVersion(version -> {
-            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-            String PREFIX_PLACEHOLDER = "%PREFIX%";
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("no-update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
-                this.updateAvailable = false;
-            }else {
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.1").replace(PREFIX_PLACEHOLDER, prefix)));
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.2").replace(PREFIX_PLACEHOLDER, prefix)));
-                console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("update-available.3").replace(PREFIX_PLACEHOLDER, prefix)));
-                this.updateAvailable = true;
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerNoUpdateOne());
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerNoUpdateTwo());
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerNoUpdateThree());
+                setUpdateAvailable(false);
+            } else {
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerUpdateAvailableOne());
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerUpdateAvailableTwo());
+                MessageUtils.sendConsole(getMessagesManager().getUpdateCheckerUpdateAvailableThree());
+                setUpdateAvailable(true);
             }
         });
 
-        //Start auto save task
-        foliaLib.getImpl().runLaterAsync(() -> {
+        // Set plugin enabled to true
+        setPluginEnabled(true);
+
+        // Start auto save task
+        getFoliaLib().getImpl().runLaterAsync(() -> {
             AutoSaveTaskUtils.runAutoSaveTask();
-            String PREFIX_PLACEHOLDER = "%PREFIX%";
-            String prefix = messagesFileManager.getMessagesConfig().getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-            console.sendMessage(ColorUtils.translateColorCodes(messagesFileManager.getMessagesConfig().getString("auto-save-started").replace(PREFIX_PLACEHOLDER, prefix)));
+            MessageUtils.sendConsole(getMessagesManager().getAutoSaveStart());
         }, 5L, TimeUnit.SECONDS);
     }
 
     @Override
     public void onDisable() {
-        //Plugin shutdown logic
+        // Plugin shutdown logic
+        setPluginEnabled(false);
 
-        //Unregister event listeners
+        // Unregister event listeners
         HandlerList.unregisterAll(this);
 
-        //Safely stop the background tasks if running
-        console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin by: &b&lLoving11ish"));
+        // Unregister PlaceHolderAPI hooks
+        if (placeholderAPIHook != null) {
+            placeholderAPIHook.unregister();
+            MessageUtils.sendDebugConsole("&aExternal placeholders unregistered!");
+        }
+
+        // Safely stop the background tasks if running
+        MessageUtils.sendConsole("-------------------------------------------");
+        MessageUtils.sendConsole("&3Plugin by: &b&lLoving11ish");
         try {
-            if (!teleportQueue.isEmpty()){
-                for (Map.Entry<UUID, WrappedTask> wrappedTaskEntry: teleportQueue.entrySet()){
+            if (!getTeleportationManager().getTeleportQueue().isEmpty()) {
+                for (Map.Entry<UUID, WrappedTask> wrappedTaskEntry : getTeleportationManager().getTeleportQueue().entrySet()) {
                     WrappedTask wrappedTask = wrappedTaskEntry.getValue();
                     wrappedTask.cancel();
-                    if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + wrappedTask.toString()));
-                        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aTimed task canceled successfully"));
-                    }
-                    teleportQueue.remove(wrappedTaskEntry.getKey());
+                    MessageUtils.sendDebugConsole( "&aWrapped task: " + wrappedTask.toString());
+                    MessageUtils.sendDebugConsole( "&aTimed task canceled successfully");
+                    getTeleportationManager().getTeleportQueue().remove(wrappedTaskEntry.getKey());
                 }
             }
-            if (!AutoSaveTaskUtils.getAutoSaveTask().isCancelled()){
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aWrapped task: " + AutoSaveTaskUtils.getAutoSaveTask().toString()));
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aAuto save timed task canceled successfully"));
-                }
+            if (!AutoSaveTaskUtils.getAutoSaveTask().isCancelled()) {
+                MessageUtils.sendDebugConsole( "&aWrapped task: " + AutoSaveTaskUtils.getAutoSaveTask().toString());
+                MessageUtils.sendDebugConsole( "&aAuto save timed task canceled successfully");
                 AutoSaveTaskUtils.getAutoSaveTask().cancel();
             }
-            foliaLib.getImpl().cancelAllTasks();
-            if (foliaLib.isUnsupported()){
+            getFoliaLib().getImpl().cancelAllTasks();
+            if (getFoliaLib().isUnsupported()) {
                 Bukkit.getScheduler().cancelTasks(this);
-                if (getConfig().getBoolean("general.developer-debug-mode.enabled")){
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aBukkit scheduler tasks canceled successfully"));
-                }
+                MessageUtils.sendDebugConsole( "&aBukkit scheduler tasks canceled successfully");
             }
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3All pending teleport & background tasks stopped successfully."));
-        }catch (Exception e){
-            console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3All pending teleport & background tasks stopped successfully."));
+            MessageUtils.sendConsole("&3All pending teleport & background tasks stopped successfully.");
+        } catch (Exception e) {
+            MessageUtils.sendConsole("&3All pending teleport & background tasks stopped successfully.");
         }
 
-        //Saver usermap to usermap.yml
-        if (usermapStorageUtil != null){
-            if (!usermapStorageUtil.getRawUsermapList().isEmpty()){
+        // Saver usermap to usermap.yml
+        if (getUsermapStorageUtil() != null) {
+            if (!getUsermapStorageUtil().getRawUsermapList().isEmpty()) {
                 try {
-                    usermapStorageUtil.saveUsermap();
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3All users data saved to usermap.yml successfully!"));
+                    getUsermapStorageUtil().saveUsermap();
+                    MessageUtils.sendConsole("&3All users data saved to usermap.yml successfully!");
                 } catch (IOException e) {
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4Failed to save usermap data to usermap.yml!"));
-                    console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &4See below error for reason!"));
+                    MessageUtils.sendConsole("error", "&4Failed to save usermap data to usermap.yml!");
+                    MessageUtils.sendConsole("error", "&4See below error for reason!");
                     e.printStackTrace();
                 }
-            }else {
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Usermap storage was empty, skipping saving!"));
+            } else {
+                MessageUtils.sendConsole("&3Usermap storage was empty, skipping saving!");
             }
         }
 
-        //Final plugin shutdown message
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Plugin Version: &d&l" + pluginVersion));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Has been shutdown successfully"));
-        console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes: &3Goodbye!"));
-        console.sendMessage(ColorUtils.translateColorCodes("-------------------------------------------"));
+        // Final plugin shutdown message
+        MessageUtils.sendConsole("&3Plugin Version: &d&l" + pluginVersion);
+        MessageUtils.sendConsole("&3Has been shutdown successfully");
+        MessageUtils.sendConsole("&3Goodbye!");
+        MessageUtils.sendConsole("-------------------------------------------");
 
-        //Clear any plugin remains
+        // Clear any plugin remains
+        getTeleportationManager().getTeleportQueue().clear();
+        pluginCommands.clear();
+        playerMenuUtilityMap.clear();
+
+        placeholderAPIHook = null;
         usermapStorageUtil = null;
+        messagesManager = null;
+        configManager = null;
         usermapFileManager = null;
         messagesFileManager = null;
+        teleportationManager = null;
         versionCheckerUtils = null;
+        serverVersion = null;
         foliaLib = null;
         plugin = null;
     }
@@ -342,6 +340,16 @@ public final class EpicHomes extends JavaPlugin {
         }
     }
 
+    private void setVersion() {
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String bukkitVersion = Bukkit.getServer().getBukkitVersion();
+        if (bukkitVersion.contains("1.20.5") || bukkitVersion.contains("1.20.6")) {
+            serverVersion = ServerVersion.v1_20_R4;
+        } else {
+            serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
+        }
+    }
+
     public static EpicHomes getPlugin() {
         return plugin;
     }
@@ -350,27 +358,91 @@ public final class EpicHomes extends JavaPlugin {
         return foliaLib;
     }
 
+    public static ServerVersion getServerVersion() {
+        return serverVersion;
+    }
+
     public static VersionCheckerUtils getVersionCheckerUtils() {
         return versionCheckerUtils;
     }
 
-    public static boolean isGUIEnabled() {
-        return GUIEnabled;
+    public boolean isPluginEnabled() {
+        return isPluginEnabled;
     }
 
-    public static void setGUIEnabled(boolean GUIEnabled) {
-        EpicHomes.GUIEnabled = GUIEnabled;
+    public void setPluginEnabled(boolean pluginEnabled) {
+        isPluginEnabled = pluginEnabled;
     }
 
-    public static boolean isOnlineMode() {
-        return onlineMode;
+    public boolean isOnlineMode() {
+        return isOnlineMode;
     }
 
-    public static void setOnlineMode(boolean onlineMode) {
-        EpicHomes.onlineMode = onlineMode;
+    public void setOnlineMode(boolean onlineMode) {
+        isOnlineMode = onlineMode;
+    }
+
+    public boolean isGUIEnabled() {
+        return isGUIEnabled;
+    }
+
+    public void setGUIEnabled(boolean GUIEnabled) {
+        isGUIEnabled = GUIEnabled;
     }
 
     public boolean isUpdateAvailable() {
-        return updateAvailable;
+        return isUpdateAvailable;
+    }
+
+    public void setUpdateAvailable(boolean updateAvailable) {
+        isUpdateAvailable = updateAvailable;
+    }
+
+    public MessagesFileManager getMessagesFileManager() {
+        return messagesFileManager;
+    }
+
+    public void setMessagesFileManager(MessagesFileManager messagesFileManager) {
+        this.messagesFileManager = messagesFileManager;
+    }
+
+    public UsermapFileManager getUsermapFileManager() {
+        return usermapFileManager;
+    }
+
+    public void setUsermapFileManager(UsermapFileManager usermapFileManager) {
+        this.usermapFileManager = usermapFileManager;
+    }
+
+    public UsermapStorageUtil getUsermapStorageUtil() {
+        return usermapStorageUtil;
+    }
+
+    public void setUsermapStorageUtil(UsermapStorageUtil usermapStorageUtil) {
+        this.usermapStorageUtil = usermapStorageUtil;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public void setConfigManager(ConfigManager configManager) {
+        this.configManager = configManager;
+    }
+
+    public MessagesManager getMessagesManager() {
+        return messagesManager;
+    }
+
+    public void setMessagesManager(MessagesManager messagesManager) {
+        this.messagesManager = messagesManager;
+    }
+
+    public TeleportationManager getTeleportationManager() {
+        return teleportationManager;
+    }
+
+    public void setTeleportationManager(TeleportationManager teleportationManager) {
+        this.teleportationManager = teleportationManager;
     }
 }

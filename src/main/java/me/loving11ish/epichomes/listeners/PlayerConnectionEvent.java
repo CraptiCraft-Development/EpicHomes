@@ -1,14 +1,13 @@
 package me.loving11ish.epichomes.listeners;
 
+import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.api.events.PlayerNameChangedEvent;
-import me.loving11ish.epichomes.api.events.UserAddedToUsermapEvent;
+import me.loving11ish.epichomes.api.events.AsyncPlayerNameChangedEvent;
+import me.loving11ish.epichomes.api.events.AsyncUserAddedToUsermapEvent;
 import me.loving11ish.epichomes.models.User;
-import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,42 +15,44 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerConnectionEvent implements Listener {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
 
-    private final FileConfiguration config = EpicHomes.getPlugin().getConfig();
-
-    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
 
     @EventHandler
     public void onPlayerConnection(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!usermapStorageUtil.isUserExisting(player)){
+        if (!usermapStorageUtil.isUserExisting(player)) {
             User user = usermapStorageUtil.addToUsermap(player);
-            fireUserAddedToUsermapEvent(player, user);
-            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired UserAddedToUsermapEvent"));
-            }
+
+            foliaLib.getImpl().runAsync((task) -> {
+                fireUserAddedToUsermapEvent(player, user);
+                MessageUtils.sendDebugConsole("&aFired AsyncUserAddedToUsermapEvent");
+            });
+
             return;
         }
-        if (usermapStorageUtil.hasNameChanged(player)){
+        if (usermapStorageUtil.hasNameChanged(player)) {
             User user = usermapStorageUtil.getUserByOnlinePlayer(player);
             String lastPlayerName = user.getLastKnownName();
             String newPlayerName = player.getName();
-            firePlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
-            if (config.getBoolean("general.developer-debug-mode.enabled", false)){
-                console.sendMessage(ColorUtils.translateColorCodes("&6EpicHomes-Debug: &aFired PlayerNameChangedEvent"));
-            }
+
+            foliaLib.getImpl().runAsync((task) -> {
+                firePlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
+                MessageUtils.sendDebugConsole("&aFired AsyncPlayerNameChangedEvent");
+            });
+
             usermapStorageUtil.updatePlayerName(player);
         }
     }
 
     private static void fireUserAddedToUsermapEvent(Player player, User user) {
-        UserAddedToUsermapEvent userAddedToUsermapEvent = new UserAddedToUsermapEvent(player, user);
-        Bukkit.getPluginManager().callEvent(userAddedToUsermapEvent);
+        AsyncUserAddedToUsermapEvent asyncUserAddedToUsermapEvent = new AsyncUserAddedToUsermapEvent(player, user);
+        Bukkit.getPluginManager().callEvent(asyncUserAddedToUsermapEvent);
     }
 
     private static void firePlayerNameChangedEvent(Player player, User user, String lastPlayerName, String newPlayerName) {
-        PlayerNameChangedEvent playerNameChangedEvent = new PlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
-        Bukkit.getPluginManager().callEvent(playerNameChangedEvent);
+        AsyncPlayerNameChangedEvent asyncPlayerNameChangedEvent = new AsyncPlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
+        Bukkit.getPluginManager().callEvent(asyncPlayerNameChangedEvent);
     }
 }

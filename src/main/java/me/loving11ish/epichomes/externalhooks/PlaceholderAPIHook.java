@@ -4,19 +4,16 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
-    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
-
-    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
-    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().usermapStorageUtil;
+    private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
 
     @Override
     public @NotNull String getIdentifier() {
@@ -45,7 +42,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("pluginPrefix")){
             //%epicHomes_pluginPrefix%
-            return ColorUtils.translateColorCodes(prefix);
+            return ColorUtils.translateColorCodes(MessageUtils.prefix);
         }
 
         if (params.equalsIgnoreCase("pluginVersion")){
@@ -55,7 +52,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("pluginAuthor")){
             //%epicHomes_pluginAuthor%
-            return EpicHomes.getPlugin().getDescription().getAuthors().get(0);
+            return EpicHomes.getPlugin().getDescription().getAuthors().toString();
         }
 
         if (params.equalsIgnoreCase("baseServerVersion")){
@@ -87,6 +84,15 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             //%epicHomes_userHomeListSize%
             if (userHomesList != null && !userHomesList.isEmpty()){
                 return String.valueOf(userHomesList.size());
+            }else {
+                return "";
+            }
+        }
+
+        if (params.equalsIgnoreCase("userHomeList")){
+            //%epicHomes_userHomeList%
+            if (userHomesList != null && !userHomesList.isEmpty()){
+                return String.join(", ", userHomesList);
             }else {
                 return "";
             }
