@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,60 +15,54 @@ import java.util.*;
 
 public class UsermapStorageUtil {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
-    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
-    private final FileConfiguration usermapConfig = EpicHomes.getPlugin().usermapFileManager.getUsermapConfig();
-
-    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
-    private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
-
-    private final String prefix = messagesConfig.getString("global-prefix", "&f[&6Epic&bHomes&f]&r");
+    private final FileConfiguration usermapConfig = EpicHomes.getPlugin().getUsermapFileManager().getUsermapConfig();
 
     private final HashMap<UUID, User> usermapStorage = new HashMap<>();
 
+    private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
+
     public void saveUsermap() throws IOException {
-        for (Map.Entry<UUID, User> entry : usermapStorage.entrySet()) {
+        for (Map.Entry<UUID, User> entry : this.usermapStorage.entrySet()) {
             HashMap<String, Location> homeLocations = entry.getValue().getHomesList();
-            usermapConfig.set("users.data." + entry.getKey() + ".userUUID", entry.getValue().getUserUUID());
-            usermapConfig.set("users.data." + entry.getKey() + ".lastKnownName", entry.getValue().getLastKnownName());
+            this.usermapConfig.set("users.data." + entry.getKey() + ".userUUID", entry.getValue().getUserUUID());
+            this.usermapConfig.set("users.data." + entry.getKey() + ".lastKnownName", entry.getValue().getLastKnownName());
             if (!entry.getValue().getHomesList().isEmpty()){
                 for (Map.Entry<String, Location> homeEntry : homeLocations.entrySet()) {
                     if (homeEntry.getValue().getWorld() == null){
-                        console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("usermap-file-save-failure")
-                                .replace(PREFIX_PLACEHOLDER, prefix)
-                                .replace("%PLAYER%", entry.getValue().getLastKnownName())));
+                        MessageUtils.sendConsole("warning", EpicHomes.getPlugin().getMessagesManager().getUserMapSaveFailed()
+                                .replace("%PLAYER%", entry.getValue().getLastKnownName()));
                         continue;
                     }
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeName", homeEntry.getKey());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeWorld", homeEntry.getValue().getWorld().getName());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeX", homeEntry.getValue().getX());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeY", homeEntry.getValue().getY());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeZ", homeEntry.getValue().getZ());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeYaw", homeEntry.getValue().getYaw());
-                    usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homePitch", homeEntry.getValue().getPitch());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeName", homeEntry.getKey());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeWorld", homeEntry.getValue().getWorld().getName());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeX", homeEntry.getValue().getX());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeY", homeEntry.getValue().getY());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeZ", homeEntry.getValue().getZ());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homeYaw", homeEntry.getValue().getYaw());
+                    this.usermapConfig.set("users.data." + entry.getKey() + ".homes." + homeEntry.getKey() + ".homePitch", homeEntry.getValue().getPitch());
                 }
             }
         }
-        EpicHomes.getPlugin().usermapFileManager.saveUsermapConfig();
+        EpicHomes.getPlugin().getUsermapFileManager().saveUsermapConfig();
     }
 
     public void loadUsermap() throws IOException {
-        usermapStorage.clear();
-        usermapConfig.getConfigurationSection("users.data").getKeys(false).forEach(key -> {
+        this.usermapStorage.clear();
+        this.usermapConfig.getConfigurationSection("users.data").getKeys(false).forEach(key -> {
             HashMap<String, Location> homeLocations = new HashMap<>();
             UUID uuid = UUID.fromString(key);
-            String userUUID = usermapConfig.getString("users.data." + key + ".userUUID");
-            String lastKnownName = usermapConfig.getString("users.data." + key + ".lastKnownName");
-            ConfigurationSection homesSection = usermapConfig.getConfigurationSection("users.data." + key + ".homes");
+            String userUUID = this.usermapConfig.getString("users.data." + key + ".userUUID");
+            String lastKnownName = this.usermapConfig.getString("users.data." + key + ".lastKnownName");
+            ConfigurationSection homesSection = this.usermapConfig.getConfigurationSection("users.data." + key + ".homes");
             if (homesSection != null){
-                usermapConfig.getConfigurationSection("users.data." + key + ".homes").getKeys(false).forEach(homeKey -> {
-                    String homeName = usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeName");
-                    String homeWorld = usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeWorld");
-                    double homeX = usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeX");
-                    double homeY = usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeY");
-                    double homeZ = usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeZ");
-                    float homeYaw = (float) usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeYaw");
-                    float homePitch = (float) usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homePitch");
+                this.usermapConfig.getConfigurationSection("users.data." + key + ".homes").getKeys(false).forEach(homeKey -> {
+                    String homeName = this.usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeName");
+                    String homeWorld = this.usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeWorld");
+                    double homeX = this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeX");
+                    double homeY = this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeY");
+                    double homeZ = this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeZ");
+                    float homeYaw = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeYaw");
+                    float homePitch = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homePitch");
                     World world = Bukkit.getWorld(homeWorld);
                     Location location = new Location(world, homeX, homeY, homeZ, homeYaw, homePitch);
                     homeLocations.put(homeName, location);
@@ -79,7 +72,7 @@ public class UsermapStorageUtil {
             if (!homeLocations.isEmpty()){
                 user.setHomesList(homeLocations);
             }
-            usermapStorage.put(uuid, user);
+            this.usermapStorage.put(uuid, user);
         });
     }
 
@@ -89,7 +82,7 @@ public class UsermapStorageUtil {
         String lastKnownName = player.getName();
         if (!isUserExisting(player)){
             User user = new User(userUUID, lastKnownName);
-            usermapStorage.put(uuid, user);
+            this.usermapStorage.put(uuid, user);
             return user;
         }
         return null;
@@ -97,24 +90,24 @@ public class UsermapStorageUtil {
 
     public boolean isUserExisting(Player player) {
         UUID uuid = player.getUniqueId();
-        return usermapStorage.containsKey(uuid);
+        return this.usermapStorage.containsKey(uuid);
     }
 
     public boolean isUserExisting(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
-        return usermapStorage.containsKey(uuid);
+        return this.usermapStorage.containsKey(uuid);
     }
 
     public boolean hasNameChanged(Player player) {
         UUID uuid = player.getUniqueId();
-        User user = usermapStorage.get(uuid);
+        User user = this.usermapStorage.get(uuid);
         String lastKnownName = user.getLastKnownName();
         return !player.getName().equals(lastKnownName);
     }
 
     public void updatePlayerName(Player player) {
         UUID uuid = player.getUniqueId();
-        User user = usermapStorage.get(uuid);
+        User user = this.usermapStorage.get(uuid);
         String newPlayerName = player.getName();
         user.setLastKnownName(newPlayerName);
     }
@@ -122,7 +115,7 @@ public class UsermapStorageUtil {
     public User getUserByOnlinePlayer(Player player) {
         UUID uuid = player.getUniqueId();
         if (isUserExisting(player)){
-            return usermapStorage.get(uuid);
+            return this.usermapStorage.get(uuid);
         }
         return null;
     }
@@ -130,9 +123,13 @@ public class UsermapStorageUtil {
     public User getUserByOfflinePlayer(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
         if (isUserExisting(offlinePlayer)){
-            return usermapStorage.get(uuid);
+            return this.usermapStorage.get(uuid);
         }
         return null;
+    }
+
+    public User getUserByUUID(UUID uuid) {
+        return this.usermapStorage.get(uuid);
     }
 
     public Player getBukkitPlayerByUser(User user) {
@@ -146,7 +143,7 @@ public class UsermapStorageUtil {
     }
 
     public User getUserByLastKnownName(String lastKnownName) {
-        for (User user : usermapStorage.values()){
+        for (User user : this.usermapStorage.values()){
             if (user.getLastKnownName().equalsIgnoreCase(lastKnownName)){
                 return user;
             }
@@ -165,9 +162,8 @@ public class UsermapStorageUtil {
         for (Map.Entry<String, Location> home: userHomesList.entrySet()){
             if (home.getKey().equalsIgnoreCase(homeName)){
                 Player player = getBukkitPlayerByUser(user);
-                player.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("home-set-failed-home-exists")
-                        .replace(PREFIX_PLACEHOLDER, ColorUtils.translateColorCodes(prefix))
-                        .replace(HOME_NAME_PLACEHOLDER, ColorUtils.translateColorCodes(homeName))));
+                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailAlreadyExists()
+                        .replace(HOME_NAME_PLACEHOLDER, ColorUtils.translateColorCodes(homeName)));
                 return false;
             }
         }
@@ -182,9 +178,9 @@ public class UsermapStorageUtil {
             if (home.getKey().equalsIgnoreCase(homeName)){
                 userHomesList.remove(homeName);
                 user.setHomesList(userHomesList);
-                usermapStorage.replace(UUID.fromString(user.getUserUUID()), user);
-                usermapConfig.set("users.data." + key + ".homes." + homeName, null);
-                EpicHomes.getPlugin().usermapFileManager.saveUsermapConfig();
+                this.usermapStorage.replace(UUID.fromString(user.getUserUUID()), user);
+                this.usermapConfig.set("users.data." + key + ".homes." + homeName, null);
+                EpicHomes.getPlugin().getUsermapFileManager().saveUsermapConfig();
                 return true;
             }
         }
@@ -207,13 +203,13 @@ public class UsermapStorageUtil {
 
     public Set<Map.Entry<String, Location>> getHomeLocationsListByPlayer(Player player) {
         UUID uuid = player.getUniqueId();
-        User user = usermapStorage.get(uuid);
+        User user = this.usermapStorage.get(uuid);
         return user.getHomesList().entrySet();
     }
 
     public Set<Map.Entry<String, Location>> getHomeLocationsListByOfflinePlayer(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
-        User user = usermapStorage.get(uuid);
+        User user = this.usermapStorage.get(uuid);
         return user.getHomesList().entrySet();
     }
 
@@ -227,19 +223,19 @@ public class UsermapStorageUtil {
     }
 
     public void setHomeImportCompleted() {
-        usermapConfig.set("import-completed", true);
-        EpicHomes.getPlugin().usermapFileManager.saveUsermapConfig();
+        this.usermapConfig.set("import-completed", true);
+        EpicHomes.getPlugin().getUsermapFileManager().saveUsermapConfig();
     }
 
     public boolean getHomeImportCompleted() {
-        return usermapConfig.getBoolean("import-completed");
+        return this.usermapConfig.getBoolean("import-completed");
     }
 
     public Set<UUID> getRawUsermapList() {
-        return usermapStorage.keySet();
+        return this.usermapStorage.keySet();
     }
 
     public HashMap<UUID, User> getUsermapStorage() {
-        return usermapStorage;
+        return this.usermapStorage;
     }
 }

@@ -2,10 +2,7 @@ package me.loving11ish.epichomes.updatesystem;
 
 import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
-import me.loving11ish.epichomes.utils.ColorUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import me.loving11ish.epichomes.utils.MessageUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +12,9 @@ import java.util.function.Consumer;
 
 public class UpdateChecker {
 
-    private final ConsoleCommandSender console = Bukkit.getConsoleSender();
-
     private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
-    private final FileConfiguration messagesConfig = EpicHomes.getPlugin().messagesFileManager.getMessagesConfig();
 
     private final int resourceId;
-
-    private final String prefix = messagesConfig.getString("global-prefix");
-    private static final String PREFIX_PLACEHOLDER = "%PREFIX%";
 
     public UpdateChecker(int resourceId) {
         this.resourceId = resourceId;
@@ -36,7 +27,7 @@ public class UpdateChecker {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException exception) {
-                console.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("update-check-failure").replace(PREFIX_PLACEHOLDER, prefix) + exception.getMessage()));
+                MessageUtils.sendConsole("warning", EpicHomes.getPlugin().getMessagesManager().getUpdateCheckerFailed() + exception.getMessage());
             }
         });
     }

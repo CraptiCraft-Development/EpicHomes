@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -20,33 +20,43 @@
     <build>
         <defaultGoal>package</defaultGoal>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.12.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version> <!-- Make sure to always use the latest version (https://maven.apache.org/plugins/maven-shade-plugin/) -->
+                <version>3.5.2</version> <!-- Make sure to always use the latest version (https://maven.apache.org/plugins/maven-shade-plugin/) -->
                 <configuration>
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.paperlib</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>me.loving11ish.epichomes.libs.paperlib</shadedPattern> <!-- Replace this -->
                         </relocation>
                         <relocation>
                             <pattern>com.tcoded.folialib</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.folialib</shadedPattern>
+                            <shadedPattern>me.loving11ish.epichomes.libs.folialib</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.github.lightlibs</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.lightlibs</shadedPattern>
+                            <shadedPattern>me.loving11ish.epichomes.libs.lightlibs</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.gson</pattern>
+                            <shadedPattern>me.loving11ish.epichomes.libs.gson</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache.commons</pattern>
+                            <shadedPattern>me.loving11ish.epichomes.libs.commons-lang3</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -59,6 +69,102 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.guardsquare</groupId>
+                        <artifactId>proguard-core</artifactId>
+                        <version>9.1.1</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>2.6.0</version>
+                <executions>
+                    <execution>
+                        <id>obfuscation-packaging</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                        <!--                        <>true</>-->
+                        <configuration>
+                            <proguardVersion>9.1.1</proguardVersion>
+                            <obfuscate>true</obfuscate>
+                            <injar>${project.build.finalName}.jar</injar>
+                            <outjar>EpicHomes-${project.version}.jar</outjar>
+                            <options>
+                                <!--                                <option>-libraryjars ${java.home}/lib/rt.jar</option>-->
+                                <option>-libraryjars ${java.home}/jmods/java.base.jmod</option>
+                                <option>-libraryjars ${java.home}/jmods/java.logging.jmod</option>
+                                <option>-repackageclasses me.loving11ish.epichomes</option>
+                                <option>-keep class me.loving11ish.epichomes.libs.** {*;}</option>
+                                <option>-keep class me.loving11ish.epichomes.api.** {*;}</option>
+                                <option>
+                                    -keep class me.loving11ish.epichomes.EpicHomes {
+                                    *** onLoad(...);
+                                    *** onEnable(...);
+                                    *** onDisable(...);
+                                    }
+                                </option>
+                                <option>
+                                    -keep,allowobfuscation class * implements org.bukkit.event.Listener {
+                                    @org.bukkit.event.EventHandler
+                                    *** *(...);
+                                    }
+                                </option>
+                                <option>-keepclassmembers class * extends java.lang.Enum {
+                                    &lt;fields&gt;;
+                                    public static **[] values();
+                                    public static ** valueOf(java.lang.String);
+                                    }
+                                </option>
+                                <option>-keepattributes *Annotation*,SourceFile,LineNumberTable</option>
+                                <!--                            <option>-dontoptimize</option>-->
+                                <!--                            <option>-dontshrink</option>-->
+                                <option>-dontwarn java.sql.SQLException</option>
+                                <option>-dontwarn me.loving11ish.epichomes.libs.**</option>
+                                <option>-dontwarn me.loving11ish.epichomes.api.**</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                    <excludes>src.main.java.me.loving11ish.epichomes.EpicHomes</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.websocketutils.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.versionsystems.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.utils.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.models.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.menusystem.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.listeners.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.files.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.externalhooks.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.commands.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.importers.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.managers.**</excludes>
+                    <excludes>src.main.java.me.loving11ish.epichomes.updatesystem.**</excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <id>execution1</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
         <resources>
             <resource>
@@ -85,11 +191,6 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <!-- PlugMan -->
-        <repository>
-            <id>PlugMan</id>
-            <url>https://raw.githubusercontent.com/TheBlackEntity/PlugMan/repository/</url>
-        </repository>
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
@@ -98,6 +199,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -105,38 +211,44 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.13.0</version>
+            <version>3.14.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.4</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.github.lightlibs</groupId>
             <artifactId>simplehttpwrapper</artifactId>
             <version>0.0.3-alpha</version>
         </dependency>
-        <dependency>
-            <groupId>com.rylinaux</groupId>
-            <artifactId>PlugMan</artifactId>
-            <version>2.3.3</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>

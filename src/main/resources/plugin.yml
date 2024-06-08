@@ -6,7 +6,9 @@ folia-supported: true
 authors: [Loving11ish]
 description: A fully featured homes plugin that is resource efficient and simple to use.
 softdepend: [ PlugManX, PlaceholderAPI ]
+
 commands:
+
   home:
     description: This is the main command for the plugin.
     usage: "/home [<home-name>|set|delete|list]"
@@ -15,18 +17,22 @@ commands:
       - eh
       - homes
       - epichomes
+
   homeadmin:
     description: This is the command to access all admin features.
     usage: "/homeadmin [delete|visit|list|reload]"
     permission: epichomes.admin
     aliases:
       - ha
+
   sethome:
     description: This command lets a player st at home at their current location.
     usage: "/sethome <home-name>"
+
   delhome:
     description: This command lets a player delete the specified home if it exists.
     usage: "/delhome <home-name>"
+
   importhomes:
     description: The command used by ops to import homes and player data from the StormerHomes plugin.
     usage: "/importhomes"
