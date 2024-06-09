@@ -24,7 +24,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>3.13.0</version> <!-- (https://maven.apache.org/plugins/maven-compiler-plugin/) -->
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -34,7 +34,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version> <!-- Make sure to always use the latest version (https://maven.apache.org/plugins/maven-shade-plugin/) -->
+                <version>3.6.0</version> <!-- (https://maven.apache.org/plugins/maven-shade-plugin/) -->
                 <configuration>
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
@@ -70,73 +70,10 @@
                 </executions>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>com.guardsquare</groupId>-->
-<!--                        <artifactId>proguard-core</artifactId>-->
-<!--                        <version>9.1.1</version>-->
-<!--                        <scope>runtime</scope>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--                <groupId>com.github.wvengen</groupId>-->
-<!--                <artifactId>proguard-maven-plugin</artifactId>-->
-<!--                <version>2.6.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>obfuscation-packaging</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>proguard</goal>-->
-<!--                        </goals>-->
-<!--                        &lt;!&ndash;                        <>true</>&ndash;&gt;-->
-<!--                        <configuration>-->
-<!--                            <proguardVersion>9.1.1</proguardVersion>-->
-<!--                            <obfuscate>true</obfuscate>-->
-<!--                            <injar>${project.build.finalName}.jar</injar>-->
-<!--                            <outjar>EpicHomes-${project.version}.jar</outjar>-->
-<!--                            <options>-->
-<!--                                &lt;!&ndash;                                <option>-libraryjars ${java.home}/lib/rt.jar</option>&ndash;&gt;-->
-<!--                                <option>-libraryjars ${java.home}/jmods/java.base.jmod</option>-->
-<!--                                <option>-libraryjars ${java.home}/jmods/java.logging.jmod</option>-->
-<!--                                <option>-repackageclasses me.loving11ish.epichomes</option>-->
-<!--                                <option>-keep class me.loving11ish.epichomes.libs.** {*;}</option>-->
-<!--                                <option>-keep class me.loving11ish.epichomes.api.** {*;}</option>-->
-<!--                                <option>-->
-<!--                                    -keep class me.loving11ish.epichomes.EpicHomes {-->
-<!--                                    *** onLoad(...);-->
-<!--                                    *** onEnable(...);-->
-<!--                                    *** onDisable(...);-->
-<!--                                    }-->
-<!--                                </option>-->
-<!--                                <option>-->
-<!--                                    -keep,allowobfuscation class * implements org.bukkit.event.Listener {-->
-<!--                                    @org.bukkit.event.EventHandler-->
-<!--                                    *** *(...);-->
-<!--                                    }-->
-<!--                                </option>-->
-<!--                                <option>-keepclassmembers class * extends java.lang.Enum {-->
-<!--                                    &lt;fields&gt;;-->
-<!--                                    public static **[] values();-->
-<!--                                    public static ** valueOf(java.lang.String);-->
-<!--                                    }-->
-<!--                                </option>-->
-<!--                                <option>-keepattributes *Annotation*,SourceFile,LineNumberTable</option>-->
-<!--                                &lt;!&ndash;                            <option>-dontoptimize</option>&ndash;&gt;-->
-<!--                                &lt;!&ndash;                            <option>-dontshrink</option>&ndash;&gt;-->
-<!--                                <option>-dontwarn java.sql.SQLException</option>-->
-<!--                                <option>-dontwarn me.loving11ish.epichomes.libs.**</option>-->
-<!--                                <option>-dontwarn me.loving11ish.epichomes.api.**</option>-->
-<!--                            </options>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.7.0</version> <!-- (https://maven.apache.org/plugins/maven-javadoc-plugin/) -->
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
