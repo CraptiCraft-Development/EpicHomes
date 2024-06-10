@@ -1,4 +1,4 @@
 jdk:
   - openjdk11
-maven:
-  - 3.6.3
+install:
+  - ./mvnw install -DskipTests
