@@ -17,6 +17,8 @@ As another massive bonus, EpicHomes also features the ability for any server own
 
 Another big bonus of EpicHomes is direct api support for the very popular PlugManX plugin management system.
 
+Click here for the detailed [Wiki](https://github.com/CraptiCraft-Development/EpicHomes/wiki) for EpicHomes and EpicHomesAPI.
+
 [------------------------------------------------------------------------------------------------------------------------------------------------------------------------]
 
 **Dependancies:
@@ -26,8 +28,6 @@ None!
 **Soft Dependancies:
 
 PlaceholderAPI
-
-PlugManX
 
 [------------------------------------------------------------------------------------------------------------------------------------------------------------------------]
 
