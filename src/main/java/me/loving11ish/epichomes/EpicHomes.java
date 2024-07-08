@@ -89,7 +89,8 @@ public final class EpicHomes extends JavaPlugin {
         versionCheckerUtils.setVersion();
 
         // Server version compatibility check
-        if (versionCheckerUtils.getVersion() != 20 || !versionCheckerUtils.isVersionCheckedSuccessfully()) {
+        if (versionCheckerUtils.getVersion() < 16 || versionCheckerUtils.getVersion() > 21
+                || !versionCheckerUtils.isVersionCheckedSuccessfully()) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
             MessageUtils.sendConsole("&4This plugin is only supported on the Minecraft versions listed below:");
@@ -98,6 +99,7 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole("&41.18.x");
             MessageUtils.sendConsole("&41.19.x");
             MessageUtils.sendConsole("&41.20.x");
+            MessageUtils.sendConsole("&41.21.x");
             MessageUtils.sendConsole("&4Is now disabling!");
             MessageUtils.sendConsole("&4-------------------------------------------");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -343,8 +345,12 @@ public final class EpicHomes extends JavaPlugin {
     private void setVersion() {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-        if (bukkitVersion.contains("1.20.5") || bukkitVersion.contains("1.20.6")) {
-            serverVersion = ServerVersion.v1_20_R4;
+        if (bukkitVersion.contains("1.20.5")) {
+            serverVersion = ServerVersion.v1_20_R5;
+        } else if (bukkitVersion.contains("1.20.6")) {
+            serverVersion = ServerVersion.v1_20_R5;
+        } else if (bukkitVersion.contains("1.21")) {
+            serverVersion = ServerVersion.v1_21_R1;
         } else {
             serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
         }
