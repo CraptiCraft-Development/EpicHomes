@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,12 +20,12 @@ public class SetHomeCommand implements CommandExecutor {
     private static List<String> bannedNames;
 
     public static void updateBannedNamesList() {
-        foliaLib.getImpl().runLaterAsync(() ->
+        foliaLib.getScheduler().runLaterAsync(() ->
                 bannedNames = EpicHomes.getPlugin().getConfigManager().getBannedHomeNames(), 50L, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 

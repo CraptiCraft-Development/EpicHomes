@@ -39,7 +39,7 @@ public class DeleteSubCommand {
                                 try {
                                     if (usermapStorageUtil.removeHomeFromUser(user, homeName)) {
 
-                                        foliaLib.getImpl().runAsync((task) -> {
+                                        foliaLib.getScheduler().runAsync((task) -> {
                                             fireHomeDeleteEvent(player, user, homeName);
                                             MessageUtils.sendDebugConsole("&aFired AsyncHomeDeleteEvent");
                                         });
@@ -80,7 +80,7 @@ public class DeleteSubCommand {
                             try {
                                 if (usermapStorageUtil.removeHomeFromUser(user, homeName)) {
 
-                                    foliaLib.getImpl().runAsync((task) -> {
+                                    foliaLib.getScheduler().runAsync((task) -> {
                                         fireHomeDeleteEvent(player, user, homeName);
                                         MessageUtils.sendDebugConsole("&aFired AsyncHomeDeleteEvent");
                                     });
@@ -120,7 +120,7 @@ public class DeleteSubCommand {
                         try {
                             if (usermapStorageUtil.removeHomeFromUser(targetUser, homeName)) {
 
-                                foliaLib.getImpl().runAsync((task) -> {
+                                foliaLib.getScheduler().runAsync((task) -> {
                                     fireHomeDeleteEvent(offlineTarget.getPlayer(), targetUser, homeName);
                                     MessageUtils.sendDebugConsole("&aFired AsyncHomeDeleteEvent");
                                 });

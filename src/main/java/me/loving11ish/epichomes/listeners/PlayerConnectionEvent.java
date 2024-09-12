@@ -25,7 +25,7 @@ public class PlayerConnectionEvent implements Listener {
         if (!usermapStorageUtil.isUserExisting(player)) {
             User user = usermapStorageUtil.addToUsermap(player);
 
-            foliaLib.getImpl().runAsync((task) -> {
+            foliaLib.getScheduler().runAsync((task) -> {
                 fireUserAddedToUsermapEvent(player, user);
                 MessageUtils.sendDebugConsole("&aFired AsyncUserAddedToUsermapEvent");
             });
@@ -37,7 +37,7 @@ public class PlayerConnectionEvent implements Listener {
             String lastPlayerName = user.getLastKnownName();
             String newPlayerName = player.getName();
 
-            foliaLib.getImpl().runAsync((task) -> {
+            foliaLib.getScheduler().runAsync((task) -> {
                 firePlayerNameChangedEvent(player, user, lastPlayerName, newPlayerName);
                 MessageUtils.sendDebugConsole("&aFired AsyncPlayerNameChangedEvent");
             });

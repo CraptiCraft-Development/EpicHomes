@@ -15,7 +15,7 @@ public class AutoSaveTaskUtils {
     public static WrappedTask autoSaveTask;
 
     public static void runAutoSaveTask() {
-        autoSaveTask = foliaLib.getImpl().runTimerAsync(() -> {
+        autoSaveTask = foliaLib.getScheduler().runTimerAsync(() -> {
             try {
                 EpicHomes.getPlugin().getUsermapStorageUtil().saveUsermap();
 

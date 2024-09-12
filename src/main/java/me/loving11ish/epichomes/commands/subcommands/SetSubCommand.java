@@ -74,7 +74,7 @@ public class SetSubCommand {
                     MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetSuccess()
                             .replace(HOME_NAME_PLACEHOLDER, homeName));
 
-                    foliaLib.getImpl().runAsync((task) -> {
+                    foliaLib.getScheduler().runAsync((task) -> {
                         fireHomeSetEvent(player, user, homeName, location);
                         MessageUtils.sendDebugConsole("&aFired AsyncHomeSetEvent");
                     });

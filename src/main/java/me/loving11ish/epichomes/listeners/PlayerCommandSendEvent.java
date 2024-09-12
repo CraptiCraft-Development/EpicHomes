@@ -44,10 +44,10 @@ public class PlayerCommandSendEvent implements Listener {
                 if (coolDown.containsKey(uuid)) {
 
                     if (coolDown.get(uuid) > System.currentTimeMillis()) {
-                        Long timeLeft = (coolDown.get(uuid) - System.currentTimeMillis()) / 1000;
+                        long timeLeft = (coolDown.get(uuid) - System.currentTimeMillis()) / 1000;
 
                         MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getCommandCooldownTimeRemaining()
-                                .replace(TIME_PLACEHOLDER, timeLeft.toString()));
+                                .replace(TIME_PLACEHOLDER, Long.toString(timeLeft)));
 
                         event.setCancelled(true);
                         return;

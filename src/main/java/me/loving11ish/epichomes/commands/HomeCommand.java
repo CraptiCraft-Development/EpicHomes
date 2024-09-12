@@ -33,7 +33,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
 
     public static void updateBannedNamesList() {
-        foliaLib.getImpl().runLaterAsync(() ->
+        foliaLib.getScheduler().runLaterAsync(() ->
                 bannedNames = EpicHomes.getPlugin().getConfigManager().getBannedHomeNames(), 50L, TimeUnit.MILLISECONDS);
     }
 
@@ -130,7 +130,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
 
                         if (EpicHomes.getPlugin().getConfigManager().isUseDelayBeforeHomeTP()) {
-                            foliaLib.getImpl().runAsync((task) -> {
+                            foliaLib.getScheduler().runAsync((task) -> {
                                 fireHomePreTeleportEvent(player, user, args[0], homeLocation, player.getLocation());
                                 MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                             });
@@ -139,7 +139,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                         }
 
                         else {
-                            foliaLib.getImpl().runAsync((task) -> {
+                            foliaLib.getScheduler().runAsync((task) -> {
                                 fireHomePreTeleportEvent(player, user, args[0], homeLocation, player.getLocation());
                                 MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                             });
