@@ -65,6 +65,11 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             return EpicHomes.getVersionCheckerUtils().getServerPackage();
         }
 
+        if (params.equalsIgnoreCase("pluginEnabled")){
+            //%epicHomes_pluginEnabled%
+            return String.valueOf(EpicHomes.getPlugin().isPluginEnabled());
+        }
+
         if (params.equalsIgnoreCase("totalPlayerJoined")){
             //%epicHomes_totalPlayerJoined%
             return String.valueOf(usermapStorageUtil.getUsermapStorage().size());

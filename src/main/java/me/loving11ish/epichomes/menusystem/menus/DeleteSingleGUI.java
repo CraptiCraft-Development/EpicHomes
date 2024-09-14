@@ -61,7 +61,7 @@ public class DeleteSingleGUI extends Menu {
                         try {
                             if (usermapStorageUtil.removeHomeFromUser(user, homeName)) {
 
-                                foliaLib.getImpl().runAsync((task) -> {
+                                foliaLib.getScheduler().runAsync((task) -> {
                                     fireHomeDeleteEvent(player, user, homeName);
                                     MessageUtils.sendDebugConsole("&aFired AsyncHomeDeleteEvent");
                                 });

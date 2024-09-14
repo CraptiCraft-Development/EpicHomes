@@ -70,7 +70,7 @@ public class HomeListGUI extends PaginatedMenu {
                     if (EpicHomes.getPlugin().getConfigManager().isUseDelayBeforeHomeTP()) {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
 
-                        foliaLib.getImpl().runAsync((task -> {
+                        foliaLib.getScheduler().runAsync((task -> {
                             fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
                             MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                         }));
@@ -80,7 +80,7 @@ public class HomeListGUI extends PaginatedMenu {
                     } else {
                         TeleportationUtils teleportationUtils = new TeleportationUtils();
 
-                        foliaLib.getImpl().runAsync((task -> {
+                        foliaLib.getScheduler().runAsync((task -> {
                             fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
                             MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                         }));

@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
+            <version>3.15.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -187,9 +187,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.tcoded</groupId>
+            <groupId>com.github.technicallycoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>0.3.4</version>
+            <version>0.4.3</version>
             <scope>compile</scope>
         </dependency>
 

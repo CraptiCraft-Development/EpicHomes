@@ -161,7 +161,7 @@ public class EpicHomesAPI {
         User user = EpicHomes.getPlugin().getUsermapStorageUtil().getUserByOnlinePlayer(player);
         TeleportationUtils teleportationUtils = new TeleportationUtils();
 
-        getFoliaLib().getImpl().runAsync((task) -> {
+        getFoliaLib().getScheduler().runAsync((task) -> {
             fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
             MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
         });
@@ -181,7 +181,7 @@ public class EpicHomesAPI {
         User user = EpicHomes.getPlugin().getUsermapStorageUtil().getUserByOnlinePlayer(player);
         TeleportationUtils teleportationUtils = new TeleportationUtils();
 
-        getFoliaLib().getImpl().runAsync((task) -> {
+        getFoliaLib().getScheduler().runAsync((task) -> {
             fireHomePreTeleportEvent(player, user, homeName, homeLocation, player.getLocation());
             MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
         });

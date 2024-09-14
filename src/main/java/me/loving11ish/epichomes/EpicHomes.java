@@ -90,7 +90,8 @@ public final class EpicHomes extends JavaPlugin {
 
         // Server version compatibility check
         if (versionCheckerUtils.getVersion() < 16 || versionCheckerUtils.getVersion() > 21
-                || !versionCheckerUtils.isVersionCheckedSuccessfully()) {
+                || !versionCheckerUtils.isVersionCheckedSuccessfully()
+                && !serverVersion.serverVersionEqual(ServerVersion.Other)) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
             MessageUtils.sendConsole("&4This plugin is only supported on the Minecraft versions listed below:");
@@ -102,7 +103,6 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole("&41.21.x");
             MessageUtils.sendConsole("&4Is now disabling!");
             MessageUtils.sendConsole("&4-------------------------------------------");
-            Bukkit.getPluginManager().disablePlugin(this);
             setPluginEnabled(false);
             return;
         } else {
@@ -119,7 +119,6 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole("&4This plugin uses features that your server most likely doesn't have!");
             MessageUtils.sendConsole("&4Is now disabling!");
             MessageUtils.sendConsole("&4-------------------------------------------");
-            Bukkit.getPluginManager().disablePlugin(this);
             setPluginEnabled(false);
             return;
         }
@@ -137,6 +136,19 @@ public final class EpicHomes extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Plugin startup logic
+
+        // Check plugin was not disabled during onLoad
+        if (!isPluginEnabled()) {
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            MessageUtils.sendConsole("&4Plugin has been disabled during onLoad!");
+            MessageUtils.sendConsole("&4See above for details!");
+            MessageUtils.sendConsole("&4Disabling plugin!");
+            MessageUtils.sendConsole("&4-------------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // Load internal plugin objects
         setUsermapStorageUtil(new UsermapStorageUtil());
 
@@ -243,7 +255,7 @@ public final class EpicHomes extends JavaPlugin {
         setPluginEnabled(true);
 
         // Start auto save task
-        getFoliaLib().getImpl().runLaterAsync(() -> {
+        getFoliaLib().getScheduler().runLaterAsync(() -> {
             AutoSaveTaskUtils.runAutoSaveTask();
             MessageUtils.sendConsole(getMessagesManager().getAutoSaveStart());
         }, 5L, TimeUnit.SECONDS);
@@ -281,7 +293,7 @@ public final class EpicHomes extends JavaPlugin {
                 MessageUtils.sendDebugConsole( "&aAuto save timed task canceled successfully");
                 AutoSaveTaskUtils.getAutoSaveTask().cancel();
             }
-            getFoliaLib().getImpl().cancelAllTasks();
+            getFoliaLib().getScheduler().cancelAllTasks();
             if (getFoliaLib().isUnsupported()) {
                 Bukkit.getScheduler().cancelTasks(this);
                 MessageUtils.sendDebugConsole( "&aBukkit scheduler tasks canceled successfully");
@@ -343,17 +355,25 @@ public final class EpicHomes extends JavaPlugin {
     }
 
     private void setVersion() {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-        if (bukkitVersion.contains("1.20.5")) {
-            serverVersion = ServerVersion.v1_20_R5;
-        } else if (bukkitVersion.contains("1.20.6")) {
-            serverVersion = ServerVersion.v1_20_R5;
-        } else if (bukkitVersion.contains("1.21")) {
-            serverVersion = ServerVersion.v1_21_R1;
-        } else {
-            serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
+        try {
+            String packageName = Bukkit.getServer().getClass().getPackage().getName();
+            String bukkitVersion = Bukkit.getServer().getBukkitVersion();
+            if (bukkitVersion.contains("1.20.5")) {
+                serverVersion = ServerVersion.v1_20_R5;
+            } else if (bukkitVersion.contains("1.20.6")) {
+                serverVersion = ServerVersion.v1_20_R5;
+            } else if (bukkitVersion.contains("1.21")) {
+                serverVersion = ServerVersion.v1_21_R1;
+            } else if (bukkitVersion.contains("1.21.1")) {
+                serverVersion = ServerVersion.v1_21_R2;
+            }else {
+                serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
+            }
+        } catch (Exception e) {
+            serverVersion = ServerVersion.Other;
+            MessageUtils.sendDebugConsole("Failed to detect server version, defaulting to: " + serverVersion);
         }
+        MessageUtils.sendDebugConsole("Set server version: " + serverVersion);
     }
 
     public static EpicHomes getPlugin() {

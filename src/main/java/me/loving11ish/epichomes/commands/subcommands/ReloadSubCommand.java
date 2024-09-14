@@ -33,7 +33,7 @@ public class ReloadSubCommand {
 
             handleReload();
 
-            foliaLib.getImpl().runLater(() ->
+            foliaLib.getScheduler().runLater(() ->
                     MessageUtils.broadcastMessage(EpicHomes.getPlugin().getMessagesManager().getPluginReloadComplete())
                     , 8L, TimeUnit.SECONDS);
             return true;
@@ -48,7 +48,7 @@ public class ReloadSubCommand {
 
         handleReload();
 
-        foliaLib.getImpl().runLater(() ->
+        foliaLib.getScheduler().runLater(() ->
                 MessageUtils.broadcastMessage(EpicHomes.getPlugin().getMessagesManager().getPluginReloadComplete())
                 , 8L, TimeUnit.SECONDS);
         return true;
@@ -69,7 +69,7 @@ public class ReloadSubCommand {
 
                     WrappedTask wrappedTask = wrappedTaskEntry.getValue();
                     wrappedTask.cancel();
-                    MessageUtils.sendDebugConsole( "&aWrapped task: " + wrappedTask.toString());
+                    MessageUtils.sendDebugConsole( "&aWrapped task: " + wrappedTask);
                     MessageUtils.sendDebugConsole( "&aTimed task canceled successfully");
                     EpicHomes.getPlugin().getTeleportationManager().getTeleportQueue().remove(wrappedTaskEntry.getKey());
                 }
@@ -87,7 +87,7 @@ public class ReloadSubCommand {
                 MessageUtils.sendDebugConsole( "&aAuto save timed task canceled successfully");
                 AutoSaveTaskUtils.getAutoSaveTask().cancel();
             }
-            foliaLib.getImpl().cancelAllTasks();
+            foliaLib.getScheduler().cancelAllTasks();
             if (foliaLib.isUnsupported()) {
                 Bukkit.getScheduler().cancelTasks(EpicHomes.getPlugin());
                 MessageUtils.sendDebugConsole( "&aBukkit scheduler tasks canceled successfully");
@@ -104,7 +104,7 @@ public class ReloadSubCommand {
         MessagesFileManager messagesFileManager = new MessagesFileManager(EpicHomes.getPlugin());
         EpicHomes.getPlugin().setMessagesFileManager(messagesFileManager);
 
-        foliaLib.getImpl().runLaterAsync(() -> {
+        foliaLib.getScheduler().runLaterAsync(() -> {
 
             // Reload memory values for config.yml
             ConfigManager configManager = new ConfigManager(EpicHomes.getPlugin().getConfig());
@@ -122,7 +122,7 @@ public class ReloadSubCommand {
 
         }, 4L, TimeUnit.SECONDS);
 
-        foliaLib.getImpl().runLater(() -> {
+        foliaLib.getScheduler().runLater(() -> {
             // Update banned names lists
             HomeCommand.updateBannedNamesList();
             SetHomeCommand.updateBannedNamesList();
@@ -143,7 +143,7 @@ public class ReloadSubCommand {
             });
 
             // Restart auto save task
-            foliaLib.getImpl().runLaterAsync(() -> {
+            foliaLib.getScheduler().runLaterAsync(() -> {
                 AutoSaveTaskUtils.runAutoSaveTask();
                 MessageUtils.sendConsole(EpicHomes.getPlugin().getMessagesManager().getAutoSaveStart());
             }, 5L, TimeUnit.SECONDS);

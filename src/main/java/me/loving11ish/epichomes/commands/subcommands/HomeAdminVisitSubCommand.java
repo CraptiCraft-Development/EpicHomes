@@ -47,7 +47,7 @@ public class HomeAdminVisitSubCommand {
                             TeleportationUtils teleportationUtils = new TeleportationUtils();
                             if (EpicHomes.getPlugin().getConfigManager().isUseDelayBeforeHomeTP()) {
 
-                                foliaLib.getImpl().runAsync((task) -> {
+                                foliaLib.getScheduler().runAsync((task) -> {
                                     fireHomePreTeleportEvent(player, user, args[2], homeLocation, player.getLocation());
                                     MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                                 });
@@ -56,7 +56,7 @@ public class HomeAdminVisitSubCommand {
                             }
 
                             else {
-                                foliaLib.getImpl().runAsync((task) -> {
+                                foliaLib.getScheduler().runAsync((task) -> {
                                     fireHomePreTeleportEvent(player, user, args[2], homeLocation, player.getLocation());
                                     MessageUtils.sendDebugConsole("&aFired AsyncHomePreTeleportEvent");
                                 });

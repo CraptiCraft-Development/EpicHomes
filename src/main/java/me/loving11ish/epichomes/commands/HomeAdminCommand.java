@@ -39,21 +39,11 @@ public class HomeAdminCommand implements CommandExecutor, TabCompleter {
 
                     case "delete":
                         if (args.length == 3) {
-                            if (args[1] != null && args[2] != null) {
-
-                                if (player.hasPermission("epichomes.command.deleteothers") || player.hasPermission("epichomes.command.*")
-                                        || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
-                                    return new DeleteSubCommand().adminDeleteHomeSubCommand(sender, args);
-                                }
-
-                                else {
-                                    MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
-                                    return true;
-                                }
-                            }
-
-                            else {
-                                MessageUtils.sendPlayerNoPrefix(player, sendUsageMessage());
+                            if (player.hasPermission("epichomes.command.deleteothers") || player.hasPermission("epichomes.command.*")
+                                    || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
+                                return new DeleteSubCommand().adminDeleteHomeSubCommand(sender, args);
+                            } else {
+                                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
                                 return true;
                             }
                         }
@@ -66,21 +56,11 @@ public class HomeAdminCommand implements CommandExecutor, TabCompleter {
 
                     case "visit":
                         if (args.length == 3) {
-                            if (args[1] != null && args[2] != null) {
-
-                                if (player.hasPermission("epichomes.command.visitothers") || player.hasPermission("epichomes.command.*")
-                                        || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
-                                    return new HomeAdminVisitSubCommand().homeAdminVisitSubCommand(sender, args);
-                                }
-
-                                else {
-                                    MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
-                                    return true;
-                                }
-                            }
-
-                            else {
-                                MessageUtils.sendPlayerNoPrefix(player, sendUsageMessage());
+                            if (player.hasPermission("epichomes.command.visitothers") || player.hasPermission("epichomes.command.*")
+                                    || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
+                                return new HomeAdminVisitSubCommand().homeAdminVisitSubCommand(sender, args);
+                            } else {
+                                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
                                 return true;
                             }
                         }
@@ -93,21 +73,11 @@ public class HomeAdminCommand implements CommandExecutor, TabCompleter {
 
                     case "list":
                         if (args.length == 2) {
-                            if (args[1] != null) {
-
-                                if (player.hasPermission("epichomes.command.listothers") || player.hasPermission("epichomes.command.*")
-                                        || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
-                                    return new ListSubCommand().adminListSubCommand(sender, args);
-                                }
-
-                                else {
-                                    MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
-                                    return true;
-                                }
-                            }
-
-                            else {
-                                MessageUtils.sendPlayerNoPrefix(player, sendUsageMessage());
+                            if (player.hasPermission("epichomes.command.listothers") || player.hasPermission("epichomes.command.*")
+                                    || player.hasPermission("epichomes.admin") || player.hasPermission("epichomes.*") || player.isOp()) {
+                                return new ListSubCommand().adminListSubCommand(sender, args);
+                            } else {
+                                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getNoPermission());
                                 return true;
                             }
                         }

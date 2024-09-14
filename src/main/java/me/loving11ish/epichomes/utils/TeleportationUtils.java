@@ -25,7 +25,7 @@ public class TeleportationUtils {
         User user = EpicHomes.getPlugin().getUsermapStorageUtil().getUserByOnlinePlayer(player);
         PaperLib.teleportAsync(player, location);
 
-        foliaLib.getImpl().runAsync((task) -> {
+        foliaLib.getScheduler().runAsync((task) -> {
             fireAsyncHomeTeleportEvent(player, user, homeName, location);
             MessageUtils.sendDebugConsole("&aFired AsyncHomeTeleportEvent in async mode");
         });
@@ -39,7 +39,7 @@ public class TeleportationUtils {
         MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getTimedBeginTP()
                 .replace(HOME_NAME_PLACEHOLDER, homeName));
 
-        wrappedTask = foliaLib.getImpl().runTimerAsync(new Runnable() {
+        wrappedTask = foliaLib.getScheduler().runTimerAsync(new Runnable() {
             int time = EpicHomes.getPlugin().getConfigManager().getTeleportDelayTime();
 
             @Override
@@ -57,7 +57,7 @@ public class TeleportationUtils {
                     MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getTimedCompleteTP()
                             .replace(HOME_NAME_PLACEHOLDER, homeName));
 
-                    foliaLib.getImpl().runAsync((task) -> {
+                    foliaLib.getScheduler().runAsync((task) -> {
                         fireAsyncHomeTeleportEvent(player, user, homeName, location);
                         MessageUtils.sendDebugConsole("&aFired AsyncHomeTeleportEvent in async mode");
                     });
