@@ -72,7 +72,16 @@ public class EssentialsXHomesDataReader {
 
                     Set<String> data = fileReader.getConfigurationSection("homes." + name).getKeys(false);
                     for (String info : data) {
+                        if (info == null) {
+                            MessageUtils.sendDebugConsole("&cNo data found for home: " + homeName + "! Skipping...");
+                            continue;
+                        }
                         if (info.matches("world-name")) {
+                            if (Bukkit.getWorld(fileReader.getString("homes." + name + "." + info)) == null) {
+                                MessageUtils.sendDebugConsole("&cUser: " + playerName);
+                                MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                                continue;
+                            }
                             world = fileReader.get("homes." + name + "." + info).toString();
                             MessageUtils.sendDebugConsole("&aFound world entry for home: " + name + " world entry: " + world);
 
@@ -106,6 +115,11 @@ public class EssentialsXHomesDataReader {
                         List<String> userHomeNames = usermapStorageUtil.getHomeNamesListByUser(user);
 
                         if (!userHomeNames.contains(homeName)) {
+                            if (world == null || Bukkit.getWorld(world) == null) {
+                                MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                                continue;
+                            }
+
                             Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
                             usermapStorageUtil.addHomeToUser(user, homeName, location);
                             MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
@@ -121,6 +135,12 @@ public class EssentialsXHomesDataReader {
                     else {
                         User user = new User(uuid, playerName);
                         usermapStorageUtil.getUsermapStorage().put(UUID.fromString(uuid), user);
+
+                        if (world == null || Bukkit.getWorld(world) == null) {
+                            MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                            return;
+                        }
+
                         Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
 
                         usermapStorageUtil.addHomeToUser(user, homeName, location);

@@ -155,6 +155,12 @@ public class HomeListGUI extends PaginatedMenu {
                     List<String> loreConfigList = EpicHomes.getPlugin().getConfigManager().getHomeListGUIItemLore();
                     ArrayList<String> homeLore = new ArrayList<>();
 
+                    if (homeLocation.getWorld() == null) {
+                        MessageUtils.sendDebugConsole("warning", "&cPlayer: " + user.getLastKnownName());
+                        MessageUtils.sendDebugConsole("warning", "&cHome location world is null for home: " + homeName);
+                        continue;
+                    }
+
                     for (String string : loreConfigList) {
                         homeLore.add(ColorUtils.translateColorCodes(string)
                                 .replace(HOME_LOCATION_PLACEHOLDER_WORLD, homeLocation.getWorld().getName())
