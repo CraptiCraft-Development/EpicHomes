@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class EssentialsXHomesDataReader {
 
@@ -45,20 +46,29 @@ public class EssentialsXHomesDataReader {
         this.z = 0;
         this.yaw = 0f;
         this.pitch = 0f;
-        try {
-            fileReader = new YamlConfiguration();
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
-            for (File file : new File(plugin.getDataFolder().getParentFile() + File.separator + "Essentials" + File.separator + "userdata").listFiles()) {
-                fileReader.load(file);
-                playerName = fileReader.getString("last-account-name");
-                uuid = file.getName().replace(".yml", "");
-                MessageUtils.sendDebugConsole("User UUID: " + uuid);
-                getHomes();
+
+        // Run the import process asynchronously
+        CompletableFuture.runAsync(() -> {
+            try {
+                fileReader = new YamlConfiguration();
+                Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
+
+                File[] files = new File(plugin.getDataFolder().getParentFile() + File.separator + "Essentials" + File.separator + "userdata").listFiles();
+
+                if (files != null) {
+                    for (File file : files) {
+                        fileReader.load(file);
+                        playerName = fileReader.getString("last-account-name");
+                        uuid = file.getName().replace(".yml", "");
+                        MessageUtils.sendDebugConsole("User UUID: " + uuid);
+                        getHomes();
+                    }
+                }
+                homesImportSuccessful = true;
+            } catch (IOException | InvalidConfigurationException | NullPointerException e) {
+                MessageUtils.sendConsole("error", "Cannot find EssentialsX player data file!");
             }
-            this.homesImportSuccessful = true;
-        } catch (IOException | InvalidConfigurationException | NullPointerException e) {
-            MessageUtils.sendConsole("error", "Cannot find EssentialsX player data file!");
-        }
+        });
     }
 
     private void getHomes() {
@@ -76,37 +86,42 @@ public class EssentialsXHomesDataReader {
                             MessageUtils.sendDebugConsole("&cNo data found for home: " + homeName + "! Skipping...");
                             continue;
                         }
-                        if (info.matches("world-name")) {
-                            if (Bukkit.getWorld(fileReader.getString("homes." + name + "." + info)) == null) {
-                                MessageUtils.sendDebugConsole("&cUser: " + playerName);
-                                MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
-                                continue;
-                            }
-                            world = fileReader.get("homes." + name + "." + info).toString();
-                            MessageUtils.sendDebugConsole("&aFound world entry for home: " + name + " world entry: " + world);
 
-                        } else if (info.matches("x")) {
-                            x = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
-                            MessageUtils.sendDebugConsole("&aFound x entry for home: " + name + " x entry: " + x);
-
-                        } else if (info.matches("y")) {
-                            y = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
-                            MessageUtils.sendDebugConsole("&aFound y entry for home: " + name + " y entry: " + y);
-
-                        } else if (info.matches("z")) {
-                            z = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
-                            MessageUtils.sendDebugConsole("&aFound z entry for home: " + name + " z entry: " + z);
-
-                        } else if (info.matches("yaw")) {
-                            yaw = Float.parseFloat(fileReader.get("homes." + name + "." + info).toString());
-                            MessageUtils.sendDebugConsole("&aFound yaw entry for home: " + name + " yaw entry: " + yaw);
-
-                        } else if (info.matches("pitch")) {
-                            pitch = Float.parseFloat(fileReader.get("homes." + name + "." + info).toString());
-                            MessageUtils.sendDebugConsole("&aFound pitch entry for home: " + name + " pitch entry: " + pitch);
-
+                        switch (info) {
+                            case "world-name":
+                                EpicHomes.getFoliaLib().getScheduler().runNextTick((task) -> {
+                                    if (Bukkit.getWorld(fileReader.getString("homes." + name + "." + info)) == null) {
+                                        MessageUtils.sendDebugConsole("&cUser: " + playerName);
+                                        MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                                    } else {
+                                        world = fileReader.get("homes." + name + "." + info).toString();
+                                        MessageUtils.sendDebugConsole("&aFound world entry for home: " + name + " world entry: " + world);
+                                    }
+                                });
+                                break;
+                            case "x":
+                                x = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
+                                MessageUtils.sendDebugConsole("&aFound x entry for home: " + name + " x entry: " + x);
+                                break;
+                            case "y":
+                                y = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
+                                MessageUtils.sendDebugConsole("&aFound y entry for home: " + name + " y entry: " + y);
+                                break;
+                            case "z":
+                                z = Double.parseDouble(fileReader.get("homes." + name + "." + info).toString());
+                                MessageUtils.sendDebugConsole("&aFound z entry for home: " + name + " z entry: " + z);
+                                break;
+                            case "yaw":
+                                yaw = Float.parseFloat(fileReader.get("homes." + name + "." + info).toString());
+                                MessageUtils.sendDebugConsole("&aFound yaw entry for home: " + name + " yaw entry: " + yaw);
+                                break;
+                            case "pitch":
+                                pitch = Float.parseFloat(fileReader.get("homes." + name + "." + info).toString());
+                                MessageUtils.sendDebugConsole("&aFound pitch entry for home: " + name + " pitch entry: " + pitch);
+                                break;
                         }
                     }
+
                     UUID userUUID = UUID.fromString(uuid);
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(userUUID);
 
@@ -114,38 +129,36 @@ public class EssentialsXHomesDataReader {
                         User user = usermapStorageUtil.getUserByOfflinePlayer(offlinePlayer);
                         List<String> userHomeNames = usermapStorageUtil.getHomeNamesListByUser(user);
 
-                        if (!userHomeNames.contains(homeName)) {
-                            if (world == null || Bukkit.getWorld(world) == null) {
-                                MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
-                                continue;
+                        EpicHomes.getFoliaLib().getScheduler().runNextTick((task) -> {
+                            if (!userHomeNames.contains(homeName)) {
+                                if (world == null || Bukkit.getWorld(world) == null) {
+                                    MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                                } else {
+                                    Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+                                    usermapStorageUtil.addHomeToUser(user, homeName, location);
+                                    MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
+                                    MessageUtils.sendDebugConsole("&aSuccessfully added new home to player: " + user.getLastKnownName());
+                                }
+                            } else {
+                                MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
+                                MessageUtils.sendDebugConsole("&aThe home " + homeName + " already exists! Skipping...");
                             }
+                        });
 
-                            Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
-                            usermapStorageUtil.addHomeToUser(user, homeName, location);
-                            MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
-                            MessageUtils.sendDebugConsole("&aSuccessfully added new home to player: " + user.getLastKnownName());
-                        }
-
-                        else {
-                            MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
-                            MessageUtils.sendDebugConsole("&aThe home " + homeName + "&aalready exists! Skipping...");
-                        }
-                    }
-
-                    else {
+                    } else {
                         User user = new User(uuid, playerName);
                         usermapStorageUtil.getUsermapStorage().put(UUID.fromString(uuid), user);
 
-                        if (world == null || Bukkit.getWorld(world) == null) {
-                            MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
-                            return;
-                        }
-
-                        Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
-
-                        usermapStorageUtil.addHomeToUser(user, homeName, location);
-                        MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " has never joined this server before!");
-                        MessageUtils.sendDebugConsole("&aThey have been added to the usermap and had their homes stored!");
+                        EpicHomes.getFoliaLib().getScheduler().runNextTick((task) -> {
+                            if (world == null || Bukkit.getWorld(world) == null) {
+                                MessageUtils.sendDebugConsole("&cWorld does not exist for " + homeName + "! Skipping...");
+                            } else {
+                                Location location = new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+                                usermapStorageUtil.addHomeToUser(user, homeName, location);
+                                MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " has never joined this server before!");
+                                MessageUtils.sendDebugConsole("&aThey have been added to the usermap and had their homes stored!");
+                            }
+                        });
                     }
                 }
             }
