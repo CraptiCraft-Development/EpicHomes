@@ -40,6 +40,9 @@ public class MessageUtils {
     }
 
     /**
+     * This method will attempt to send a message to an offline player.
+     * If the player is online, the message will be sent to them.
+     * If the player is offline, an error message will be sent to the console.
      * @param offlinePlayer  The offlinePlayer to send the message too.
      * @param message The message to be sent with prefix applied. Supports color codes.
      */
@@ -48,7 +51,7 @@ public class MessageUtils {
         if (player != null) {
             player.sendMessage(ColorUtils.translateColorCodes(prefix + " &r" + message));
         } else {
-            sendConsole("error", "Player " + offlinePlayer.getName() + " is not online!");
+            sendConsole("&cPlayer &e" + offlinePlayer.getName() + " &cis not online! Message not sent.");
         }
     }
 
@@ -98,6 +101,20 @@ public class MessageUtils {
             sendPlayer(player, message);
         } else {
             sendConsole(message);
+        }
+    }
+
+    /**
+     * @param sender  The sender to send the message too.
+     * @param level   The log level of the message. Supports: info, warning, error, and severe.
+     * @param message The message to be sent with prefix applied. Supports color codes.
+     */
+    public static void sendSender(CommandSender sender, String level, String message) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            sendPlayer(player, message);
+        } else {
+            sendConsole(level, message);
         }
     }
 

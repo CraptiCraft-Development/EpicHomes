@@ -47,49 +47,58 @@ public class HomeImportCommand implements CommandExecutor {
             return;
         }
 
-        if (EpicHomes.getPlugin().getConfigManager().getDataImportPlugin().equalsIgnoreCase("StormerHomes")) {
-            StormerHomesDataReader stormerHomesDataReader = new StormerHomesDataReader();
+        switch (EpicHomes.getPlugin().getConfigManager().getDataImportPlugin()) {
+            case "StormerHomes":
+                StormerHomesDataReader stormerHomesDataReader = new StormerHomesDataReader();
 
-            if (stormerHomesDataReader.homesImportSuccessful) {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
-                        .replace(PLUGIN_PLACEHOLDER, "StormerHomes"));
-                usermapStorageUtil.setHomeImportCompleted();
-            }
+                EpicHomes.getFoliaLib().getScheduler().runLaterAsync(() -> {
+                    if (stormerHomesDataReader.homesImportSuccessful) {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
+                                .replace(PLUGIN_PLACEHOLDER, "StormerHomes"));
+                        usermapStorageUtil.setHomeImportCompleted();
+                    } else {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
+                                .replace(PLUGIN_PLACEHOLDER, "StormerHomes"));
+                    }
+                }, 200L);
+                break;
 
-            else {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
-                        .replace(PLUGIN_PLACEHOLDER, "StormerHomes"));
-            }
-        }
+            case "StormerHomesReloaded":
+                StormerHomesReloadedDataReader stormerHomesReloadedDataReader = new StormerHomesReloadedDataReader();
 
-        else if (EpicHomes.getPlugin().getConfigManager().getDataImportPlugin().equalsIgnoreCase("StormerHomesReloaded")) {
-            StormerHomesReloadedDataReader stormerHomesReloadedDataReader = new StormerHomesReloadedDataReader();
+                EpicHomes.getFoliaLib().getScheduler().runLaterAsync(() -> {
+                    if (stormerHomesReloadedDataReader.homesImportSuccessful) {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
+                                .replace(PLUGIN_PLACEHOLDER, "StormerHomesReloaded"));
+                        usermapStorageUtil.setHomeImportCompleted();
+                    } else {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
+                                .replace(PLUGIN_PLACEHOLDER, "StormerHomesReloaded"));
+                    }
+                }, 200L);
+                break;
 
-            if (stormerHomesReloadedDataReader.homesImportSuccessful) {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
-                        .replace(PLUGIN_PLACEHOLDER, "StormerHomesReloaded"));
-                usermapStorageUtil.setHomeImportCompleted();
-            }
+            case "EssentialsX":
+                EssentialsXHomesDataReader essentialsXHomesDataReader = new EssentialsXHomesDataReader();
 
-            else {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
-                        .replace(PLUGIN_PLACEHOLDER, "StormerHomesReloaded"));
-            }
-        }
+                EpicHomes.getFoliaLib().getScheduler().runLaterAsync(() -> {
+                    if (essentialsXHomesDataReader.homesImportSuccessful) {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
+                                .replace(PLUGIN_PLACEHOLDER, "EssentialsX"));
+                        usermapStorageUtil.setHomeImportCompleted();
+                    } else {
+                        MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
+                                .replace(PLUGIN_PLACEHOLDER, "EssentialsX"));
+                    }
+                }, 200L);
+                break;
 
-        else if (EpicHomes.getPlugin().getConfigManager().getDataImportPlugin().equalsIgnoreCase("EssentialsX")) {
-            EssentialsXHomesDataReader essentialsXHomesDataReader = new EssentialsXHomesDataReader();
-
-            if (essentialsXHomesDataReader.homesImportSuccessful) {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportSuccess()
-                        .replace(PLUGIN_PLACEHOLDER, "EssentialsX"));
-                usermapStorageUtil.setHomeImportCompleted();
-            }
-
-            else {
-                MessageUtils.sendSender(sender, EpicHomes.getPlugin().getMessagesManager().getHomeDataImportFailed()
-                        .replace(PLUGIN_PLACEHOLDER, "EssentialsX"));
-            }
+            default:
+                MessageUtils.sendSender(sender, "error", "&4&lUnknown data import plugin specified.");
+                MessageUtils.sendSender(sender, "error", "&4&lPlease check your config.yml file.");
+                MessageUtils.sendSender(sender, "error", "&cAvailable options: &bStormerHomes, StormerHomesReloaded, EssentialsX");
+                MessageUtils.sendSender(sender, "error", "&cYou specified: &b" + EpicHomes.getPlugin().getConfigManager().getDataImportPlugin());
+                break;
         }
     }
 }

@@ -171,8 +171,8 @@ public class UsermapStorageUtil {
         HashMap<String, Location> userHomesList = user.getHomesList();
         for (Map.Entry<String, Location> home : userHomesList.entrySet()) {
             if (home.getKey().equalsIgnoreCase(homeName)) {
-                Player player = getBukkitPlayerByUser(user);
-                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailAlreadyExists()
+                OfflinePlayer player = getBukkitOfflinePlayerByUser(user);
+                MessageUtils.sendOfflinePlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailAlreadyExists()
                         .replace(HOME_NAME_PLACEHOLDER, ColorUtils.translateColorCodes(homeName)));
                 return false;
             }
