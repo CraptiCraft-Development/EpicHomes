@@ -3,9 +3,10 @@ version: '${project.version}'
 main: me.loving11ish.epichomes.EpicHomes
 api-version: 1.13
 folia-supported: true
+load: POSTWORLD
 authors: [Loving11ish]
 description: A fully featured homes plugin that is resource efficient and simple to use.
-softdepend: [ PlugManX, PlaceholderAPI ]
+softdepend: [ PlaceholderAPI, Multiverse-Core ]
 
 commands:
 

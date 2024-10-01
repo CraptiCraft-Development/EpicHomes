@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class StormerHomesDataReader {
 
@@ -35,21 +37,7 @@ public class StormerHomesDataReader {
     private float pitch;
 
     public StormerHomesDataReader() {
-        try {
-            fileReader = new YamlConfiguration();
-            File stormerData = Bukkit.getServer().getPluginManager().getPlugin("StormerHomes").getDataFolder();
-            File stormerConfig = new File(stormerData, "config.yml");
-
-            fileReader.load(stormerConfig);
-            MessageUtils.sendDebugConsole("&aFound StormerHomes config.yml and loaded successfully.");
-
-            if (loadHomes()) {
-                this.homesImportSuccessful = true;
-            }
-        } catch (IOException | InvalidConfigurationException | NullPointerException e) {
-            MessageUtils.sendConsole("error", "&4&lCannot find StormerHomes data file!");
-        }
-
+        // Initialize the class with default values
         this.world = null;
         this.homeName = null;
         this.playerName = null;
@@ -58,6 +46,24 @@ public class StormerHomesDataReader {
         this.z = 0;
         this.yaw = 0f;
         this.pitch = 0f;
+
+        // Load homes asynchronously using CompletableFuture
+        CompletableFuture.runAsync(() -> {
+            try {
+                fileReader = new YamlConfiguration();
+                File stormerData = Bukkit.getServer().getPluginManager().getPlugin("StormerHomes").getDataFolder();
+                File stormerConfig = new File(stormerData, "config.yml");
+
+                fileReader.load(stormerConfig);
+                MessageUtils.sendDebugConsole("&aFound StormerHomes config.yml and loaded successfully.");
+
+                if (loadHomes()) {
+                    this.homesImportSuccessful = true;
+                }
+            } catch (IOException | InvalidConfigurationException | NullPointerException e) {
+                MessageUtils.sendConsole("error", "&4&lCannot find StormerHomes data file!");
+            }
+        });
     }
 
     private boolean loadHomes() {
@@ -65,9 +71,11 @@ public class StormerHomesDataReader {
             if (fileReader.getConfigurationSection("homes2") != null) {
                 MessageUtils.sendDebugConsole("&aFound homes2 section in StormerHomes config.yml");
 
-                fileReader.getConfigurationSection("homes2").getKeys(false).forEach(key -> {
+                Set<String> keys = fileReader.getConfigurationSection("homes2").getKeys(false);
+                for (String key : keys) {
                     HashMap<String, Location> homes = new HashMap<>();
-                    fileReader.getConfigurationSection("homes2." + key).getKeys(false).forEach(home -> {
+                    Set<String> homeKeys = fileReader.getConfigurationSection("homes2." + key).getKeys(false);
+                    for (String home : homeKeys) {
                         homeName = home;
                         MessageUtils.sendDebugConsole("&aFound home name entry of: " + home + " for UUID: " + key);
 
@@ -92,11 +100,21 @@ public class StormerHomesDataReader {
                         pitch = (float) fileReader.getDouble("homes2." + key + "." + home + "." + "pitch");
                         MessageUtils.sendDebugConsole("&aFound pitch entry for home: " + home + ". Pitch entry: " + pitch);
 
-                        World homeWorld = Bukkit.getWorld(world);
-                        Location location = new Location(homeWorld, x, y, z, yaw, pitch);
-                        homes.put(homeName, location);
-                        MessageUtils.sendDebugConsole("&aHome: " + home + " has been successfully created for player: " + playerName);
-                    });
+                        // Get the world on the main thread
+                        EpicHomes.getFoliaLib().getScheduler().runNextTick((task) -> {
+                            World homeWorld = Bukkit.getWorld(world);
+
+                            if (homeWorld == null) {
+                                MessageUtils.sendDebugConsole("&4&lCould not find world: " + world + " for home: " + homeName + " for player: " + playerName);
+                                MessageUtils.sendDebugConsole("&4&lSkipping home: " + homeName + " for player: " + playerName);
+
+                            } else {
+                                Location location = new Location(homeWorld, x, y, z, yaw, pitch);
+                                homes.put(homeName, location);
+                                MessageUtils.sendDebugConsole("&aHome: " + home + " has been successfully created for player: " + playerName);
+                            }
+                        });
+                    }
 
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(key));
 
@@ -106,13 +124,10 @@ public class StormerHomesDataReader {
 
                         for (Map.Entry<String, Location> homesList : homes.entrySet()) {
                             if (!usersCurrentHomes.containsKey(homesList.getKey())) {
-
                                 usersCurrentHomes.put(homesList.getKey(), homesList.getValue());
                                 MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
                                 MessageUtils.sendDebugConsole("&aSuccessfully added new home: " + homeName + " to player.");
-                            }
-
-                            else {
+                            } else {
                                 MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " already exists in the usermap");
                                 MessageUtils.sendDebugConsole("&aThe current home iteration already exists! Skipping...");
                             }
@@ -120,16 +135,14 @@ public class StormerHomesDataReader {
 
                         user.setHomesList(usersCurrentHomes);
                         usermapStorageUtil.getUsermapStorage().replace(UUID.fromString(key), user);
-                    }
-
-                    else {
+                    } else {
                         User user = new User(key, playerName);
                         user.setHomesList(homes);
                         usermapStorageUtil.getUsermapStorage().put(UUID.fromString(key), user);
                         MessageUtils.sendDebugConsole("&aPlayer " + user.getLastKnownName() + " has never joined this server before!");
                         MessageUtils.sendDebugConsole("&aThey have been added to the usermap and had their homes stored!");
                     }
-                });
+                }
                 return true;
             }
         } catch (NullPointerException e) {

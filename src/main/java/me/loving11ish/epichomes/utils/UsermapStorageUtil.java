@@ -26,9 +26,10 @@ public class UsermapStorageUtil {
             HashMap<String, Location> homeLocations = entry.getValue().getHomesList();
             this.usermapConfig.set("users.data." + entry.getKey() + ".userUUID", entry.getValue().getUserUUID());
             this.usermapConfig.set("users.data." + entry.getKey() + ".lastKnownName", entry.getValue().getLastKnownName());
-            if (!entry.getValue().getHomesList().isEmpty()){
+            if (!entry.getValue().getHomesList().isEmpty()) {
                 for (Map.Entry<String, Location> homeEntry : homeLocations.entrySet()) {
-                    if (homeEntry.getValue().getWorld() == null){
+                    if (homeEntry.getValue().getWorld() == null) {
+                        MessageUtils.sendDebugConsole("World is null for home: " + homeEntry.getKey() + " for user: " + entry.getValue().getLastKnownName());
                         MessageUtils.sendConsole("warning", EpicHomes.getPlugin().getMessagesManager().getUserMapSaveFailed()
                                 .replace("%PLAYER%", entry.getValue().getLastKnownName()));
                         continue;
@@ -48,14 +49,16 @@ public class UsermapStorageUtil {
 
     public void loadUsermap() throws IOException {
         this.usermapStorage.clear();
-        this.usermapConfig.getConfigurationSection("users.data").getKeys(false).forEach(key -> {
+        Set<String> userKeys = this.usermapConfig.getConfigurationSection("users.data").getKeys(false);
+        for (String key : userKeys) {
             HashMap<String, Location> homeLocations = new HashMap<>();
             UUID uuid = UUID.fromString(key);
             String userUUID = this.usermapConfig.getString("users.data." + key + ".userUUID");
             String lastKnownName = this.usermapConfig.getString("users.data." + key + ".lastKnownName");
             ConfigurationSection homesSection = this.usermapConfig.getConfigurationSection("users.data." + key + ".homes");
-            if (homesSection != null){
-                this.usermapConfig.getConfigurationSection("users.data." + key + ".homes").getKeys(false).forEach(homeKey -> {
+            if (homesSection != null) {
+                Set<String> homeKeys = homesSection.getKeys(false);
+                for (String homeKey : homeKeys) {
                     String homeName = this.usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeName");
                     String homeWorld = this.usermapConfig.getString("users.data." + key + ".homes." + homeKey + ".homeWorld");
                     double homeX = this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeX");
@@ -63,24 +66,31 @@ public class UsermapStorageUtil {
                     double homeZ = this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeZ");
                     float homeYaw = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeYaw");
                     float homePitch = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homePitch");
+
+                    if (Bukkit.getWorld(homeWorld) == null) {
+                        MessageUtils.sendConsole("warning", "Home: " + homeName + " for user: " + lastKnownName + " could not be loaded.");
+                        MessageUtils.sendDebugConsole("warning", "World: " + homeWorld + " could not be found or is not loaded.");
+                        continue;
+                    }
+
                     World world = Bukkit.getWorld(homeWorld);
                     Location location = new Location(world, homeX, homeY, homeZ, homeYaw, homePitch);
                     homeLocations.put(homeName, location);
-                });
+                }
             }
             User user = new User(userUUID, lastKnownName);
-            if (!homeLocations.isEmpty()){
+            if (!homeLocations.isEmpty()) {
                 user.setHomesList(homeLocations);
             }
             this.usermapStorage.put(uuid, user);
-        });
+        }
     }
 
     public User addToUsermap(Player player) {
         UUID uuid = player.getUniqueId();
         String userUUID = uuid.toString();
         String lastKnownName = player.getName();
-        if (!isUserExisting(player)){
+        if (!isUserExisting(player)) {
             User user = new User(userUUID, lastKnownName);
             this.usermapStorage.put(uuid, user);
             return user;
@@ -114,7 +124,7 @@ public class UsermapStorageUtil {
 
     public User getUserByOnlinePlayer(Player player) {
         UUID uuid = player.getUniqueId();
-        if (isUserExisting(player)){
+        if (isUserExisting(player)) {
             return this.usermapStorage.get(uuid);
         }
         return null;
@@ -122,7 +132,7 @@ public class UsermapStorageUtil {
 
     public User getUserByOfflinePlayer(OfflinePlayer offlinePlayer) {
         UUID uuid = offlinePlayer.getUniqueId();
-        if (isUserExisting(offlinePlayer)){
+        if (isUserExisting(offlinePlayer)) {
             return this.usermapStorage.get(uuid);
         }
         return null;
@@ -143,8 +153,8 @@ public class UsermapStorageUtil {
     }
 
     public User getUserByLastKnownName(String lastKnownName) {
-        for (User user : this.usermapStorage.values()){
-            if (user.getLastKnownName().equalsIgnoreCase(lastKnownName)){
+        for (User user : this.usermapStorage.values()) {
+            if (user.getLastKnownName().equalsIgnoreCase(lastKnownName)) {
                 return user;
             }
         }
@@ -159,10 +169,10 @@ public class UsermapStorageUtil {
 
     public boolean addHomeToUser(User user, String homeName, Location location) {
         HashMap<String, Location> userHomesList = user.getHomesList();
-        for (Map.Entry<String, Location> home: userHomesList.entrySet()){
-            if (home.getKey().equalsIgnoreCase(homeName)){
-                Player player = getBukkitPlayerByUser(user);
-                MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailAlreadyExists()
+        for (Map.Entry<String, Location> home : userHomesList.entrySet()) {
+            if (home.getKey().equalsIgnoreCase(homeName)) {
+                OfflinePlayer player = getBukkitOfflinePlayerByUser(user);
+                MessageUtils.sendOfflinePlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailAlreadyExists()
                         .replace(HOME_NAME_PLACEHOLDER, ColorUtils.translateColorCodes(homeName)));
                 return false;
             }
@@ -174,8 +184,8 @@ public class UsermapStorageUtil {
     public boolean removeHomeFromUser(User user, String homeName) throws IOException {
         String key = user.getUserUUID();
         HashMap<String, Location> userHomesList = user.getHomesList();
-        for (Map.Entry<String, Location> home: userHomesList.entrySet()){
-            if (home.getKey().equalsIgnoreCase(homeName)){
+        for (Map.Entry<String, Location> home : userHomesList.entrySet()) {
+            if (home.getKey().equalsIgnoreCase(homeName)) {
                 userHomesList.remove(homeName);
                 user.setHomesList(userHomesList);
                 this.usermapStorage.replace(UUID.fromString(user.getUserUUID()), user);
@@ -193,8 +203,8 @@ public class UsermapStorageUtil {
 
     public Location getHomeLocationByHomeName(User user, String homeName) {
         HashMap<String, Location> userHomesList = user.getHomesList();
-        for (Map.Entry<String, Location> home: userHomesList.entrySet()){
-            if (home.getKey().equalsIgnoreCase(homeName)){
+        for (Map.Entry<String, Location> home : userHomesList.entrySet()) {
+            if (home.getKey().equalsIgnoreCase(homeName)) {
                 return home.getValue();
             }
         }
@@ -216,7 +226,7 @@ public class UsermapStorageUtil {
     public List<String> getHomeNamesListByUser(User user) {
         HashMap<String, Location> userHomesList = user.getHomesList();
         List<String> homeNames = new ArrayList<>();
-        for (Map.Entry<String, Location> home: userHomesList.entrySet()){
+        for (Map.Entry<String, Location> home : userHomesList.entrySet()) {
             homeNames.add(home.getKey());
         }
         return homeNames;

@@ -195,7 +195,7 @@ public final class EpicHomes extends JavaPlugin {
         pluginCommands.add("/delhome");
         pluginCommands.add("/homes");
         pluginCommands.add("/epichomes");
-        pluginCommands.add("homeadmin");
+        pluginCommands.add("/homeadmin");
         pluginCommands.add("/ha");
         getServer().getPluginManager().registerEvents(new MenuEvent(), this);
         getServer().getPluginManager().registerEvents(new JoinEvent(), this);
