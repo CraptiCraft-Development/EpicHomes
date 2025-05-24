@@ -366,7 +366,15 @@ public final class EpicHomes extends JavaPlugin {
                 serverVersion = ServerVersion.v1_21_R1;
             } else if (bukkitVersion.contains("1.21.1")) {
                 serverVersion = ServerVersion.v1_21_R2;
-            }else {
+            } else if (bukkitVersion.contains("1.21.2")) {
+                serverVersion = ServerVersion.v1_21_R3;
+            } else if (bukkitVersion.contains("1.21.3")) {
+                serverVersion = ServerVersion.v1_21_R4;
+            } else if (bukkitVersion.contains("1.21.4")) {
+                serverVersion = ServerVersion.v1_21_R5;
+            } else if (bukkitVersion.contains("1.21.5")) {
+                serverVersion = ServerVersion.v1_21_R6;
+            } else {
                 serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
             }
         } catch (Exception e) {

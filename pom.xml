@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3-ALPHA-01</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -37,7 +37,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version> <!-- (https://maven.apache.org/plugins/maven-compiler-plugin/) -->
+                <version>3.14.0</version> <!-- (https://maven.apache.org/plugins/maven-compiler-plugin/) -->
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -64,12 +64,8 @@
                             <shadedPattern>me.loving11ish.epichomes.libs.lightlibs</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.libs.gson</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache.commons</pattern>
-                            <shadedPattern>me.loving11ish.epichomes.libs.commons-lang3</shadedPattern>
+                            <pattern>net.kyori</pattern>
+                            <shadedPattern>me.loving11ish.epichomes.libs.adventure</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -86,7 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.7.0</version> <!-- (https://maven.apache.org/plugins/maven-javadoc-plugin/) -->
+                <version>3.11.2</version> <!-- (https://maven.apache.org/plugins/maven-javadoc-plugin/) -->
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
@@ -153,21 +149,8 @@
     </repositories>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.15.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10</version>
-            <scope>compile</scope>
-        </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.spigotmc/spigot-api -->
+        <!-- Spigot-api is provided by main server instance -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -175,31 +158,88 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- FoliaLib is shaded in via maven-shade -->
+        <dependency>
+            <groupId>com.github.technicallycoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+            <version>0.4.4</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- PaperLib is shaded in via maven-shade -->
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.8</version>
             <scope>compile</scope>
         </dependency>
-
+        <!-- Adventure-api is shaded in via maven-shade -->
         <dependency>
-            <groupId>com.github.technicallycoded</groupId>
-            <artifactId>FoliaLib</artifactId>
-            <version>0.4.3</version>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.19.0</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- Adventure-platform-bukkit is shaded in via maven-shade -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.3.4</version>
+        </dependency>
+        <!-- adventure-text-minimessage is shaded in via maven-shade -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.19.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <!-- JetBrains-annotations is provided by runtime compiler -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <!-- Commons-codec is provided by external lib download -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Commons-lang3 is provided by external lib download -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.15.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <!-- Gson is provided by Spigot -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- PlaceholderAPI is provided by external plugin instance -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.lightlibs</groupId>
             <artifactId>simplehttpwrapper</artifactId>
             <version>0.0.3-alpha</version>
-        </dependency>
-
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.11.4</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
