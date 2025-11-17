@@ -38,10 +38,10 @@ public final class EpicHomes extends JavaPlugin {
 
     private static EpicHomes plugin;
     private static FoliaLib foliaLib;
-    private static ServerVersion serverVersion;
-    private static BukkitAudiences bukkitAudiences;
-    private static VersionCheckerUtils versionCheckerUtils;
-    private static PlaceholderAPIHook placeholderAPIHook = null;
+    private ServerVersion serverVersion;
+    private BukkitAudiences bukkitAudiences;
+    private VersionCheckerUtils versionCheckerUtils;
+    private PlaceholderAPIHook placeholderAPIHook = null;
 
     private boolean isPluginEnabled = true;
     private boolean isOnlineMode = true;
@@ -86,8 +86,8 @@ public final class EpicHomes extends JavaPlugin {
         setUsermapFileManager(new UsermapFileManager(this));
 
         // Check server version and set it
-        setVersion();
         versionCheckerUtils = new VersionCheckerUtils();
+        versionCheckerUtils.getServerVersion();
         versionCheckerUtils.setVersion();
 
         // Server version compatibility check
@@ -380,36 +380,6 @@ public final class EpicHomes extends JavaPlugin {
         }
     }
 
-    private void setVersion() {
-        try {
-            String packageName = Bukkit.getServer().getClass().getPackage().getName();
-            String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-            if (bukkitVersion.contains("1.20.5")) {
-                serverVersion = ServerVersion.v1_20_R5;
-            } else if (bukkitVersion.contains("1.20.6")) {
-                serverVersion = ServerVersion.v1_20_R5;
-            } else if (bukkitVersion.contains("1.21")) {
-                serverVersion = ServerVersion.v1_21_R1;
-            } else if (bukkitVersion.contains("1.21.1")) {
-                serverVersion = ServerVersion.v1_21_R2;
-            } else if (bukkitVersion.contains("1.21.2")) {
-                serverVersion = ServerVersion.v1_21_R3;
-            } else if (bukkitVersion.contains("1.21.3")) {
-                serverVersion = ServerVersion.v1_21_R4;
-            } else if (bukkitVersion.contains("1.21.4")) {
-                serverVersion = ServerVersion.v1_21_R5;
-            } else if (bukkitVersion.contains("1.21.5")) {
-                serverVersion = ServerVersion.v1_21_R6;
-            } else {
-                serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
-            }
-        } catch (Exception e) {
-            serverVersion = ServerVersion.Other;
-            MessageUtils.sendDebugConsole("Failed to detect server version, defaulting to: " + serverVersion);
-        }
-        MessageUtils.sendDebugConsole("Set server version: " + serverVersion);
-    }
-
     public static EpicHomes getPlugin() {
         return plugin;
     }
@@ -418,15 +388,19 @@ public final class EpicHomes extends JavaPlugin {
         return foliaLib;
     }
 
-    public static ServerVersion getServerVersion() {
+    public ServerVersion getServerVersion() {
         return serverVersion;
+    }
+
+    public void setServerVersion(ServerVersion serverVersion) {
+        this.serverVersion = serverVersion;
     }
 
     public BukkitAudiences getBukkitAudiences() {
         return bukkitAudiences;
     }
 
-    public static VersionCheckerUtils getVersionCheckerUtils() {
+    public VersionCheckerUtils getVersionCheckerUtils() {
         return versionCheckerUtils;
     }
 
