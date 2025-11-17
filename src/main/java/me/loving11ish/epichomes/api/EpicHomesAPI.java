@@ -55,14 +55,14 @@ public class EpicHomesAPI {
      * @return Returns a string of text that contains the full server package.
      */
     public static String getServerPackage() {
-        return EpicHomes.getVersionCheckerUtils().getServerPackage();
+        return EpicHomes.getPlugin().getVersionCheckerUtils().getServerPackage();
     }
 
     /**
      * @return Returns an integer that is the base major server version.
      */
     public static int getMajorServerVersion() {
-        return EpicHomes.getVersionCheckerUtils().getVersion();
+        return EpicHomes.getPlugin().getVersionCheckerUtils().getVersion();
     }
 
     /**
