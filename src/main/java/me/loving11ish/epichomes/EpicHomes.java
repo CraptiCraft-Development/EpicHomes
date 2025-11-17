@@ -20,6 +20,7 @@ import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import me.loving11ish.epichomes.utils.VersionCheckerUtils;
 import me.loving11ish.epichomes.versionsystems.ServerVersion;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -38,6 +39,7 @@ public final class EpicHomes extends JavaPlugin {
     private static EpicHomes plugin;
     private static FoliaLib foliaLib;
     private static ServerVersion serverVersion;
+    private static BukkitAudiences bukkitAudiences;
     private static VersionCheckerUtils versionCheckerUtils;
     private static PlaceholderAPIHook placeholderAPIHook = null;
 
@@ -146,6 +148,24 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole("&4Disabling plugin!");
             MessageUtils.sendConsole("&4-------------------------------------------");
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Load BukkitAudiences
+        try {
+            bukkitAudiences = BukkitAudiences.create(this);
+            MessageUtils.sendConsole("-------------------------------------------");
+            MessageUtils.sendConsole("&3Adventure Library hooked successfully!");
+        } catch (Exception e) {
+            MessageUtils.sendConsole("severe", "&4-------------------------------------------");
+            MessageUtils.sendConsole("severe", "&4BukkitAudiences failed to be created!");
+            MessageUtils.sendConsole("severe", "&4This plugin uses Adventure Library to function properly!");
+            MessageUtils.sendConsole("severe", "&4Please send this error to the developer of ClansLite using below link!");
+            MessageUtils.sendConsole("severe", "&4https://discord.gg/crapticraft");
+            MessageUtils.sendConsole("severe", "&4Is now disabling!");
+            MessageUtils.sendConsole("severe", "&4-------------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            setPluginEnabled(false);
             return;
         }
 
@@ -319,6 +339,12 @@ public final class EpicHomes extends JavaPlugin {
             }
         }
 
+        // Unregister BukkitAudiences
+        if (getBukkitAudiences() != null) {
+            getBukkitAudiences().close();
+            MessageUtils.sendConsole("&3Adventure Library hook closed successfully!");
+        }
+
         // Final plugin shutdown message
         MessageUtils.sendConsole("&3Plugin Version: &d&l" + pluginVersion);
         MessageUtils.sendConsole("&3Has been shutdown successfully");
@@ -366,7 +392,15 @@ public final class EpicHomes extends JavaPlugin {
                 serverVersion = ServerVersion.v1_21_R1;
             } else if (bukkitVersion.contains("1.21.1")) {
                 serverVersion = ServerVersion.v1_21_R2;
-            }else {
+            } else if (bukkitVersion.contains("1.21.2")) {
+                serverVersion = ServerVersion.v1_21_R3;
+            } else if (bukkitVersion.contains("1.21.3")) {
+                serverVersion = ServerVersion.v1_21_R4;
+            } else if (bukkitVersion.contains("1.21.4")) {
+                serverVersion = ServerVersion.v1_21_R5;
+            } else if (bukkitVersion.contains("1.21.5")) {
+                serverVersion = ServerVersion.v1_21_R6;
+            } else {
                 serverVersion = ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", ""));
             }
         } catch (Exception e) {
@@ -386,6 +420,10 @@ public final class EpicHomes extends JavaPlugin {
 
     public static ServerVersion getServerVersion() {
         return serverVersion;
+    }
+
+    public BukkitAudiences getBukkitAudiences() {
+        return bukkitAudiences;
     }
 
     public static VersionCheckerUtils getVersionCheckerUtils() {

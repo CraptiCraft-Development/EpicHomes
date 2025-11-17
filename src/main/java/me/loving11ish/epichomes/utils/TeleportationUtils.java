@@ -3,7 +3,6 @@ package me.loving11ish.epichomes.utils;
 import com.tcoded.folialib.FoliaLib;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
-import io.papermc.lib.PaperLib;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.api.events.AsyncHomeTeleportEvent;
 import me.loving11ish.epichomes.models.User;
@@ -23,7 +22,7 @@ public class TeleportationUtils {
 
     public void teleportPlayerAsync(Player player, Location location, String homeName) {
         User user = EpicHomes.getPlugin().getUsermapStorageUtil().getUserByOnlinePlayer(player);
-        PaperLib.teleportAsync(player, location);
+        foliaLib.getScheduler().teleportAsync(player, location);
 
         foliaLib.getScheduler().runAsync((task) -> {
             fireAsyncHomeTeleportEvent(player, user, homeName, location);
@@ -53,7 +52,7 @@ public class TeleportationUtils {
                     EpicHomes.getPlugin().getTeleportationManager().getTeleportQueue().remove(player.getUniqueId());
                     MessageUtils.sendDebugConsole("&aPlayer " + player.getName() + " has been removed from the teleport queue");
 
-                    PaperLib.teleportAsync(player, location);
+                    foliaLib.getScheduler().teleportAsync(player, location);
                     MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getTimedCompleteTP()
                             .replace(HOME_NAME_PLACEHOLDER, homeName));
 
@@ -63,14 +62,19 @@ public class TeleportationUtils {
                     });
 
                     getWrappedTask().cancel();
-                    MessageUtils.sendDebugConsole("&aWrapped task: " + getWrappedTask().toString());
-                    MessageUtils.sendDebugConsole("&ateleportPlayerAsyncTimed task canceled");
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed complete task entity: " + player.getName());
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed complete task home location: " + location.toString());
+                    MessageUtils.sendDebugConsole("&aComplete wrapped task ID: " + getWrappedTask().toString());
+                    MessageUtils.sendDebugConsole("&aCompleted TeleportPlayerAsyncTimed task canceled");
 
                     return;
                 } else {
                     time--;
-                    MessageUtils.sendDebugConsole("&ateleportPlayerAsyncTimed task running");
-                    MessageUtils.sendDebugConsole("&aWrapped task: " + getWrappedTask().toString());
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed task running");
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed task entity: " + player.getName());
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed task time left: " + time);
+                    MessageUtils.sendDebugConsole("&aTeleportPlayerAsyncTimed task home location: " + location.toString());
+                    MessageUtils.sendDebugConsole("&aWrapped task ID: " + getWrappedTask().toString());
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS);
