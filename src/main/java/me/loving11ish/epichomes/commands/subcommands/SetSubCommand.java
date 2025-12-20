@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class SetSubCommand {
 
     private final FoliaLib foliaLib = EpicHomes.getFoliaLib();

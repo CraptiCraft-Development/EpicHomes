@@ -57,12 +57,12 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("baseServerVersion")){
             //%epicHomes_baseServerVersion%
-            return String.valueOf(EpicHomes.getVersionCheckerUtils().getVersion());
+            return String.valueOf(EpicHomes.getPlugin().getVersionCheckerUtils().getVersion());
         }
 
         if (params.equalsIgnoreCase("serverPackage")){
             //%epicHomes_serverPackage%
-            return EpicHomes.getVersionCheckerUtils().getServerPackage();
+            return EpicHomes.getPlugin().getVersionCheckerUtils().getServerPackage();
         }
 
         if (params.equalsIgnoreCase("pluginEnabled")){
