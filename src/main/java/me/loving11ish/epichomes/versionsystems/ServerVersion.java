@@ -39,6 +39,7 @@ public enum ServerVersion {
     v1_21_R9,
     v1_21_R10,
     v1_21_R11,
+    v1_21_R12,
     Other;
 
     public boolean serverVersionEqual(ServerVersion version) {

@@ -87,6 +87,9 @@ public class VersionCheckerUtils {
                 case "1.21.10":
                     EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R11);
                     break;
+                case "1.21.11":
+                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R12);
+                    break;
 
 
                 default:
