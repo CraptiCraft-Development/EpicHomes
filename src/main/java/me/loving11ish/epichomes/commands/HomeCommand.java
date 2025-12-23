@@ -45,7 +45,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
 
             if (args.length < 1) {
                 if (EpicHomes.getPlugin().isGUIEnabled()) {
-                    new HomeListGUI(EpicHomes.getPlayerMenuUtility(player)).open();
+                    new HomeListGUI(EpicHomes.getPlugin().getPlayerMenuUtility(player)).open();
                 }
 
                 else {
@@ -83,7 +83,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                             if (args[1] != null) {
                                 if (EpicHomes.getPlugin().isGUIEnabled()) {
 
-                                    PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
+                                    PlayerMenuUtility playerMenuUtility = EpicHomes.getPlugin().getPlayerMenuUtility(player);
                                     playerMenuUtility.setUser(user);
                                     playerMenuUtility.setHomeName(args[1]);
                                     playerMenuUtility.setHomeLocation(usermapStorageUtil.getHomeLocationByHomeName(user, args[1]));

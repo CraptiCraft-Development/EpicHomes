@@ -13,9 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * EpicHomesAPI is a class that provides a set of methods for developers to use when interacting with EpicHomes.
@@ -139,6 +137,22 @@ public class EpicHomesAPI {
      */
     public static Location getPlayerHomeLocationByHomeName(User user, String homeName) {
         return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationByHomeName(user, homeName);
+    }
+
+    /**
+     * @param player The Bukkit Player object to get the home locations from.
+     * @return Returns a Set of Map Entries containing the home name and location for the provided player.
+     */
+    public static Set<Map.Entry<String, Location>> getHomeLocationsListByPlayer(Player player) {
+        return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationsListByPlayer(player);
+    }
+
+    /**
+     * @param offlinePlayer The Bukkit OfflinePlayer object to get the home locations from.
+     * @return Returns a Set of Map Entries containing the home name and location for the provided offline player.
+     */
+    public static Set<Map.Entry<String, Location>> getHomeLocationsListByOfflinePlayer(OfflinePlayer offlinePlayer) {
+        return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationsListByOfflinePlayer(offlinePlayer);
     }
 
     /**
