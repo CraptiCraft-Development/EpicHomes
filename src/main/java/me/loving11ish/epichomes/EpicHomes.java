@@ -93,16 +93,15 @@ public final class EpicHomes extends JavaPlugin {
                 && !serverVersion.serverVersionEqual(ServerVersion.Other)) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
-            MessageUtils.sendConsole("&4This plugin is only supported on the Minecraft versions listed below:");
+            MessageUtils.sendConsole("&4This plugin is only tested on the Minecraft versions listed below:");
             MessageUtils.sendConsole("&41.16.x");
             MessageUtils.sendConsole("&41.17.x");
             MessageUtils.sendConsole("&41.18.x");
             MessageUtils.sendConsole("&41.19.x");
             MessageUtils.sendConsole("&41.20.x");
             MessageUtils.sendConsole("&41.21.x");
-            MessageUtils.sendConsole("&4Is now disabling!");
+            MessageUtils.sendConsole("&4NO SUPPORT IS GUARANTEED FOR OTHER VERSIONS!");
             MessageUtils.sendConsole("&4-------------------------------------------");
-            setPluginEnabled(false);
             return;
         } else {
             MessageUtils.sendConsole("&a-------------------------------------------");
