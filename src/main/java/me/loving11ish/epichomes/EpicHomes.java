@@ -88,7 +88,7 @@ public final class EpicHomes extends JavaPlugin {
         versionCheckerUtils.setVersion();
 
         // Server version compatibility check
-        if (versionCheckerUtils.getVersion() < 16 || versionCheckerUtils.getVersion() > 21
+        if (versionCheckerUtils.getVersion() < 16
                 || !versionCheckerUtils.isVersionCheckedSuccessfully()
                 && !serverVersion.serverVersionEqual(ServerVersion.Other)) {
             MessageUtils.sendConsole("&4-------------------------------------------");
