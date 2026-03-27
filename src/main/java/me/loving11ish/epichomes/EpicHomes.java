@@ -87,10 +87,18 @@ public final class EpicHomes extends JavaPlugin {
         versionCheckerUtils.getServerVersion();
         versionCheckerUtils.setVersion();
 
+        ServerVersion detectedServerVersion = getServerVersion();
+
         // Server version compatibility check
-        if (versionCheckerUtils.getVersion() < 16
-                || !versionCheckerUtils.isVersionCheckedSuccessfully()
-                && !serverVersion.serverVersionEqual(ServerVersion.Other)) {
+        boolean versionDetectionFailed = !versionCheckerUtils.isVersionCheckedSuccessfully()
+                || detectedServerVersion == null
+                || detectedServerVersion.serverVersionEqual(ServerVersion.Other);
+
+        boolean unsupportedLegacyVersion = !versionDetectionFailed
+                && detectedServerVersion.isLegacyVersionScheme()
+                && detectedServerVersion.serverVersionLessThan(ServerVersion.v1_16_R3);
+
+        if (versionDetectionFailed || unsupportedLegacyVersion) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
             MessageUtils.sendConsole("&4This plugin is only tested on the Minecraft versions listed below:");
@@ -100,9 +108,9 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole("&41.19.x");
             MessageUtils.sendConsole("&41.20.x");
             MessageUtils.sendConsole("&41.21.x");
-            MessageUtils.sendConsole("&4NO SUPPORT IS GUARANTEED FOR OTHER VERSIONS!");
+            MessageUtils.sendConsole("&426.x.x");
+            MessageUtils.sendConsole("&4NO SUPPORT OR DEVELOPMENT HELP IS GUARANTEED FOR OTHER VERSIONS!");
             MessageUtils.sendConsole("&4-------------------------------------------");
-            return;
         } else {
             MessageUtils.sendConsole("&a-------------------------------------------");
             MessageUtils.sendConsole("&aA supported Minecraft version has been detected");
