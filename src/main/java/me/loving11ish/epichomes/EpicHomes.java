@@ -15,10 +15,7 @@ import me.loving11ish.epichomes.managers.filemanagers.MessagesManager;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
 import me.loving11ish.epichomes.updatesystem.JoinEvent;
 import me.loving11ish.epichomes.updatesystem.UpdateChecker;
-import me.loving11ish.epichomes.utils.AutoSaveTaskUtils;
-import me.loving11ish.epichomes.utils.MessageUtils;
-import me.loving11ish.epichomes.utils.UsermapStorageUtil;
-import me.loving11ish.epichomes.utils.VersionCheckerUtils;
+import me.loving11ish.epichomes.utils.*;
 import me.loving11ish.epichomes.versionsystems.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
@@ -58,7 +55,7 @@ public final class EpicHomes extends JavaPlugin {
     private TeleportationManager teleportationManager;
 
     private final List<String> pluginCommands = new ArrayList<>();
-    private static final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
+    private final HashMap<Player, PlayerMenuUtility> playerMenuUtilityMap = new HashMap<>();
 
     @Override
     public void onLoad() {
@@ -90,23 +87,30 @@ public final class EpicHomes extends JavaPlugin {
         versionCheckerUtils.getServerVersion();
         versionCheckerUtils.setVersion();
 
+        ServerVersion detectedServerVersion = getServerVersion();
+
         // Server version compatibility check
-        if (versionCheckerUtils.getVersion() < 16 || versionCheckerUtils.getVersion() > 21
-                || !versionCheckerUtils.isVersionCheckedSuccessfully()
-                && !serverVersion.serverVersionEqual(ServerVersion.Other)) {
+        boolean versionDetectionFailed = !versionCheckerUtils.isVersionCheckedSuccessfully()
+                || detectedServerVersion == null
+                || detectedServerVersion.serverVersionEqual(ServerVersion.Other);
+
+        boolean unsupportedLegacyVersion = !versionDetectionFailed
+                && detectedServerVersion.isLegacyVersionScheme()
+                && detectedServerVersion.serverVersionLessThan(ServerVersion.v1_16_R3);
+
+        if (versionDetectionFailed || unsupportedLegacyVersion) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
-            MessageUtils.sendConsole("&4This plugin is only supported on the Minecraft versions listed below:");
+            MessageUtils.sendConsole("&4This plugin is only tested on the Minecraft versions listed below:");
             MessageUtils.sendConsole("&41.16.x");
             MessageUtils.sendConsole("&41.17.x");
             MessageUtils.sendConsole("&41.18.x");
             MessageUtils.sendConsole("&41.19.x");
             MessageUtils.sendConsole("&41.20.x");
             MessageUtils.sendConsole("&41.21.x");
-            MessageUtils.sendConsole("&4Is now disabling!");
+            MessageUtils.sendConsole("&426.x.x");
+            MessageUtils.sendConsole("&4NO SUPPORT OR DEVELOPMENT HELP IS GUARANTEED FOR OTHER VERSIONS!");
             MessageUtils.sendConsole("&4-------------------------------------------");
-            setPluginEnabled(false);
-            return;
         } else {
             MessageUtils.sendConsole("&a-------------------------------------------");
             MessageUtils.sendConsole("&aA supported Minecraft version has been detected");
@@ -279,6 +283,12 @@ public final class EpicHomes extends JavaPlugin {
             AutoSaveTaskUtils.runAutoSaveTask();
             MessageUtils.sendConsole(getMessagesManager().getAutoSaveStart());
         }, 5L, TimeUnit.SECONDS);
+
+        // Start auto cleanup task
+        getFoliaLib().getScheduler().runLaterAsync(() -> {
+            AutoCleanupTaskUtils.runAutoCleanupTask();
+            MessageUtils.sendDebugConsole("Auto cleanup task started successfully");
+        }, 6L, TimeUnit.SECONDS);
     }
 
     @Override
@@ -369,7 +379,7 @@ public final class EpicHomes extends JavaPlugin {
         plugin = null;
     }
 
-    public static PlayerMenuUtility getPlayerMenuUtility(Player player) {
+    public PlayerMenuUtility getPlayerMenuUtility(Player player) {
         PlayerMenuUtility playerMenuUtility;
         if (!(playerMenuUtilityMap.containsKey(player))) {
             playerMenuUtility = new PlayerMenuUtility(player);
@@ -482,5 +492,9 @@ public final class EpicHomes extends JavaPlugin {
 
     public void setTeleportationManager(TeleportationManager teleportationManager) {
         this.teleportationManager = teleportationManager;
+    }
+
+    public HashMap<Player, PlayerMenuUtility> getRawPlayerMenuUtilityMap() {
+        return playerMenuUtilityMap;
     }
 }

@@ -7,15 +7,14 @@ import me.loving11ish.epichomes.api.events.AsyncHomePreTeleportEvent;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.TeleportationUtils;
+import me.loving11ish.epichomes.versionsystems.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * EpicHomesAPI is a class that provides a set of methods for developers to use when interacting with EpicHomes.
@@ -63,6 +62,62 @@ public class EpicHomesAPI {
      */
     public static int getMajorServerVersion() {
         return EpicHomes.getPlugin().getVersionCheckerUtils().getVersion();
+    }
+
+    /**
+     * @return Returns an integer that is the first version number in the version enum.
+     */
+    public static int getFirstVersionNumber() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().getFirstVersionNumber();
+    }
+
+    /**
+     * @return Returns an integer that is the second version number in the version enum
+     */
+    public static int getSecondVersionNumber() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().getSecondVersionNumber();
+    }
+
+    /**
+     * @return Returns an integer that is the current patch version of the current version enum.
+     * For old versions like 1.21.4, this returns 4. For new versions like 26.1, this returns 0.
+     */
+    public static int getPatchVersionNumber() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().getPatchVersionNumber();
+    }
+
+    /**
+     * @return Returns `true` if the server is running an old server version like `1.21.11`.
+     * Returns `false` if the server is running a new server version like `26.1.x`.
+     */
+    public static boolean isLegacyVersionScheme() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().isLegacyVersionScheme();
+    }
+
+    /**
+     * @return Returns `true` if the server is running a new server version like `26.1.x`.
+     * Returns `false` if the server is running an old server version like `1.21.11`.
+     */
+    public static boolean isNewVersionScheme() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().isNewVersionScheme();
+    }
+
+    /**
+     * This is very useful if you need a quick way to check that the server is at `1.21.0 or higher`,
+     * without needing to do a version check yourself.
+     * @return Returns `true` if the current server version is at least `1.21.0`+.
+     */
+    public static boolean isAtLeastMinecraft1_21() {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().isAtLeastMinecraft1_21();
+    }
+
+    /**
+     * Generic helper if you want to compare the current version against a specific enum version.
+     * @param requiredVersion Version enum to compare the current server version against.
+     * @return Returns `true` if the provided enum equals or is higher than the current server version.
+     */
+    public static boolean isAtLeast(ServerVersion requiredVersion) {
+        return EpicHomes.getPlugin().getVersionCheckerUtils().isAtLeast(requiredVersion);
     }
 
     /**
@@ -139,6 +194,22 @@ public class EpicHomesAPI {
      */
     public static Location getPlayerHomeLocationByHomeName(User user, String homeName) {
         return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationByHomeName(user, homeName);
+    }
+
+    /**
+     * @param player The Bukkit Player object to get the home locations from.
+     * @return Returns a Set of Map Entries containing the home name and location for the provided player.
+     */
+    public static Set<Map.Entry<String, Location>> getHomeLocationsListByPlayer(Player player) {
+        return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationsListByPlayer(player);
+    }
+
+    /**
+     * @param offlinePlayer The Bukkit OfflinePlayer object to get the home locations from.
+     * @return Returns a Set of Map Entries containing the home name and location for the provided offline player.
+     */
+    public static Set<Map.Entry<String, Location>> getHomeLocationsListByOfflinePlayer(OfflinePlayer offlinePlayer) {
+        return EpicHomes.getPlugin().getUsermapStorageUtil().getHomeLocationsListByOfflinePlayer(offlinePlayer);
     }
 
     /**

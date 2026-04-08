@@ -34,7 +34,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
             if (args.length < 1) {
 
                 if (EpicHomes.getPlugin().isGUIEnabled()) {
-                    new DeleteHomesListGUI(EpicHomes.getPlayerMenuUtility(player)).open();
+                    new DeleteHomesListGUI(EpicHomes.getPlugin().getPlayerMenuUtility(player)).open();
                 }
 
                 else {
@@ -47,7 +47,7 @@ public class DeleteHomeCommand implements CommandExecutor, TabCompleter {
                 if (args[0] != null) {
                     if (EpicHomes.getPlugin().isGUIEnabled()) {
 
-                        PlayerMenuUtility playerMenuUtility = EpicHomes.getPlayerMenuUtility(player);
+                        PlayerMenuUtility playerMenuUtility = EpicHomes.getPlugin().getPlayerMenuUtility(player);
                         playerMenuUtility.setUser(user);
                         playerMenuUtility.setHomeName(args[0]);
                         Location location = usermapStorageUtil.getHomeLocationByHomeName(user, args[0]);

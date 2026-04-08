@@ -9,6 +9,7 @@ import me.loving11ish.epichomes.files.MessagesFileManager;
 import me.loving11ish.epichomes.managers.filemanagers.ConfigManager;
 import me.loving11ish.epichomes.managers.filemanagers.MessagesManager;
 import me.loving11ish.epichomes.updatesystem.UpdateChecker;
+import me.loving11ish.epichomes.utils.AutoCleanupTaskUtils;
 import me.loving11ish.epichomes.utils.AutoSaveTaskUtils;
 import me.loving11ish.epichomes.utils.MessageUtils;
 import org.bukkit.Bukkit;
@@ -87,6 +88,11 @@ public class ReloadSubCommand {
                 MessageUtils.sendDebugConsole( "&aAuto save timed task canceled successfully");
                 AutoSaveTaskUtils.getAutoSaveTask().cancel();
             }
+            if (!AutoCleanupTaskUtils.getAutoCleanupTask().isCancelled()) {
+                MessageUtils.sendDebugConsole( "&aWrapped task: " + AutoCleanupTaskUtils.getAutoCleanupTask().toString());
+                MessageUtils.sendDebugConsole( "&aAuto cleanup timed task canceled successfully");
+                AutoCleanupTaskUtils.getAutoCleanupTask().cancel();
+            }
             foliaLib.getScheduler().cancelAllTasks();
             if (foliaLib.isUnsupported()) {
                 Bukkit.getScheduler().cancelTasks(EpicHomes.getPlugin());
@@ -147,6 +153,12 @@ public class ReloadSubCommand {
                 AutoSaveTaskUtils.runAutoSaveTask();
                 MessageUtils.sendConsole(EpicHomes.getPlugin().getMessagesManager().getAutoSaveStart());
             }, 5L, TimeUnit.SECONDS);
+
+            // Restart auto cleanup task
+            foliaLib.getScheduler().runLaterAsync(() -> {
+                AutoCleanupTaskUtils.runAutoCleanupTask();
+                MessageUtils.sendDebugConsole("Auto cleanup task started successfully");
+            }, 6L, TimeUnit.SECONDS);
         }, 6L, TimeUnit.SECONDS);
     }
 }

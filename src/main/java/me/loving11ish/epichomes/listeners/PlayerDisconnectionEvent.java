@@ -21,5 +21,7 @@ public class PlayerDisconnectionEvent implements Listener {
                 MessageUtils.sendConsole("error", "Failed to remove timed teleport for player " + player.getName() + "!");
             }
         }
+
+        EpicHomes.getPlugin().getRawPlayerMenuUtilityMap().remove(player);
     }
 }
