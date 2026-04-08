@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/Loving11ish/EpicHomes.svg)](https://jitpack.io/#Loving11ish/EpicHomes)
+[![](https://jitpack.io/v/CraptiCraft-Development/EpicHomes.svg)](https://jitpack.io/#CraptiCraft-Development/EpicHomes)
 
 # EpicHomes
 Welcome to the very best and last homes plugin you'll ever need!
