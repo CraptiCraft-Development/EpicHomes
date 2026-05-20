@@ -9,7 +9,7 @@ folia-supported: true
 load: POSTWORLD
 authors: [Loving11ish]
 description: A fully featured homes plugin that is resource efficient and simple to use.
-softdepend: [ PlaceholderAPI, Multiverse-Core ]
+softdepend: [ PlaceholderAPI, Multiverse-Core, Vault ]
 
 commands:
 
@@ -36,6 +36,14 @@ commands:
   delhome:
     description: This command lets a player delete the specified home if it exists.
     usage: "/delhome <home-name>"
+
+  buyhome:
+    description: This command lets a player buy an extra home slot.
+    usage: "/buyhome [confirm]"
+    aliases:
+      - buyhomes
+      - buyextrahome
+      - buyextrahomes
 
   importhomes:
     description: The command used by ops to import homes and player data from the StormerHomes plugin.

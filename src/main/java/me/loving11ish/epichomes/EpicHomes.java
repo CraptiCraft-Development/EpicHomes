@@ -202,18 +202,25 @@ public final class EpicHomes extends JavaPlugin {
         // Register commands
         HomeCommand homeCommand = new HomeCommand();
         HomeAdminCommand homeAdminCommand = new HomeAdminCommand();
+        BuyHomeCommand buyHomeCommand = new BuyHomeCommand();
         getCommand("home").setExecutor(homeCommand);
         getCommand("home").setTabCompleter(homeCommand);
         getCommand("homeadmin").setExecutor(homeAdminCommand);
         getCommand("homeadmin").setTabCompleter(homeAdminCommand);
         getCommand("sethome").setExecutor(new SetHomeCommand());
         getCommand("delhome").setExecutor(new DeleteHomeCommand());
+        getCommand("buyhome").setExecutor(buyHomeCommand);
+        getCommand("buyhome").setTabCompleter(buyHomeCommand);
         getCommand("importhomes").setExecutor(new HomeImportCommand());
 
         // Register events
         pluginCommands.add("/home");
         pluginCommands.add("/sethome");
         pluginCommands.add("/delhome");
+        pluginCommands.add("/buyhome");
+        pluginCommands.add("/buyhomes");
+        pluginCommands.add("/buyextrahome");
+        pluginCommands.add("/buyextrahomes");
         pluginCommands.add("/h");
         pluginCommands.add("/eh");
         pluginCommands.add("/delhome");
