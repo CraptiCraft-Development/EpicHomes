@@ -9,6 +9,7 @@ public class User {
     private String userUUID;
     private String lastKnownName;
     private HashMap<String, Location> homesList = new HashMap<>();
+    private int purchasedExtraHomes = 0;
 
     public User(String uuid, String name) {
         userUUID = uuid;
@@ -37,5 +38,13 @@ public class User {
 
     public void setHomesList(HashMap<String, Location> homesList) {
         this.homesList = homesList;
+    }
+
+    public int getPurchasedExtraHomes() {
+        return purchasedExtraHomes;
+    }
+
+    public void setPurchasedExtraHomes(int purchasedExtraHomes) {
+        this.purchasedExtraHomes = purchasedExtraHomes;
     }
 }

@@ -28,6 +28,15 @@ home-set-failed-max-tiered-reached: "&cSorry, you have reached the total homes y
 home-set-failed-invalid-name: "&cSorry, your home cannot contain colours or the following characters: &d."
 home-set-failed-name-not-allowed: "&cSorry, that home name is not allowed. Please choose another!"
 
+#Extra home purchase
+home-buy-disabled: "&cExtra home purchases are disabled."
+home-buy-economy-unavailable: "&cHome purchases require Vault and an economy plugin. Please contact a server admin."
+home-buy-price-disclaimer: "&eBuying one extra home will cost &a%PRICE%&e. Your home limit will increase from &a%CURRENT-LIMIT% &eto &a%NEXT-LIMIT%&e. Run &6/home buy confirm &eto purchase."
+home-buy-successful: "&aPurchase complete! Your home limit is now &e%CURRENT-LIMIT%&a."
+home-buy-failed: "&cFailed to purchase an extra home. Please try again later."
+home-buy-insufficient-funds: "&cYou need &e%PRICE% &cto buy another home slot."
+home-buy-max-reached: "&cYou already own the maximum extra home slots: &e%MAX-EXTRA-HOMES%&c."
+
 #Home delete
 home-delete-successful: "&aSuccessfully deleted &e%HOME%&a."
 homeadmin-delete-successful: "&aSuccessfully deleted &e%TARGET%'s %HOME%&a."
@@ -82,7 +91,14 @@ incorrect-home-command-usage:
   - "&7- &6/home <name>\n"
   - "&7- &6/home set <name>\n"
   - "&7- &6/home delete <name>\n"
-  - "&7- &6/home list"
+  - "&7- &6/home list\n"
+  - "&7- &6/home buy [confirm]"
+
+#Buyhome command usage
+incorrect-buyhome-command-usage:
+  - "&abuyhome Usage:\n"
+  - "&7- &6/buyhome\n"
+  - "&7- &6/buyhome confirm"
 
 #Sethome command usage
 incorrect-sethome-command-usage:

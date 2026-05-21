@@ -3,7 +3,9 @@ package me.loving11ish.epichomes.commands.subcommands;
 import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.api.events.AsyncHomeSetEvent;
+import me.loving11ish.epichomes.menusystem.menus.BuyExtraHomeGUI;
 import me.loving11ish.epichomes.models.User;
+import me.loving11ish.epichomes.utils.HomePurchaseUtil;
 import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -13,13 +15,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class SetSubCommand {
 
     private final FoliaLib foliaLib = EpicHomes.getFoliaLib();
     private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
+    private final HomePurchaseUtil homePurchaseUtil = new HomePurchaseUtil();
 
     private static final String HOME_NAME_PLACEHOLDER = "%HOME%";
     private static final String LIMIT_PLACEHOLDER = "%LIMIT%";
@@ -59,16 +61,17 @@ public class SetSubCommand {
 
                 if (!(player.hasPermission("epichomes.maxhomes.*") || player.hasPermission("epichomes.*") || player.isOp())) {
 
-                    if (!EpicHomes.getPlugin().getConfigManager().isUseTieredHomeLimit()) {
+                    int homeLimit = homePurchaseUtil.getPlayerHomeLimit(player);
 
-                        if (homesList.size() >= EpicHomes.getPlugin().getConfigManager().getDefaultHomeLimit()) {
+                    if (homesList.size() >= homeLimit) {
+                        if (EpicHomes.getPlugin().getConfigManager().isUseTieredHomeLimit()) {
+                            MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailedTieredMaxHomes()
+                                    .replace(LIMIT_PLACEHOLDER, String.valueOf(homeLimit)));
+                        } else {
                             MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailedMaxHomes());
-                            return true;
                         }
-                    }
-
-                    else {
-                        if (getTieredLimitCheck(player, homesList)) return true;
+                        offerExtraHomePurchase(player);
+                        return true;
                     }
                 }
                 if (usermapStorageUtil.addHomeToUser(user, homeName, location)) {
@@ -85,6 +88,19 @@ public class SetSubCommand {
         return false;
     }
 
+    private void offerExtraHomePurchase(Player player) {
+        if (!EpicHomes.getPlugin().getConfigManager().isExtraHomePurchaseEnabled()) {
+            return;
+        }
+
+        if (EpicHomes.getPlugin().isGUIEnabled()) {
+            new BuyExtraHomeGUI(EpicHomes.getPlugin().getPlayerMenuUtility(player)).open();
+            return;
+        }
+
+        homePurchaseUtil.sendPurchaseDisclaimer(player);
+    }
+
     private boolean isNameInvalidStringUtils(Player player, String homeName, List<String> bannedNames) {
         if (StringUtils.containsAnyIgnoreCase(homeName, ".")
                 || StringUtils.containsAnyIgnoreCase(homeName, "&")
@@ -96,23 +112,6 @@ public class SetSubCommand {
         if (bannedNames.contains(homeName)) {
             MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailedIllegalName());
             return true;
-        }
-        return false;
-    }
-
-    private boolean getTieredLimitCheck(Player player, List<String> homesList) {
-        for (Map<?, ?> groupMap : EpicHomes.getPlugin().getConfigManager().getTieredHomesMaxAmountGroups()) {
-            String group = (String) groupMap.get("group");
-            int maxAmount = (Integer) groupMap.get("maxAmount");
-
-            if (player.hasPermission(group)) {
-                if (homesList.size() >= maxAmount) {
-                    MessageUtils.sendPlayer(player, EpicHomes.getPlugin().getMessagesManager().getHomeSetFailedTieredMaxHomes()
-                            .replace(LIMIT_PLACEHOLDER, String.valueOf(maxAmount)));
-                    return true;
-                }
-                break;
-            }
         }
         return false;
     }
