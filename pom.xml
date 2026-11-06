@@ -235,6 +235,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- VaultAPI is provided by external plugin instance -->
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.github.lightlibs</groupId>
             <artifactId>simplehttpwrapper</artifactId>

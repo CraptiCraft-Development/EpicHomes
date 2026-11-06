@@ -55,6 +55,14 @@ public class MessagesManager {
     private String homeSetFailedTieredMaxHomes;
     private String homeSetFailInvalidName;
     private String homeSetFailedIllegalName;
+    // Extra home purchase
+    private String homeBuyDisabled;
+    private String homeBuyEconomyUnavailable;
+    private String homeBuyPriceDisclaimer;
+    private String homeBuySuccess;
+    private String homeBuyFailed;
+    private String homeBuyInsufficientFunds;
+    private String homeBuyMaxReached;
     // Home delete
     private String homeDeleteSuccess;
     private String homeAdminDeleteSuccess;
@@ -65,6 +73,7 @@ public class MessagesManager {
     private List<String> playerHomeList;
     private List<String> adminHomeList;
     private List<String> homeCommandList;
+    private List<String> buyHomeCommandList;
     private List<String> setHomeCommandList;
     private List<String> deleteHomeCommandList;
     private List<String> homeAdminCommandList;
@@ -121,6 +130,14 @@ public class MessagesManager {
         homeSetFailedTieredMaxHomes = messages.getString("home-set-failed-max-tiered-reached", "&cSorry, you have reached the total homes your tier can set!\\n&cYou can set a total of &e%LIMIT% &chomes.");
         homeSetFailInvalidName = messages.getString("home-set-failed-invalid-name", "&cSorry, your home cannot contain colours or the following characters: &d.");
         homeSetFailedIllegalName = messages.getString("home-set-failed-name-not-allowed", "&cSorry, that home name is not allowed. Please choose another!");
+        // Extra home purchase
+        homeBuyDisabled = messages.getString("home-buy-disabled", "&cExtra home purchases are disabled.");
+        homeBuyEconomyUnavailable = messages.getString("home-buy-economy-unavailable", "&cHome purchases require Vault and an economy plugin. Please contact a server admin.");
+        homeBuyPriceDisclaimer = messages.getString("home-buy-price-disclaimer", "&eBuying one extra home will cost &a%PRICE%&e. Your home limit will increase from &a%CURRENT-LIMIT% &eto &a%NEXT-LIMIT%&e. Run &6/home buy confirm &eto purchase.");
+        homeBuySuccess = messages.getString("home-buy-successful", "&aPurchase complete! Your home limit is now &e%CURRENT-LIMIT%&a.");
+        homeBuyFailed = messages.getString("home-buy-failed", "&cFailed to purchase an extra home. Please try again later.");
+        homeBuyInsufficientFunds = messages.getString("home-buy-insufficient-funds", "&cYou need &e%PRICE% &cto buy another home slot.");
+        homeBuyMaxReached = messages.getString("home-buy-max-reached", "&cYou already own the maximum extra home slots: &e%MAX-EXTRA-HOMES%&c.");
         // Home delete
         homeDeleteSuccess = messages.getString("home-delete-successful", "&aSuccessfully deleted &e%HOME%&a.");
         homeAdminDeleteSuccess = messages.getString("homeadmin-delete-successful", "&aSuccessfully deleted &e%TARGET%'s %HOME%&a.");
@@ -131,6 +148,7 @@ public class MessagesManager {
         playerHomeList = messages.getStringList("list");
         adminHomeList = messages.getStringList("homeadmin-list");
         homeCommandList = messages.getStringList("incorrect-home-command-usage");
+        buyHomeCommandList = messages.getStringList("incorrect-buyhome-command-usage");
         setHomeCommandList = messages.getStringList("incorrect-sethome-command-usage");
         deleteHomeCommandList = messages.getStringList("incorrect-delhome-command-usage");
         homeAdminCommandList = messages.getStringList("incorrect-homeadmin-command-usage");
@@ -294,6 +312,34 @@ public class MessagesManager {
         return homeSetFailedIllegalName;
     }
 
+    public String getHomeBuyDisabled() {
+        return homeBuyDisabled;
+    }
+
+    public String getHomeBuyEconomyUnavailable() {
+        return homeBuyEconomyUnavailable;
+    }
+
+    public String getHomeBuyPriceDisclaimer() {
+        return homeBuyPriceDisclaimer;
+    }
+
+    public String getHomeBuySuccess() {
+        return homeBuySuccess;
+    }
+
+    public String getHomeBuyFailed() {
+        return homeBuyFailed;
+    }
+
+    public String getHomeBuyInsufficientFunds() {
+        return homeBuyInsufficientFunds;
+    }
+
+    public String getHomeBuyMaxReached() {
+        return homeBuyMaxReached;
+    }
+
     public String getHomeDeleteSuccess() {
         return homeDeleteSuccess;
     }
@@ -321,6 +367,10 @@ public class MessagesManager {
 
     public List<String> getHomeCommandList() {
         return homeCommandList;
+    }
+
+    public List<String> getBuyHomeCommandList() {
+        return buyHomeCommandList;
     }
 
     public List<String> getSetHomeCommandList() {

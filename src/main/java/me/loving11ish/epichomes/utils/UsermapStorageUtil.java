@@ -26,6 +26,7 @@ public class UsermapStorageUtil {
             HashMap<String, Location> homeLocations = entry.getValue().getHomesList();
             this.usermapConfig.set("users.data." + entry.getKey() + ".userUUID", entry.getValue().getUserUUID());
             this.usermapConfig.set("users.data." + entry.getKey() + ".lastKnownName", entry.getValue().getLastKnownName());
+            this.usermapConfig.set("users.data." + entry.getKey() + ".purchasedExtraHomes", entry.getValue().getPurchasedExtraHomes());
             if (!entry.getValue().getHomesList().isEmpty()) {
                 for (Map.Entry<String, Location> homeEntry : homeLocations.entrySet()) {
                     if (homeEntry.getValue().getWorld() == null) {
@@ -55,6 +56,7 @@ public class UsermapStorageUtil {
             UUID uuid = UUID.fromString(key);
             String userUUID = this.usermapConfig.getString("users.data." + key + ".userUUID");
             String lastKnownName = this.usermapConfig.getString("users.data." + key + ".lastKnownName");
+            int purchasedExtraHomes = this.usermapConfig.getInt("users.data." + key + ".purchasedExtraHomes", 0);
             ConfigurationSection homesSection = this.usermapConfig.getConfigurationSection("users.data." + key + ".homes");
             if (homesSection != null) {
                 Set<String> homeKeys = homesSection.getKeys(false);
@@ -79,6 +81,7 @@ public class UsermapStorageUtil {
                 }
             }
             User user = new User(userUUID, lastKnownName);
+            user.setPurchasedExtraHomes(purchasedExtraHomes);
             if (!homeLocations.isEmpty()) {
                 user.setHomesList(homeLocations);
             }
@@ -230,6 +233,11 @@ public class UsermapStorageUtil {
             homeNames.add(home.getKey());
         }
         return homeNames;
+    }
+
+    public void setPurchasedExtraHomes(User user, int purchasedExtraHomes) {
+        user.setPurchasedExtraHomes(purchasedExtraHomes);
+        this.usermapStorage.replace(UUID.fromString(user.getUserUUID()), user);
     }
 
     public void setHomeImportCompleted() {

@@ -5,9 +5,11 @@ import me.loving11ish.epichomes.EpicHomes;
 import me.loving11ish.epichomes.api.events.AsyncHomePreTeleportEvent;
 import me.loving11ish.epichomes.menusystem.PaginatedMenu;
 import me.loving11ish.epichomes.menusystem.PlayerMenuUtility;
+import me.loving11ish.epichomes.menusystem.menus.BuyExtraHomeGUI;
 import me.loving11ish.epichomes.menusystem.menus.DeleteSingleGUI;
 import me.loving11ish.epichomes.models.User;
 import me.loving11ish.epichomes.utils.ColorUtils;
+import me.loving11ish.epichomes.utils.HomePurchaseUtil;
 import me.loving11ish.epichomes.utils.MessageUtils;
 import me.loving11ish.epichomes.utils.TeleportationUtils;
 import me.loving11ish.epichomes.utils.UsermapStorageUtil;
@@ -33,8 +35,10 @@ public class HomeListGUI extends PaginatedMenu {
     private static final String HOME_LOCATION_PLACEHOLDER_X = "%LOCATION-X%";
     private static final String HOME_LOCATION_PLACEHOLDER_Y = "%LOCATION-Y%";
     private static final String HOME_LOCATION_PLACEHOLDER_Z = "%LOCATION-Z%";
+    private static final String BUY_EXTRA_HOME_ACTION = "buyExtraHome";
 
     private final UsermapStorageUtil usermapStorageUtil = EpicHomes.getPlugin().getUsermapStorageUtil();
+    private final HomePurchaseUtil homePurchaseUtil = new HomePurchaseUtil();
 
     public HomeListGUI(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -59,6 +63,11 @@ public class HomeListGUI extends PaginatedMenu {
 
         //Check & run left click options
         if (event.isLeftClick()) {
+            if (BUY_EXTRA_HOME_ACTION.equals(getMenuAction(event.getCurrentItem()))) {
+                new BuyExtraHomeGUI(playerMenuUtility).open();
+                return;
+            }
+
             if (event.getCurrentItem().getType().equals(EpicHomes.getPlugin().getConfigManager().getHomeListGUIItemMaterial())) {
                 String homeName = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(EpicHomes.getPlugin(), "homeName"), PersistentDataType.STRING);
 
@@ -179,10 +188,39 @@ public class HomeListGUI extends PaginatedMenu {
                 }
             }
         }
+
+        if (EpicHomes.getPlugin().getConfigManager().isExtraHomePurchaseEnabled()) {
+            inventory.setItem(52, makeBuyExtraHomeItem(playerMenuUtility.getOwner()));
+        }
     }
 
     private static void fireHomePreTeleportEvent(Player player, User user, String homeName, Location homeLocation, Location oldLocation) {
         AsyncHomePreTeleportEvent asyncHomePreTeleportEvent = new AsyncHomePreTeleportEvent(player, user, homeName, homeLocation, oldLocation);
         Bukkit.getPluginManager().callEvent(asyncHomePreTeleportEvent);
+    }
+
+    private ItemStack makeBuyExtraHomeItem(Player player) {
+        ItemStack buyItem = new ItemStack(EpicHomes.getPlugin().getConfigManager().getHomeListGUIBuyExtraHomeItemMaterial(), 1);
+        ItemMeta itemMeta = buyItem.getItemMeta();
+        itemMeta.setDisplayName(ColorUtils.translateColorCodes(homePurchaseUtil.applyPlaceholders(
+                EpicHomes.getPlugin().getConfigManager().getHomeListGUIBuyExtraHomeItemName(), player)));
+
+        List<String> loreConfigList = EpicHomes.getPlugin().getConfigManager().getHomeListGUIBuyExtraHomeItemLore();
+        ArrayList<String> lore = new ArrayList<>();
+        for (String string : loreConfigList) {
+            lore.add(ColorUtils.translateColorCodes(homePurchaseUtil.applyPlaceholders(string, player)));
+        }
+        itemMeta.setLore(lore);
+        itemMeta.getPersistentDataContainer().set(new NamespacedKey(EpicHomes.getPlugin(), "homeListAction"), PersistentDataType.STRING, BUY_EXTRA_HOME_ACTION);
+        buyItem.setItemMeta(itemMeta);
+        return buyItem;
+    }
+
+    private String getMenuAction(ItemStack itemStack) {
+        if (itemStack == null || !itemStack.hasItemMeta()) {
+            return null;
+        }
+
+        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(EpicHomes.getPlugin(), "homeListAction"), PersistentDataType.STRING);
     }
 }
