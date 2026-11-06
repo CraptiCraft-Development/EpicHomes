@@ -1,71 +1,110 @@
 package me.loving11ish.epichomes.versionsystems;
 
+import me.loving11ish.epichomes.utils.MessageUtils;
+
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 public enum ServerVersion {
 
-    v1_8_R1("1.8", 1, 8, 0),
-    v1_8_R2("1.8.3", 1, 8, 3),
-    v1_8_R3("1.8.8", 1, 8, 8),
+    v1_8_R1(MCVersion.MC_1_8),
+    v1_8_R2(MCVersion.MC_1_8_3),
+    v1_8_R3(MCVersion.MC_1_8_8),
 
-    v1_9_R1("1.9", 1, 9, 0),
-    v1_9_R2("1.9.4", 1, 9, 4),
+    v1_9_R1(MCVersion.MC_1_9),
+    v1_9_R2(MCVersion.MC_1_9_4),
 
-    v1_10_R1("1.10", 1, 10, 0),
-    v1_11_R1("1.11", 1, 11, 0),
-    v1_12_R1("1.12", 1, 12, 0),
+    v1_10_R1(MCVersion.MC_1_10),
+    v1_11_R1(MCVersion.MC_1_11),
+    v1_12_R1(MCVersion.MC_1_12),
 
-    v1_13_R1("1.13", 1, 13, 0),
-    v1_13_R2("1.13.2", 1, 13, 2),
+    v1_13_R1(MCVersion.MC_1_13),
+    v1_13_R2(MCVersion.MC_1_13_2),
 
-    v1_14_R1("1.14", 1, 14, 0),
-    v1_15_R1("1.15", 1, 15, 0),
+    v1_14_R1(MCVersion.MC_1_14),
+    v1_15_R1(MCVersion.MC_1_15),
 
-    v1_16_R1("1.16", 1, 16, 0),
-    v1_16_R2("1.16.2", 1, 16, 2),
-    v1_16_R3("1.16.5", 1, 16, 5),
+    v1_16_R1(MCVersion.MC_1_16),
+    v1_16_R2(MCVersion.MC_1_16_2),
+    v1_16_R3(MCVersion.MC_1_16_5),
 
-    v1_17_R1("1.17", 1, 17, 0),
+    v1_17_R1(MCVersion.MC_1_17),
 
-    v1_18_R1("1.18", 1, 18, 0),
-    v1_18_R2("1.18.2", 1, 18, 2),
+    v1_18_R1(MCVersion.MC_1_18),
+    v1_18_R2(MCVersion.MC_1_18_2),
 
-    v1_19_R1("1.19", 1, 19, 0),
-    v1_19_R2("1.19.3", 1, 19, 3),
-    v1_19_R3("1.19.4", 1, 19, 4),
+    v1_19_R1(MCVersion.MC_1_19),
+    v1_19_R2(MCVersion.MC_1_19_3),
+    v1_19_R3(MCVersion.MC_1_19_4),
 
-    v1_20_R1("1.20", 1, 20, 0),
-    v1_20_R2("1.20.2", 1, 20, 2),
-    v1_20_R3("1.20.3", 1, 20, 3),
-    v1_20_R4("1.20.5", 1, 20, 5),
-    v1_20_R5("1.20.6", 1, 20, 6),
+    v1_20_R1(MCVersion.MC_1_20),
+    v1_20_R2(MCVersion.MC_1_20_2),
+    v1_20_R3(MCVersion.MC_1_20_3),
+    v1_20_R4(MCVersion.MC_1_20_5),
+    v1_20_R5(MCVersion.MC_1_20_6),
 
-    v1_21_R1("1.21", 1, 21, 0),
-    v1_21_R2("1.21.1", 1, 21, 1),
-    v1_21_R3("1.21.2", 1, 21, 2),
-    v1_21_R4("1.21.3", 1, 21, 3),
-    v1_21_R5("1.21.4", 1, 21, 4),
-    v1_21_R6("1.21.5", 1, 21, 5),
-    v1_21_R7("1.21.6", 1, 21, 6),
-    v1_21_R8("1.21.7", 1, 21, 7),
-    v1_21_R9("1.21.8", 1, 21, 8),
-    v1_21_R10("1.21.9", 1, 21, 9),
-    v1_21_R11("1.21.10", 1, 21, 10),
-    v1_21_R12("1.21.11", 1, 21, 11),
+    v1_21_R1(MCVersion.MC_1_21),
+    v1_21_R2(MCVersion.MC_1_21_1),
+    v1_21_R3(MCVersion.MC_1_21_2),
+    v1_21_R4(MCVersion.MC_1_21_3),
+    v1_21_R5(MCVersion.MC_1_21_4),
+    v1_21_R6(MCVersion.MC_1_21_5),
+    v1_21_R7(MCVersion.MC_1_21_6),
+    v1_21_R8(MCVersion.MC_1_21_7),
+    v1_21_R9(MCVersion.MC_1_21_8),
+    v1_21_R10(MCVersion.MC_1_21_9),
+    v1_21_R11(MCVersion.MC_1_21_10),
+    v1_21_R12(MCVersion.MC_1_21_11),
 
-    v26_1_R1("26.1", 26, 1, 0),
-    v26_1_R2("26.1.1", 26, 1, 1),
+    v26_1_R1(MCVersion.MC_26_1),
+    v26_1_R2(MCVersion.MC_26_1_1),
+    v26_2_R1(MCVersion.MC_26_2),
+    v26_3_R1(MCVersion.MC_26_3),
+    v26_3_R2(MCVersion.MC_26_3_1),
+    v26_3_R3(MCVersion.MC_26_3_2),
+    v26_3_R4(MCVersion.MC_26_3_3),
+    v26_3_R5(MCVersion.MC_26_3_4),
+    v27_1_R1(MCVersion.MC_27_1),
 
-    Other("Other", -1, -1, -1);
+    Other(MCVersion.UNKNOWN, "Other");
 
+    private static final Map<String, ServerVersion> BY_MINECRAFT_VERSION = new HashMap<>();
+    private static final Map<MCVersion, ServerVersion> BY_MC_VERSION = new EnumMap<>(MCVersion.class);
+
+    static {
+        for (ServerVersion serverVersion : values()) {
+            if (serverVersion == Other) {
+                continue;
+            }
+
+            BY_MINECRAFT_VERSION.put(
+                    serverVersion.minecraftVersion.toLowerCase(Locale.ROOT),
+                    serverVersion
+            );
+            BY_MC_VERSION.put(serverVersion.mcVersion, serverVersion);
+        }
+    }
+
+    private final MCVersion mcVersion;
     private final String minecraftVersion;
     private final int firstVersionNumber;
     private final int secondVersionNumber;
     private final int patchVersionNumber;
 
-    ServerVersion(String minecraftVersion, int firstVersionNumber, int secondVersionNumber, int patchVersionNumber) {
+    ServerVersion(MCVersion mcVersion) {
+        this(mcVersion, mcVersion.getName());
+    }
+
+    ServerVersion(MCVersion mcVersion, String minecraftVersion) {
+        this.mcVersion = mcVersion;
         this.minecraftVersion = minecraftVersion;
-        this.firstVersionNumber = firstVersionNumber;
-        this.secondVersionNumber = secondVersionNumber;
-        this.patchVersionNumber = patchVersionNumber;
+
+        int[] parsed = parseVersionParts(minecraftVersion);
+        this.firstVersionNumber = parsed[0];
+        this.secondVersionNumber = parsed[1];
+        this.patchVersionNumber = parsed[2];
     }
 
     public boolean serverVersionEqual(ServerVersion version) {
@@ -93,15 +132,7 @@ public enum ServerVersion {
     }
 
     private static int compareVersions(ServerVersion version1, ServerVersion version2) {
-        if (version1.firstVersionNumber != version2.firstVersionNumber) {
-            return Integer.compare(version1.firstVersionNumber, version2.firstVersionNumber);
-        }
-
-        if (version1.secondVersionNumber != version2.secondVersionNumber) {
-            return Integer.compare(version1.secondVersionNumber, version2.secondVersionNumber);
-        }
-
-        return Integer.compare(version1.patchVersionNumber, version2.patchVersionNumber);
+        return Integer.compare(version1.mcVersion.getVersionID(), version2.mcVersion.getVersionID());
     }
 
     public String getServerVersionName() {
@@ -117,13 +148,15 @@ public enum ServerVersion {
     }
 
     /**
-     * Backwards-compatible with your old system.
-     * For old versions like 1.21.4, this returns 21.
-     * For new versions like 26.1, this returns 26.
-     * @return The major version number of the server, which is the first version number in the version scheme.
+     * @return Backwards-compatible with old behaviour:
+     * - 1.21.x returns 21
+     * - 26.1.x returns 26
      */
     public int getServerMajorVersionNumber() {
-        return firstVersionNumber;
+        if (this == Other) {
+            return -1;
+        }
+        return isLegacyVersionScheme() ? secondVersionNumber : firstVersionNumber;
     }
 
     public int getFirstVersionNumber() {
@@ -146,93 +179,130 @@ public enum ServerVersion {
         return firstVersionNumber >= 25;
     }
 
+    public MCVersion getMCVersion() {
+        return mcVersion;
+    }
+
     public static ServerVersion fromMinecraftVersion(String versionString) {
+        MessageUtils.sendDebugConsole("-----------------------------------------");
+        MessageUtils.sendDebugConsole("ServerVersion lookup requested for input: " + versionString);
+
         if (versionString == null || versionString.trim().isEmpty()) {
+            MessageUtils.sendDebugConsole("Input version is null/empty. Returning: " + Other);
             return Other;
         }
 
-        String normalizedVersion = versionString.trim();
+        String normalized = versionString.trim();
+        MessageUtils.sendDebugConsole("Normalized version string: " + normalized);
+
+        ServerVersion directMatch = BY_MINECRAFT_VERSION.get(normalized.toLowerCase(Locale.ROOT));
+        if (directMatch != null) {
+            MessageUtils.sendDebugConsole("Direct minecraftVersion map match found: " + directMatch);
+            return directMatch;
+        }
+
+        MCVersion mcVersion = resolveMCVersion(normalized);
+        MessageUtils.sendDebugConsole("Resolved MCVersion: " + mcVersion);
+
+        if (mcVersion != MCVersion.UNKNOWN) {
+            ServerVersion exactMapped = BY_MC_VERSION.get(mcVersion);
+            if (exactMapped != null) {
+                MessageUtils.sendDebugConsole("Exact MCVersion -> ServerVersion map match found: " + exactMapped);
+                return exactMapped;
+            }
+
+            int[] mcParts = parseVersionParts(mcVersion.getName());
+            if (mcParts[0] >= 0) {
+                ServerVersion closest = findClosestPatchInSameLine(mcParts[0], mcParts[1], mcParts[2]);
+                MessageUtils.sendDebugConsole("No exact map match; closest same-line patch from MCVersion parts is: " + closest);
+                return closest;
+            }
+        }
+
+        int[] parsed = parseVersionParts(normalized);
+        if (parsed[0] < 0) {
+            MessageUtils.sendDebugConsole("Could not parse normalized version string. Returning: " + Other);
+            return Other;
+        }
+
+        ServerVersion closest = findClosestPatchInSameLine(parsed[0], parsed[1], parsed[2]);
+        MessageUtils.sendDebugConsole("Fallback closest same-line patch from parsed version is: " + closest);
+        return closest;
+    }
+
+    private static MCVersion resolveMCVersion(String versionString) {
+        MCVersion resolved = MCVersion.getFromVersionName(versionString);
+        if (resolved != MCVersion.UNKNOWN) {
+            return resolved;
+        }
+
+        String candidate = versionString;
+        while (candidate.contains(".")) {
+            String previous = candidate;
+
+            // First try removing ".<digits>" suffix
+            candidate = candidate.replaceFirst("\\.\\d+$", "");
+
+            // If no change, remove last segment generically to prevent infinite loop
+            if (candidate.equals(previous)) {
+                int lastDot = candidate.lastIndexOf('.');
+                if (lastDot <= 0) {
+                    break;
+                }
+                candidate = candidate.substring(0, lastDot);
+            }
+
+            resolved = MCVersion.getFromVersionName(candidate);
+            if (resolved != MCVersion.UNKNOWN) {
+                return resolved;
+            }
+        }
+
+        return MCVersion.UNKNOWN;
+    }
+
+    private static ServerVersion findClosestPatchInSameLine(int first, int second, int patch) {
+        ServerVersion best = null;
 
         for (ServerVersion serverVersion : values()) {
             if (serverVersion == Other) {
                 continue;
             }
 
-            if (serverVersion.getMinecraftVersion().equalsIgnoreCase(normalizedVersion)) {
-                return serverVersion;
+            if (serverVersion.firstVersionNumber != first || serverVersion.secondVersionNumber != second) {
+                continue;
+            }
+
+            if (serverVersion.patchVersionNumber > patch) {
+                continue;
+            }
+
+            if (best == null || serverVersion.patchVersionNumber > best.patchVersionNumber) {
+                best = serverVersion;
             }
         }
 
-        return Other;
+        return best != null ? best : Other;
     }
+
+    private static int[] parseVersionParts(String version) {
+        if (version == null || version.equalsIgnoreCase("Other")) {
+            return new int[]{-1, -1, -1};
+        }
+
+        String[] split = version.split("\\.");
+        if (split.length < 2 || split.length > 3) {
+            return new int[]{-1, -1, -1};
+        }
+
+        try {
+            int first = Integer.parseInt(split[0]);
+            int second = Integer.parseInt(split[1]);
+            int patch = split.length == 3 ? Integer.parseInt(split[2]) : 0;
+            return new int[]{first, second, patch};
+        } catch (NumberFormatException ignored) {
+            return new int[]{-1, -1, -1};
+        }
+    }
+
 }
-//public enum ServerVersion {
-//
-//    v1_8_R1,
-//    v1_8_R2,
-//    v1_8_R3,
-//    v1_9_R1,
-//    v1_9_R2,
-//    v1_10_R1,
-//    v1_11_R1,
-//    v1_12_R1,
-//    v1_13_R1,
-//    v1_13_R2,
-//    v1_14_R1,
-//    v1_15_R1,
-//    v1_16_R1,
-//    v1_16_R2,
-//    v1_16_R3,
-//    v1_17_R1,
-//    v1_18_R1,
-//    v1_18_R2,
-//    v1_19_R1,
-//    v1_19_R2,
-//    v1_19_R3,
-//    v1_20_R1,
-//    v1_20_R2,
-//    v1_20_R3,
-//    v1_20_R4,
-//    v1_20_R5,
-//    v1_21_R1,
-//    v1_21_R2,
-//    v1_21_R3,
-//    v1_21_R4,
-//    v1_21_R5,
-//    v1_21_R6,
-//    v1_21_R7,
-//    v1_21_R8,
-//    v1_21_R9,
-//    v1_21_R10,
-//    v1_21_R11,
-//    v1_21_R12,
-//    Other;
-//
-//    public boolean serverVersionEqual(ServerVersion version) {
-//        return this.equals(version);
-//    }
-//
-//    public boolean serverVersionGreaterThanOrEqual(ServerVersion version) {
-//        return this.ordinal() >= version.ordinal();
-//    }
-//
-//    public boolean serverVersionGreaterThan(ServerVersion version1, ServerVersion version2) {
-//        return version1.ordinal() > version2.ordinal();
-//    }
-//
-//    public boolean serverVersionLessThan(ServerVersion version1, ServerVersion version2) {
-//        return version1.ordinal() < version2.ordinal();
-//    }
-//
-//    public String getServerVersionName() {
-//        return this.name();
-//    }
-//
-//    public int getOrdinalServerVersionNumber() {
-//        return this.ordinal();
-//    }
-//
-//    public int getServerMajorVersionNumber() {
-//        return Integer.parseInt(this.name().split("_")[1]);
-//    }
-//}
