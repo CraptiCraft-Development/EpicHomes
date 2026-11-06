@@ -17,7 +17,7 @@ public class VersionCheckerUtils {
         try {
             serverPackage = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         } catch (ArrayIndexOutOfBoundsException e) {
-            serverPackage = null;
+            serverPackage = "Unknown";
         }
     }
 
@@ -25,13 +25,34 @@ public class VersionCheckerUtils {
         try {
             ServerVersion detectedVersion = EpicHomes.getPlugin().getServerVersion();
 
+            if (detectedVersion == null || detectedVersion == ServerVersion.Other) {
+                version = -1;
+                firstVersionNumber = -1;
+                secondVersionNumber = -1;
+                patchVersionNumber = -1;
+                versionCheckedSuccessfully = false;
+
+                MessageUtils.sendConsole("&c-------------------------------------------");
+                MessageUtils.sendConsole("&4Unable to identify a supported server version!");
+                MessageUtils.sendConsole("&4Detected server package: &d" + getServerPackage());
+                MessageUtils.sendConsole("&4Some features may break unexpectedly!");
+                MessageUtils.sendConsole("&4-------------------------------------------");
+                MessageUtils.sendDebugConsole("error", "ServerVersion unresolved: " + detectedVersion);
+
+                return;
+            }
+
             version = detectedVersion.getServerMajorVersionNumber();
             firstVersionNumber = detectedVersion.getFirstVersionNumber();
             secondVersionNumber = detectedVersion.getSecondVersionNumber();
             patchVersionNumber = detectedVersion.getPatchVersionNumber();
 
-            versionCheckedSuccessfully = detectedVersion != ServerVersion.Other;
+            versionCheckedSuccessfully = true;
         } catch (Exception e) {
+            version = -1;
+            firstVersionNumber = -1;
+            secondVersionNumber = -1;
+            patchVersionNumber = -1;
             versionCheckedSuccessfully = false;
 
             MessageUtils.sendConsole("&c-------------------------------------------");
@@ -47,40 +68,44 @@ public class VersionCheckerUtils {
     }
 
     public void getServerVersion() {
+        ServerVersion detectedVersion = ServerVersion.Other;
+        String bukkitVersion = "Unknown";
+
         try {
-            String bukkitVersion = Bukkit.getServer().getBukkitVersion();
+            bukkitVersion = Bukkit.getServer().getBukkitVersion();
             String normalizedVersion = bukkitVersion.split("-")[0].trim();
+            normalizedVersion = normalizedVersion.replaceFirst("^((\\d+)(\\.\\d+){1,2}).*$", "$1");
 
             MessageUtils.sendDebugConsole("-----------------------------------------");
             MessageUtils.sendDebugConsole("Detected Bukkit version: " + bukkitVersion);
             MessageUtils.sendDebugConsole("Normalized version: " + normalizedVersion);
 
-            ServerVersion detectedVersion = ServerVersion.fromMinecraftVersion(normalizedVersion);
+            detectedVersion = ServerVersion.fromMinecraftVersion(normalizedVersion);
 
-
-             // Fallback for older CraftBukkit-style package versions such as v1_16_R3
-             // if Bukkit version string matching fails for some reason.
             if (detectedVersion == ServerVersion.Other) {
-                try {
-                    String packageName = Bukkit.getServer().getClass().getPackage().getName();
-                    String packageVersion = packageName.replace("org.bukkit.craftbukkit.", "");
-                    detectedVersion = ServerVersion.valueOf(packageVersion);
+                String packageName = Bukkit.getServer().getClass().getPackage().getName();
+                String packageVersion = packageName.replace("org.bukkit.craftbukkit.", "");
 
+                try {
+                    detectedVersion = ServerVersion.valueOf(packageVersion);
                     MessageUtils.sendDebugConsole("Fell back to package version detection: " + packageVersion);
-                } catch (Exception ignored) {
+                } catch (IllegalArgumentException ignored) {
                     // Keep as Other
                 }
             }
-
-            EpicHomes.getPlugin().setServerVersion(detectedVersion);
-
         } catch (Exception e) {
-            EpicHomes.getPlugin().setServerVersion(ServerVersion.Other);
-            MessageUtils.sendDebugConsole("Failed to detect server version, defaulting to: " + EpicHomes.getPlugin().getServerVersion());
+            MessageUtils.sendDebugConsole("Failed to detect server version from Bukkit version: " + bukkitVersion);
             MessageUtils.sendDebugConsole("Version detection error message: " + e.getMessage());
         }
 
-        MessageUtils.sendDebugConsole("Set server version: " + EpicHomes.getPlugin().getServerVersion());
+        if (detectedVersion == ServerVersion.Other) {
+            MessageUtils.sendDebugConsole("Unable to map Bukkit version/package to a known ServerVersion.");
+            MessageUtils.sendDebugConsole("Detected Bukkit version: " + bukkitVersion);
+            MessageUtils.sendDebugConsole("Please report this to the plugin developer for further assistance.");
+        }
+
+        EpicHomes.getPlugin().setServerVersion(detectedVersion);
+        MessageUtils.sendDebugConsole("Set server version: " + detectedVersion);
     }
 
     public String getServerPackage() {
@@ -157,120 +182,3 @@ public class VersionCheckerUtils {
         return serverVersion.serverVersionGreaterThanOrEqual(requiredVersion);
     }
 }
-//import me.loving11ish.epichomes.EpicHomes;
-//import me.loving11ish.epichomes.versionsystems.ServerVersion;
-//import org.bukkit.Bukkit;
-//
-//import java.util.regex.PatternSyntaxException;
-//
-//public class VersionCheckerUtils {
-//
-//    private String serverPackage;
-//    private int version;
-//    private boolean versionCheckedSuccessfully = false;
-//
-//    public VersionCheckerUtils() {
-//        try {
-//            serverPackage = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            serverPackage = null;
-//        }
-//    }
-//
-//    public void setVersion() {
-//        try {
-//            version = EpicHomes.getPlugin().getServerVersion().getServerMajorVersionNumber();
-//            versionCheckedSuccessfully = true;
-//        } catch (NumberFormatException | PatternSyntaxException e) {
-//            versionCheckedSuccessfully = false;
-//            MessageUtils.sendConsole("&c-------------------------------------------");
-//            MessageUtils.sendConsole("&4Unable to process server version!");
-//            MessageUtils.sendConsole("&4Some features may break unexpectedly!");
-//            MessageUtils.sendConsole("&4Report any issues to the developer!");
-//            MessageUtils.sendDebugConsole("error", "&4-------------------------------------------");
-//            MessageUtils.sendDebugConsole("error", "Cause: " + e.getCause());
-//            MessageUtils.sendDebugConsole("error", "Message: " +e.getMessage());
-//            MessageUtils.sendDebugConsole("error", "&4-------------------------------------------");
-//            MessageUtils.sendConsole("&c-------------------------------------------");
-//        }
-//    }
-//
-//    public void getServerVersion() {
-//        try {
-//            String bukkitVersion = Bukkit.getServer().getBukkitVersion();
-//            String normalizedVersion = bukkitVersion.split("-")[0]; // Extract base version
-//
-//            MessageUtils.sendDebugConsole("-----------------------------------------");
-//            MessageUtils.sendDebugConsole("Detected Bukkit version: " + bukkitVersion);
-//            MessageUtils.sendDebugConsole("Normalized version: " + normalizedVersion);
-//
-//            switch (normalizedVersion) {
-//                case "1.20.5":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_20_R4);
-//                    break;
-//                case "1.20.6":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_20_R5);
-//                    break;
-//                case "1.21":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R1);
-//                    break;
-//                case "1.21.1":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R2);
-//                    break;
-//                case "1.21.2":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R3);
-//                    break;
-//                case "1.21.3":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R4);
-//                    break;
-//                case "1.21.4":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R5);
-//                    break;
-//                case "1.21.5":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R6);
-//                    break;
-//                case "1.21.6":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R7);
-//                    break;
-//                case "1.21.7":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R8);
-//                    break;
-//                case "1.21.8":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R9);
-//                    break;
-//                case "1.21.9":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R10);
-//                    break;
-//                case "1.21.10":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R11);
-//                    break;
-//                case "1.21.11":
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.v1_21_R12);
-//                    break;
-//
-//
-//                default:
-//                    String packageName = Bukkit.getServer().getClass().getPackage().getName();
-//                    EpicHomes.getPlugin().setServerVersion(ServerVersion.valueOf(packageName.replace("org.bukkit.craftbukkit.", "")));
-//                    break;
-//            }
-//
-//        } catch (Exception e) {
-//            EpicHomes.getPlugin().setServerVersion(ServerVersion.Other);
-//            MessageUtils.sendDebugConsole("Failed to detect server version, defaulting to: " + EpicHomes.getPlugin().getServerVersion());
-//        }
-//        MessageUtils.sendDebugConsole("Set server version: " + EpicHomes.getPlugin().getServerVersion());
-//    }
-//
-//    public String getServerPackage() {
-//        return serverPackage != null ? serverPackage : "Unknown";
-//    }
-//
-//    public int getVersion() {
-//        return version;
-//    }
-//
-//    public boolean isVersionCheckedSuccessfully() {
-//        return versionCheckedSuccessfully;
-//    }
-//}

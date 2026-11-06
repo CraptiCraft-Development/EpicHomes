@@ -6,14 +6,14 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5-BETA-01</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
 
     <description>A fully featured homes plugin that is resource efficient and simple to use.</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -37,7 +37,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version> <!-- (https://maven.apache.org/plugins/maven-compiler-plugin/) -->
+                <version>3.15.0</version> <!-- (https://maven.apache.org/plugins/maven-compiler-plugin/) -->
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -47,7 +47,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version> <!-- (https://maven.apache.org/plugins/maven-shade-plugin/) -->
+                <version>3.6.1</version> <!-- (https://maven.apache.org/plugins/maven-shade-plugin/) -->
                 <configuration>
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
@@ -82,23 +82,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version> <!-- (https://maven.apache.org/plugins/maven-javadoc-plugin/) -->
+                <version>3.12.0</version> <!-- (https://maven.apache.org/plugins/maven-javadoc-plugin/) -->
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
-                    <excludes>src.main.java.me.loving11ish.epichomes.EpicHomes</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.websocketutils.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.versionsystems.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.utils.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.models.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.menusystem.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.listeners.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.files.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.externalhooks.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.commands.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.importers.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.managers.**</excludes>
-                    <excludes>src.main.java.me.loving11ish.epichomes.updatesystem.**</excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -189,20 +176,20 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
-            <version>4.25.0</version>
+            <version>5.2.0</version>
             <scope>compile</scope>
         </dependency>
         <!-- Adventure-platform-bukkit is shaded in via maven-shade -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.4.1</version>
+            <version>4.4.2-SNAPSHOT</version>
         </dependency>
         <!-- adventure-text-minimessage is shaded in via maven-shade -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.25.0</version>
+            <version>5.2.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -211,7 +198,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>26.0.2-1</version>
+            <version>26.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -220,14 +207,14 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.19.0</version>
+            <version>1.23.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Commons-lang3 is provided by external lib download -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
+            <version>3.21.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -236,7 +223,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
+            <version>2.15.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -244,7 +231,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.12.2</version>
+            <version>2.12.3</version>
             <scope>provided</scope>
         </dependency>
 

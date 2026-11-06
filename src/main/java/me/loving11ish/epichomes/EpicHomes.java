@@ -96,17 +96,14 @@ public final class EpicHomes extends JavaPlugin {
 
         boolean unsupportedLegacyVersion = !versionDetectionFailed
                 && detectedServerVersion.isLegacyVersionScheme()
-                && detectedServerVersion.serverVersionLessThan(ServerVersion.v1_16_R3);
+                && detectedServerVersion.serverVersionLessThan(ServerVersion.v1_20_R4);
 
         if (versionDetectionFailed || unsupportedLegacyVersion) {
             MessageUtils.sendConsole("&4-------------------------------------------");
             MessageUtils.sendConsole("&4Your server version is: &d" + Bukkit.getVersion());
             MessageUtils.sendConsole("&4This plugin is only tested on the Minecraft versions listed below:");
-            MessageUtils.sendConsole("&41.16.x");
-            MessageUtils.sendConsole("&41.17.x");
-            MessageUtils.sendConsole("&41.18.x");
-            MessageUtils.sendConsole("&41.19.x");
-            MessageUtils.sendConsole("&41.20.x");
+            MessageUtils.sendConsole("&41.20.5");
+            MessageUtils.sendConsole("&41.20.6");
             MessageUtils.sendConsole("&41.21.x");
             MessageUtils.sendConsole("&426.x.x");
             MessageUtils.sendConsole("&4NO SUPPORT OR DEVELOPMENT HELP IS GUARANTEED FOR OTHER VERSIONS!");
@@ -121,7 +118,7 @@ public final class EpicHomes extends JavaPlugin {
 
         if (getFoliaLib().isUnsupported()) {
             MessageUtils.sendConsole("&4-------------------------------------------");
-            MessageUtils.sendConsole("&4Your server appears to running a version other than Spigot based!");
+            MessageUtils.sendConsole("&4Your server appears to running a version other than Spigot or Paper based!");
             MessageUtils.sendConsole("&4This plugin uses features that your server most likely doesn't have!");
             MessageUtils.sendConsole("&4Is now disabling!");
             MessageUtils.sendConsole("&4-------------------------------------------");
