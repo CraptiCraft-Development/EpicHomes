@@ -17,7 +17,7 @@ public class MessageUtils {
     private static String levelColor;
 
     /**
-     * @param message The message to be sent to the console with prefix applied. Supports color codes.
+     * @param message The message to be sent to the console with prefix applied. Supports colour codes.
      */
     public static void sendConsole(String message) {
         console.sendMessage(ColorUtils.translateColorCodes(prefix + " &r" + message));
@@ -25,7 +25,7 @@ public class MessageUtils {
 
     /**
      * @param player  The player to send the message too.
-     * @param message The message to be sent with prefix applied. Supports color codes.
+     * @param message The message to be sent with prefix applied. Supports colour codes.
      */
     public static void sendPlayer(Player player, String message) {
         player.sendMessage(ColorUtils.translateColorCodes(prefix + " &r" + message));
@@ -33,7 +33,7 @@ public class MessageUtils {
 
     /**
      * @param player  The player to send the message too.
-     * @param message The message to be sent without prefix applied. Supports color codes.
+     * @param message The message to be sent without prefix applied. Supports colour codes.
      */
     public static void sendPlayerNoPrefix(Player player, String message) {
         player.sendMessage(ColorUtils.translateColorCodes(message));
@@ -44,7 +44,7 @@ public class MessageUtils {
      * If the player is online, the message will be sent to them.
      * If the player is offline, an error message will be sent to the console.
      * @param offlinePlayer  The offlinePlayer to send the message too.
-     * @param message The message to be sent with prefix applied. Supports color codes.
+     * @param message The message to be sent with prefix applied. Supports colour codes.
      */
     public static void sendOfflinePlayer(OfflinePlayer offlinePlayer, String message) {
         Player player = offlinePlayer.getPlayer();
@@ -56,7 +56,7 @@ public class MessageUtils {
     }
 
     /**
-     * @param message The message to be sent with prefix applied. Supports color codes.
+     * @param message The message to be sent with prefix applied. Supports colour codes.
      * @param level   The log level of the message. Supports info, warning, error, and severe.
      */
     public static void sendConsole(String level, String message) {
@@ -65,7 +65,7 @@ public class MessageUtils {
     }
 
     /**
-     * @param message The debug message to be sent with prefix applied. Supports color codes.
+     * @param message The debug message to be sent with prefix applied. Supports colour codes.
      */
     public static void sendDebugConsole(String message) {
         if (debug) {
@@ -74,7 +74,7 @@ public class MessageUtils {
     }
 
     /**
-     * @param message The debug message to be sent with prefix applied. Supports color codes.
+     * @param message The debug message to be sent with prefix applied. Supports colour codes.
      * @param level   The log level of the message. Supports info, warning, error, and severe.
      */
     public static void sendDebugConsole(String level, String message) {
@@ -85,7 +85,7 @@ public class MessageUtils {
     }
 
     /**
-     * @param message The message to be broadcast with prefix applied. Supports color codes.
+     * @param message The message to be broadcast with prefix applied. Supports colour codes.
      */
     public static void broadcastMessage(String message) {
         Bukkit.broadcastMessage(ColorUtils.translateColorCodes(prefix + " &l" + message));
@@ -93,7 +93,7 @@ public class MessageUtils {
 
     /**
      * @param sender  The sender to send the message too.
-     * @param message The message to be sent with prefix applied. Supports color codes.
+     * @param message The message to be sent with prefix applied. Supports colour codes.
      */
     public static void sendSender(CommandSender sender, String message) {
         if (sender instanceof Player) {
@@ -107,7 +107,7 @@ public class MessageUtils {
     /**
      * @param sender  The sender to send the message too.
      * @param level   The log level of the message. Supports: info, warning, error, and severe.
-     * @param message The message to be sent with prefix applied. Supports color codes.
+     * @param message The message to be sent with prefix applied. Supports colour codes.
      */
     public static void sendSender(CommandSender sender, String level, String message) {
         if (sender instanceof Player) {

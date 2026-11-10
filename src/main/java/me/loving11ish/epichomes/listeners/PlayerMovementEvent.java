@@ -29,8 +29,8 @@ public class PlayerMovementEvent implements Listener {
             }
 
             if (event.getFrom().getX() != event.getTo().getX()
-                    && event.getFrom().getY() != event.getTo().getY()
-                    && event.getFrom().getZ() != event.getTo().getZ()) {
+                    || event.getFrom().getY() != event.getTo().getY()
+                    || event.getFrom().getZ() != event.getTo().getZ()) {
                 MessageUtils.sendDebugConsole("&aPlayer " + player.getName() + " has a pending teleport");
 
                 try {

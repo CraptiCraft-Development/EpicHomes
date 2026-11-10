@@ -69,13 +69,19 @@ public class UsermapStorageUtil {
                     float homeYaw = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homeYaw");
                     float homePitch = (float) this.usermapConfig.getDouble("users.data." + key + ".homes." + homeKey + ".homePitch");
 
-                    if (Bukkit.getWorld(homeWorld) == null) {
-                        MessageUtils.sendConsole("warning", "Home: " + homeName + " for user: " + lastKnownName + " could not be loaded.");
-                        MessageUtils.sendDebugConsole("warning", "World: " + homeWorld + " could not be found or is not loaded.");
+                    if (homeWorld == null || homeWorld.isBlank()) {
+                        MessageUtils.sendConsole("warning", "Home: " + homeName + " for user: " + lastKnownName + " could not be loaded as the world name is null/blank.");
+                        MessageUtils.sendDebugConsole("warning", "World name is null/blank in usermap.");
                         continue;
                     }
 
                     World world = Bukkit.getWorld(homeWorld);
+                    if (world == null) {
+                        MessageUtils.sendConsole("warning", "Home: " + homeName + " for user: " + lastKnownName + " could not be loaded as the world could not be found!");
+                        MessageUtils.sendDebugConsole("warning", "World: " + homeWorld + " could not be found or is not loaded.");
+                        continue;
+                    }
+
                     Location location = new Location(world, homeX, homeY, homeZ, homeYaw, homePitch);
                     homeLocations.put(homeName, location);
                 }
@@ -166,8 +172,15 @@ public class UsermapStorageUtil {
 
     public OfflinePlayer getBukkitOfflinePlayerByLastKnownName(String lastKnownName) {
         User user = getUserByLastKnownName(lastKnownName);
+        if (user == null) {
+            throw new IllegalArgumentException("No stored user found for last known name: " + lastKnownName);
+        }
         UUID uuid = UUID.fromString(user.getUserUUID());
-        return Bukkit.getOfflinePlayer(uuid);
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        if (!offlinePlayer.isOnline() && !offlinePlayer.hasPlayedBefore()) {
+            throw new NoSuchElementException("No offline player found for last known name: " + lastKnownName);
+        }
+        return offlinePlayer;
     }
 
     public boolean addHomeToUser(User user, String homeName, Location location) {
