@@ -2,6 +2,7 @@ package me.loving11ish.epichomes.commands;
 
 import com.tcoded.folialib.FoliaLib;
 import me.loving11ish.epichomes.EpicHomes;
+import me.loving11ish.epichomes.commands.subcommands.BuySubCommand;
 import me.loving11ish.epichomes.api.events.AsyncHomePreTeleportEvent;
 import me.loving11ish.epichomes.commands.subcommands.DeleteSubCommand;
 import me.loving11ish.epichomes.commands.subcommands.ListSubCommand;
@@ -57,9 +58,10 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             else if (args[0].equalsIgnoreCase("set")
                     || args[0].equalsIgnoreCase("delete")
                     || args[0].equalsIgnoreCase("list")
+                    || args[0].equalsIgnoreCase("buy")
                     || args[0].equalsIgnoreCase("reload")) {
 
-                switch (args[0]) {
+                switch (args[0].toLowerCase()) {
 
                     case "set":
                         if (args.length == 2) {
@@ -109,6 +111,14 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
 
                     case "list":
                         return new ListSubCommand().listSubCommand(sender);
+
+                    case "buy":
+                        if (args.length <= 2) {
+                            return new BuySubCommand().buySubCommand(sender, args);
+                        }
+
+                        MessageUtils.sendPlayerNoPrefix(player, sendUsageMessage());
+                        return true;
 
                     default:
                         MessageUtils.sendPlayerNoPrefix(player, sendUsageMessage());
@@ -183,6 +193,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         arguments.add("set");
         arguments.add("delete");
         arguments.add("list");
+        arguments.add("buy");
 
         List<String> result = new ArrayList<>();
 
@@ -192,6 +203,11 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                     result.add(a);
                 }
             }
+            return result;
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("buy") && "confirm".startsWith(args[1].toLowerCase())) {
+            result.add("confirm");
             return result;
         }
         return null;

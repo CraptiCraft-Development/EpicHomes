@@ -37,6 +37,21 @@ homes:
         maxAmount: 8
       - group: "epichomes.maxhomes.group1"
         maxAmount: 4
+
+  extra-home-purchase:
+    #Do you want players to be able to buy extra home slots? [Default value: false]
+    #Requires Vault and a Vault-compatible economy plugin to be installed on the server.
+    enabled: false
+    #Minimum extra home slots all players should receive from this system. [Default value: 0]
+    minimum-extra-homes: 0
+    #Maximum extra home slots a player can own from this system. [Default value: 10]
+    maximum-extra-homes: 10
+    #Base price for the next extra home slot. [Default value: 1000.0]
+    base-price: 1000.0
+    #Multiplier applied for each already-purchased extra home slot. [Allowed range: 0.2 - 2.0]
+    #Example: 1.2 makes each next slot cost 20% more than the previous slot.
+    price-modifier: 1.0
+
   #Set below names that are not allowed to be used in home names. [They ARE case & syntax sensitive]
   disallowed-home-names:
     - "Gamers"
@@ -118,6 +133,20 @@ gui-system:
         - "&7------------"
         - "&c&oRight click me to delete this home"
         - "&3<============>"
+      buy-extra-home:
+        #What material do you want the buy-extra-home button to use? [Default value: EMERALD]
+        material: EMERALD
+        #What name do you want the buy-extra-home button to be? [Default value: &aBuy Extra Home]
+        display-name: "&aBuy Extra Home"
+        #Below is the lore for the buy-extra-home button.
+        lore:
+          - "&3<============>"
+          - "&6Price: &a%PRICE%"
+          - "&6Current Limit: &a%CURRENT-LIMIT%"
+          - "&6Next Limit: &a%NEXT-LIMIT%"
+          - "&3<============>"
+          - "&e&oLeft click me to buy an extra home"
+          - "&3<============>"
 #----------------------------------------------------------------------------#
   delete-list-gui:
     #What title do you want the GUI to have? [Default value: &d&nYour Homes:]
@@ -187,6 +216,51 @@ gui-system:
         lore:
           - "&3<============>"
           - "&a&lCancel and close this GUI"
+          - "&3<============>"
+          - "&e&oLeft click me to cancel"
+          - "&3<============>"
+#----------------------------------------------------------------------------#
+  buy-extra-home-gui:
+    #What title do you want the GUI to have? [Default value: &d&nBuy Extra Home]
+    title: "&d&nBuy Extra Home"
+
+    icons:
+      purchase-info:
+        #What material do you want the purchase info item to use? [Default value: EMERALD]
+        material: EMERALD
+        #What name do you want the purchase info item to be? [Default value: &6Extra Home Slot]
+        display-name: "&6Extra Home Slot"
+        #Below is the lore for the purchase info item.
+        lore:
+          - "&3<============>"
+          - "&6Price: &a%PRICE%"
+          - "&6Current Limit: &a%CURRENT-LIMIT%"
+          - "&6After Purchase: &a%NEXT-LIMIT%"
+          - "&6Extra Homes Owned: &a%EXTRA-HOMES%/%MAX-EXTRA-HOMES%"
+          - "&3<============>"
+
+      confirm-purchase:
+        #What material do you want the confirm purchase item to use? [Default value: EMERALD_BLOCK]
+        material: EMERALD_BLOCK
+        #What name do you want the confirm purchase item to be? [Default value: &aConfirm]
+        display-name: "&aConfirm"
+        #Below is the lore for the confirm purchase item.
+        lore:
+          - "&3<============>"
+          - "&e&lThis will cost &a%PRICE%"
+          - "&3<============>"
+          - "&e&oLeft click me to buy one extra home"
+          - "&3<============>"
+
+      cancel-purchase:
+        #What material do you want the cancel purchase item to use? [Default value: BARRIER]
+        material: BARRIER
+        #What name do you want the cancel purchase item to be? [Default value: &cCancel]
+        display-name: "&cCancel"
+        #Below is the lore for the cancel purchase item.
+        lore:
+          - "&3<============>"
+          - "&c&lCancel and close this GUI"
           - "&3<============>"
           - "&e&oLeft click me to cancel"
           - "&3<============>"
