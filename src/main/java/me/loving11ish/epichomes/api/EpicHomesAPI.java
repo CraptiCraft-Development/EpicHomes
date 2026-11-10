@@ -135,7 +135,7 @@ public class EpicHomesAPI {
     }
 
     /**
-     * @return Returns the FoliaLib instance for Entity Aliases.
+     * @return Returns the FoliaLib instance for EpicHomes.
      */
     public static FoliaLib getFoliaLibInstance() {
         return EpicHomes.getFoliaLib();
@@ -174,6 +174,8 @@ public class EpicHomesAPI {
     /**
      * @param lastKnownPlayerName The String value of the last known name for the Offline Player to get.
      * @return Returns a Bukkit OfflinePlayer object or may throw an error if an OfflinePlayer cannot be found.
+     * @throws IllegalArgumentException if an Offline User cannot be found.
+     * @throws NoSuchElementException if a Bukkit OfflinePlayer cannot be found from the OfflinePlayer's UUID.
      */
     public static OfflinePlayer getBukkitOfflinePlayerFromLastKnownPlayerName(String lastKnownPlayerName) {
         return EpicHomes.getPlugin().getUsermapStorageUtil().getBukkitOfflinePlayerByLastKnownName(lastKnownPlayerName);

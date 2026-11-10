@@ -39,6 +39,13 @@ public class AsyncHomeTeleportEvent extends Event {
     }
 
     /**
+     * @return Returns the handler list.
+     */
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    /**
      * @return Returns the player who created the event.
      */
     public Player getCreatedBy() {
