@@ -6,7 +6,7 @@
 
     <groupId>me.loving11ish</groupId>
     <artifactId>EpicHomes</artifactId>
-    <version>1.1.5-BETA-02</version>
+    <version>1.1.5-BETA-03</version>
     <packaging>jar</packaging>
 
     <name>EpicHomes</name>
@@ -86,6 +86,7 @@
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
+                    <subpackages>me.loving11ish.epichomes.api</subpackages>
                 </configuration>
                 <executions>
                     <execution>
