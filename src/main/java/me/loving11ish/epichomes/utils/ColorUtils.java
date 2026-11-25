@@ -10,8 +10,8 @@ public class ColorUtils {
     static public final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
 
     /**
-     * @param text The string of text to apply color/effects to
-     * @return Returns a string of text with color/effects applied
+     * @param text The string of text to apply colour/effects to
+     * @return Returns a string of text with colour/effects applied
      */
     public static String translateColorCodes(String text) {
         // Optionally parse MiniMessage format
@@ -21,7 +21,7 @@ public class ColorUtils {
             return LegacyComponentSerializer.legacySection().serialize(component);
         }
 
-        // Fallback to legacy color code handling with & and hex (#) codes
+        // Fallback to legacy colour code handling with & and hex (#) codes
         String[] texts = text.split(String.format(WITH_DELIMITER, "&"));
         StringBuilder finalText = new StringBuilder();
         for (int i = 0; i < texts.length; i++) {
@@ -45,19 +45,19 @@ public class ColorUtils {
      * @return True if MiniMessage tags are detected
      */
     private static boolean containsMiniMessageTags(String text) {
-        // A basic check for some common MiniMessage tags like <color>, <bold>, etc.
+        // A basic check for some common MiniMessage tags like <colour>, <bold>, etc.
         return text.matches(".*<(red|green|blue|bold|italic|reset|underlined|hover|click|obfuscated).*>");
     }
 
     /**
-     * Strips all chat colors, HEX colors, and MiniMessage colors from the provided string.
-     * @param text The string to strip colors from.
-     * @return The string without any color codes.
+     * Strips all chat colours, HEX colours, and MiniMessage colours from the provided string.
+     * @param text The string to strip colours from.
+     * @return The string without any colour codes.
      */
     public static String stripColorCodes(String text) {
-        // Pattern to match legacy color codes (& and §)
+        // Pattern to match legacy colour codes (& and §)
         String legacyColorPattern = "(?i)[&§][0-9A-FK-OR]";
-        // Pattern to match HEX color codes
+        // Pattern to match HEX colour codes
         String hexColorPattern = "(?i)#[A-F0-9]{6}";
         // Pattern to match MiniMessage tags
         String miniMessagePattern = "<[^>]+>";

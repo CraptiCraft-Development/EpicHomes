@@ -288,7 +288,7 @@ public final class EpicHomes extends JavaPlugin {
             MessageUtils.sendConsole(getMessagesManager().getAutoSaveStart());
         }, 5L, TimeUnit.SECONDS);
 
-        // Start auto cleanup task
+        // Start auto clean-up task
         getFoliaLib().getScheduler().runLaterAsync(() -> {
             AutoCleanupTaskUtils.runAutoCleanupTask();
             MessageUtils.sendDebugConsole("Auto cleanup task started successfully");
